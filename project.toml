@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ventoryx-academy"
+version = "1.0.0"
+description = "Plateforme de formation aéronautique"
+authors = [
+    {name = "Ventoryx Academy", email = "contact@ventoryx-academy.com"},
+]
+license = {text = "Proprietary"}
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.black]
+line-length = 120
+target-version = ['py312']
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+  | static
+  | media
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+skip_gitignore = true
+skip = ["migrations", "static", "media"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "settings"
+python_files = ["test_*.py", "*_test.py"]
+testpaths = ["tests"]
