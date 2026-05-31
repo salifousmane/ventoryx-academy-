@@ -1,0 +1,1 @@
+# Core App - Accueil, support, légal, chatbot IA, traduction, TTS
