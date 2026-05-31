@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - media_data:/app/media
+      - static_data:/app/staticfiles
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ventoryx
+      POSTGRES_USER: ventoryx
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ventoryx}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  media_data:
+  static_data:
