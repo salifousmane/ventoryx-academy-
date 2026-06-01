@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Journal d'audit - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    
+    <div style="background: linear-gradient(135deg, #0F1C2E, #1E3A5F); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+        <h1 style="color: white; margin: 0;"><i class="fas fa-history"></i> Journal d'audit</h1>
+        <p style="margin: 0.5rem 0 0; opacity: 0.9;">Consultation des événements — Lecture seule — Journal immutable</p>
+    </div>
+
+    <!-- Filtres -->
+    <form method="get" style="background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+        <div style="flex: 1; min-width: 150px;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.3rem;">Action</label>
+            <select name="action" style="width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;">
+                <option value="">Toutes les actions</option>
+                {% for code, label in actions %}
+                <option value="{{ code }}" {% if filtre_action == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.3rem;">Gravité</label>
+            <select name="gravite" style="width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;">
+                <option value="">Toutes les gravités</option>
+                {% for code, label in gravites %}
+                <option value="{{ code }}" {% if filtre_gravite == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit" style="background: #0077B6; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 8px; cursor: pointer;">Filtrer</button>
+            {% if filtre_action or filtre_gravite %}
+            <a href="{% url 'audit:journal' %}" style="margin-left: 0.5rem; color: #6C757D;">Réinitialiser</a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Tableau des logs -->
+    <div style="background: white; border-radius: 12px; overflow-x: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #F8F9FA; border-bottom: 1px solid #E9ECEF;">
+                    <th style="padding: 0.8rem; text-align: left;">Date</th>
+                    <th style="padding: 0.8rem; text-align: left;">Action</th>
+                    <th style="padding: 0.8rem; text-align: left;">Gravité</th>
+                    <th style="padding: 0.8rem; text-align: left;">Utilisateur</th>
+                    <th style="padding: 0.8rem; text-align: left;">Objet</th>
+                    <th style="padding: 0.8rem; text-align: left;">IP</th>
+                    <th style="padding: 0.8rem; text-align: left;">Hash précédent</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr style="border-bottom: 1px solid #E9ECEF;">
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ log.timestamp|date:"d/m/Y H:i:s" }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ log.get_action_display }}</td>
+                    <td style="padding: 0.8rem;">
+                        <span style="display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; 
+                            {% if log.gravite == 'critique' %}background: #FEE2E2; color: #dc2626;
+                            {% elif log.gravite == 'avertissement' %}background: #FFF3E0; color: #f59e0b;
+                            {% else %}background: #E0F0FF; color: #0077B6;{% endif %}">
+                            {{ log.get_gravite_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ log.utilisateur.email|default:"—" }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ log.objet|truncatechars:50 }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ log.ip_address|default:"—" }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.7rem; font-family: monospace;">{{ log.hash_precedent|truncatechars:16|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 3rem; text-align: center; color: #6C757D;">Aucune entrée dans le journal d'audit.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if logs.has_other_pages %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+        {% if logs.has_previous %}
+        <a href="?page={{ logs.previous_page_number }}{% if filtre_action %}&action={{ filtre_action }}{% endif %}{% if filtre_gravite %}&gravite={{ filtre_gravite }}{% endif %}" style="padding: 0.4rem 0.8rem; border: 1px solid #E9ECEF; border-radius: 6px; text-decoration: none; color: #0077B6;">← Précédent</a>
+        {% endif %}
+        <span style="padding: 0.4rem 0.8rem;">{{ logs.number }} / {{ logs.paginator.num_pages }}</span>
+        {% if logs.has_next %}
+        <a href="?page={{ logs.next_page_number }}{% if filtre_action %}&action={{ filtre_action }}{% endif %}{% if filtre_gravite %}&gravite={{ filtre_gravite }}{% endif %}" style="padding: 0.4rem 0.8rem; border: 1px solid #E9ECEF; border-radius: 6px; text-decoration: none; color: #0077B6;">Suivant →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
