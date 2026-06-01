@@ -1,0 +1,525 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ventoryx Academy | Formation aéronautique certifiante SHA-256{% endblock %}
+
+{% block meta_description %}
+8 parcours certifiants aux métiers de l'aviation : pilote, PNC, ingénieur, contrôleur, technicien, mécanicien, agent d'escale. Certificats SHA-256 vérifiables.
+{% endblock %}
+
+{% block meta_extra %}
+    <meta property="og:title" content="Ventoryx Academy | Formation aéronautique">
+    <meta property="og:description" content="Certificats SHA-256 vérifiables. Assistant IA. Mode hors-ligne. 15 langues.">
+    <meta property="og:image" content="{% static 'images/og-image.jpg' %}">
+    <meta property="og:type" content="website">
+    <link rel="alternate" hreflang="fr" href="{{ request.build_absolute_uri }}">
+    <link rel="alternate" hreflang="en" href="{{ request.build_absolute_uri }}?lang=en">
+    <link rel="alternate" hreflang="es" href="{{ request.build_absolute_uri }}?lang=es">
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --success: #10b981;
+    }
+    
+    /* ============ VIDEO HERO ============ */
+    .hero {
+        position: relative;
+        height: 80vh;
+        min-height: 550px;
+        overflow: hidden;
+        color: white;
+    }
+    .hero-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+        z-index: 0;
+    }
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 28, 46, 0.65);
+        z-index: 1;
+    }
+    .hero .container {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 5rem 0;
+    }
+    .hero h1 { font-size: 3rem; margin-bottom: 1.5rem; }
+    .hero h1 span { color: var(--primary); }
+    .hero p { font-size: 1.1rem; max-width: 600px; margin-bottom: 2rem; }
+    
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        margin-right: 1rem;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .btn-primary:hover { transform: translateY(-3px); background: var(--primary-dark); box-shadow: 0 10px 20px rgba(0,0,0,0.1);}
+    .btn-secondary {
+        background: transparent;
+        border: 2px solid white;
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .btn-secondary:hover { background: white; color: var(--secondary); transform: translateY(-3px);}
+    
+    /* Stats */
+    .stats {
+        padding: 3rem 0;
+        background: var(--white);
+        border-bottom: 1px solid var(--gray-light);
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        text-align: center;
+    }
+    .stat-number { font-size: 2.5rem; font-weight: 800; color: var(--primary); font-family: 'Montserrat', sans-serif; }
+    .stat-label { color: var(--gray); font-size: 0.85rem; }
+    
+    /* Search */
+    .search-bar { padding: 2rem 0; background: var(--bg-light); }
+    .search-container { max-width: 500px; margin: 0 auto; position: relative; }
+    .search-container input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.5rem;
+        border: 2px solid var(--gray-light);
+        border-radius: 50px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s;
+    }
+    .search-container input:focus { outline: none; border-color: var(--primary); }
+    .search-container i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray); }
+    
+    /* Section header */
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-header h2 { font-size: 2rem; color: var(--secondary); margin-bottom: 0.5rem; }
+    .section-header p { color: var(--gray); max-width: 600px; margin: 0 auto; }
+    
+    /* Animations au scroll */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .parcours-card, .avantage-card, .blog-card, .temoignage-card, .stat-item {
+        animation: fadeInUp 0.6s ease-out forwards;
+        opacity: 0;
+    }
+    .parcours-card:nth-child(1) { animation-delay: 0.05s; }
+    .parcours-card:nth-child(2) { animation-delay: 0.1s; }
+    .parcours-card:nth-child(3) { animation-delay: 0.15s; }
+    .parcours-card:nth-child(4) { animation-delay: 0.2s; }
+    .parcours-card:nth-child(5) { animation-delay: 0.25s; }
+    .parcours-card:nth-child(6) { animation-delay: 0.3s; }
+    .parcours-card:nth-child(7) { animation-delay: 0.35s; }
+    .parcours-card:nth-child(8) { animation-delay: 0.4s; }
+    
+    /* Parcours cards */
+    .parcours { padding: 4rem 0; background: var(--bg-light); }
+    .parcours-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+    .parcours-card {
+        background: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        display: block;
+    }
+    .parcours-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.12);}
+    .parcours-image {
+        height: 140px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    .parcours-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+    .badge-free { background: var(--success); color: white; }
+    .badge-premium { background: #D4AF37; color: #0F1C2E; }
+    .badge-new { background: var(--primary); color: white; }
+    .parcours-content { padding: 1rem; }
+    .parcours-content h3 { font-size: 0.95rem; color: var(--secondary); margin-bottom: 0.3rem; }
+    .parcours-content p { font-size: 0.75rem; color: var(--gray); }
+    
+    /* Simulateur de prix */
+    .simulator {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .simulator h2 { text-align: center; margin-bottom: 1.5rem; }
+    .simulator-control {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .simulator-control label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    .simulator-control input {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .result-box {
+        background: var(--bg-light);
+        border-radius: 16px;
+        padding: 1rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .total-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+    
+    /* Avantages */
+    .avantages { padding: 4rem 0; background: var(--white); }
+    .avantages-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        text-align: center;
+    }
+    .avantage-icon { font-size: 2rem; color: var(--primary); margin-bottom: 1rem; transition: transform 0.3s; }
+    .avantage-card:hover .avantage-icon { transform: scale(1.1); }
+    .avantage-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .avantage-card p { font-size: 0.8rem; color: var(--gray); }
+    
+    /* Blog */
+    .blog-recent { padding: 4rem 0; background: var(--bg-light); }
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    .blog-card {
+        background: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .blog-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1);}
+    .blog-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        loading: lazy;
+    }
+    .blog-content { padding: 1rem; }
+    .blog-date { font-size: 0.7rem; color: var(--gray); margin-bottom: 0.3rem; }
+    .blog-title { font-size: 0.9rem; margin: 0; }
+    .blog-title a { color: var(--secondary); text-decoration: none; font-weight: 600; transition: color 0.3s; }
+    .blog-title a:hover { color: var(--primary); }
+    
+    /* Témoignages */
+    .temoignages {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+    }
+    .temoignages .section-header h2, .temoignages .section-header p { color: white; }
+    .temoignages-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    .temoignage-card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .temoignage-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.15);}
+    .temoignage-text {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        font-style: italic;
+    }
+    .temoignage-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .temoignage-role { font-size: 0.7rem; opacity: 0.7; }
+    
+    /* FAQ */
+    .faq { padding: 4rem 0; background: var(--white); }
+    .faq-grid { max-width: 800px; margin: 0 auto; }
+    .faq-item {
+        background: var(--bg-light);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    .faq-item:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+    .faq-question {
+        padding: 1rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+    }
+    .faq-question:hover { background: rgba(0,0,0,0.02); }
+    .faq-answer {
+        padding: 0 1rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    .faq-item.open .faq-answer {
+        max-height: 200px;
+        padding: 0 1rem 1rem;
+    }
+    .faq-icon { transition: transform 0.3s; }
+    .faq-item.open .faq-icon { transform: rotate(180deg); }
+    
+    /* Newsletter */
+    .newsletter {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        text-align: center;
+    }
+    .newsletter-form {
+        max-width: 400px;
+        margin: 2rem auto 0;
+        display: flex;
+        gap: 0.5rem;
+    }
+    .newsletter-form input {
+        flex: 1;
+        padding: 0.8rem 1rem;
+        border: none;
+        border-radius: 50px;
+        font-size: 0.9rem;
+    }
+    .newsletter-form button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+    .newsletter-form button:hover { background: var(--primary-dark); }
+    
+    /* CTA final */
+    .cta-final {
+        padding: 4rem 0;
+        background: var(--bg-light);
+        text-align: center;
+    }
+    .cta-final h2 { color: var(--secondary); margin-bottom: 1rem; }
+    .cta-final p { color: var(--gray); margin-bottom: 1.5rem; }
+    
+    /* Scroll buttons */
+    .scroll-buttons {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 1000;
+    }
+    .scroll-btn {
+        background: var(--primary);
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.2s;
+        border: none;
+        opacity: 0;
+        visibility: hidden;
+    }
+    .scroll-btn.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    .scroll-btn:hover {
+        transform: scale(1.1);
+        background: var(--primary-dark);
+    }
+    
+    /* Dark mode compatibility */
+    body.dark-mode .simulator {
+        background: #1E1E1E;
+    }
+    body.dark-mode .result-box {
+        background: #2C2C2C;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .parcours-grid, .avantages-grid, .temoignages-grid, .blog-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .hero { height: auto; min-height: 500px; }
+        .hero .container { padding: 4rem 0; }
+    }
+    @media (max-width: 768px) {
+        .hero h1 { font-size: 2rem; }
+        .parcours-grid, .stats-grid, .avantages-grid, .temoignages-grid, .blog-grid {
+            grid-template-columns: 1fr;
+        }
+        .hero-buttons { display: flex; flex-direction: column; gap: 1rem; }
+        .btn-primary, .btn-secondary { text-align: center; margin-right: 0; }
+        .newsletter-form { flex-direction: column; }
+        .scroll-buttons { bottom: 80px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============ HERO AVEC VIDÉO ============ -->
+<section class="hero">
+    <video autoplay muted loop playsinline class="hero-video" poster="{% static 'images/hero-poster.jpg' %}">
+        <source src="{% static 'videos/aviation-hero.mp4' %}" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <h1>Formez-vous aux métiers<br>de <span>l'excellence aéronautique</span></h1>
+        <p>8 parcours certifiants — Certificats SHA-256 vérifiables — Assistant IA — Mode hors-ligne — 15 langues</p>
+        <div class="hero-buttons">
+            <a href="{% url 'parcours:selection_metier' %}" class="btn-primary">Découvrir les parcours</a>
+            <a href="{% url 'core:premium' %}" class="btn-secondary">Offres Premium</a>
+        </div>
+    </div>
+</section>
+
+<!-- ============ STATISTIQUES ============ -->
+<section class="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item"><div class="stat-number">8</div><div class="stat-label">Parcours</div></div>
+            <div class="stat-item"><div class="stat-number">320</div><div class="stat-label">Modules</div></div>
+            <div class="stat-item"><div class="stat-number">2</div><div class="stat-label">Parcours gratuits</div></div>
+            <div class="stat-item"><div class="stat-number">15</div><div class="stat-label">Langues</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ BARRE DE RECHERCHE ============ -->
+<div class="search-bar">
+    <div class="container">
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Rechercher une formation, un métier...">
+        </div>
+    </div>
+</div>
+
+<!-- ============ 8 PARCOURS (cartes) ============ -->
+<section class="parcours">
+    <div class="container">
+        <div class="section-header">
+            <h2>Choisissez votre voie</h2>
+            <p>Des formations théoriques conçues par des experts de l'aviation</p>
+        </div>
+        <div class="parcours-grid">
+            <!-- Pilote -->
+            <a href="{% url 'core:programme_metier' metier='pilote_de_ligne' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-pilote.jpg" %}');"></div>
+                <div class="parcours-content"><h3>Pilote de ligne</h3><p>Navigation, météo, réglementation</p></div>
+            </a>
+            <!-- PNC -->
+            <a href="{% url 'core:programme_metier' metier='personnel_navigant' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-pnc.jpg" %}');"></div>
+                <div class="parcours-content"><h3>Personnel navigant (PNC)</h3><p>Sécurité, service, urgences</p></div>
+            </a>
+            <!-- Ingénieur -->
+            <a href="{% url 'core:programme_metier' metier='ingenieur_aeronautique' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-ingenieur.jpg" %}');"></div>
+                <div class="parcours-content"><h3>Ingénieur aéronautique</h3><p>Aérodynamique, structures, certification</p></div>
+            </a>
+            <!-- Contrôleur (Gratuit) -->
+            <a href="{% url 'core:programme_metier' metier='controleur_aerien' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-controleur.jpg" %}');"><div class="parcours-badge badge-free">Gratuit</div></div>
+                <div class="parcours-content"><h3>Contrôleur aérien</h3><p>Tour, approche, en-route</p></div>
+            </a>
+            <!-- Technicien (Gratuit) -->
+            <a href="{% url 'core:programme_metier' metier='technicien_aeronautique' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-technicien.jpg" %}');"><div class="parcours-badge badge-free">Gratuit</div></div>
+                <div class="parcours-content"><h3>Technicien aéronautique</h3><p>Maintenance, avionique, diagnostic</p></div>
+            </a>
+            <!-- Mécanicien -->
+            <a href="{% url 'core:programme_metier' metier='mecanicien_avion' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-mecanicien.jpg" %}');"></div>
+                <div class="parcours-content"><h3>Mécanicien avion</h3><p>Cellules, hydraulique, trains</p></div>
+            </a>
+            <!-- Agent d'escale -->
+            <a href="{% url 'core:programme_metier' metier='agent_escale' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-agent.jpg" %}');"></div>
+                <div class="parcours-content"><h3>Agent d'escale</h3><p>Enregistrement, embarquement</p></div>
+            </a>
+            <!-- Formation avancée (Premium + Nouveau) -->
+            <a href="{% url 'core:programme_metier' metier='formation_avancee' %}" class="parcours-card">
+                <div class="parcours-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static "images/program-premium.jpg" %}');">
+                    <div class="parcours-badge badge-new">Nouveau</div>
+                    <div class="parcours-badge badge-premium" style="top: 50px;">Premium</div>
+                </div>
+                <div class="parcours-content"><h3>Formation avancée</h3><p>CRM, gestion de cris
