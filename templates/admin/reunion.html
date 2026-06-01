@@ -1,0 +1,642 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Réunion virtuelle — Direction Générale | {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Plateforme de réunion virtuelle pour la Direction Générale et les coordinateurs de Ventoryx Academy. Ordre du jour, chat en direct, décisions et suivi d'actions.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --gold: #D4AF37;
+        --gold-dark: #b8860b;
+        --primary: #3B82F6;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+    }
+
+    .reunion-section {
+        background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+        color: var(--secondary);
+        padding: 1.5rem;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .reunion-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    .reunion-section h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        color: var(--secondary);
+        position: relative;
+        z-index: 2;
+    }
+    .reunion-section p {
+        margin: 0;
+        opacity: 0.8;
+        position: relative;
+        z-index: 2;
+    }
+    .reunion-stats {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .reunion-stats span {
+        background: rgba(15,28,46,0.15);
+        padding: 0.2rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+    }
+
+    /* Participants */
+    .participants-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .participant-card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        border-top: 3px solid var(--gold);
+        position: relative;
+        overflow: hidden;
+    }
+    .participant-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.5s;
+    }
+    .participant-card:hover::before {
+        left: 100%;
+    }
+    .participant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .participant-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.8rem;
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: white;
+    }
+    .participant-department {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+    .participant-status {
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+    }
+    .status-online { color: var(--success); }
+    .status-offline { color: var(--gray); }
+
+    /* Layout */
+    .reunion-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Cards */
+    .card-reunion {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s;
+    }
+    .card-reunion:hover {
+        transform: translateY(-3px);
+    }
+    .card-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        padding-left: 0.8rem;
+        border-left: 4px solid var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .badge-count {
+        background: var(--bg-light);
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: normal;
+    }
+
+    /* Ordre du jour */
+    .agenda-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid var(--gray-light);
+        transition: background 0.3s;
+    }
+    .agenda-item:hover {
+        background: var(--bg-light);
+        padding-left: 0.5rem;
+    }
+    .agenda-status {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        flex-shrink: 0;
+    }
+    .status-done { background: var(--success); color: white; }
+    .status-inprogress { background: var(--warning); color: white; }
+    .status-pending { background: var(--gray-light); color: var(--gray); }
+
+    /* Chat */
+    .chat-container {
+        max-height: 350px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+        padding-right: 0.5rem;
+    }
+    .chat-message {
+        margin-bottom: 1rem;
+        animation: fadeInUp 0.3s ease;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-message-header {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.2rem;
+    }
+    .chat-author {
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+    .chat-time {
+        font-size: 0.65rem;
+        color: var(--gray);
+    }
+    .chat-message-content {
+        font-size: 0.85rem;
+        color: var(--secondary);
+        line-height: 1.5;
+        padding-left: 0.5rem;
+        border-left: 2px solid var(--gold);
+    }
+    .chat-input-form {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .chat-input-form input {
+        flex: 1;
+        padding: 0.7rem 1rem;
+        border: 1px solid var(--gray-light);
+        border-radius: 60px;
+        font-family: inherit;
+        transition: all 0.3s;
+    }
+    .chat-input-form input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+    .chat-input-form button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 60px;
+        padding: 0.7rem 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .chat-input-form button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    /* Décisions */
+    .decision-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--gray-light);
+    }
+    .decision-check {
+        width: 20px;
+        height: 20px;
+        background: var(--success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    /* Actions */
+    .action-item {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid var(--gray-light);
+    }
+    .action-title {
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+    .action-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        font-size: 0.7rem;
+    }
+    .action-responsable {
+        background: var(--bg-light);
+        padding: 0.2rem 0.5rem;
+        border-radius: 50px;
+    }
+    .action-deadline {
+        color: var(--warning);
+    }
+    .action-urgent {
+        color: var(--danger);
+        font-weight: 600;
+    }
+
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal.open {
+        display: flex;
+    }
+    .modal-content {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+    }
+    .modal-content h3 {
+        margin-bottom: 1rem;
+    }
+    .modal-content input, .modal-content textarea, .modal-content select {
+        width: 100%;
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--gray-light);
+        border-radius: 12px;
+    }
+    .modal-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    /* Dark mode */
+    body.dark-mode .participant-card,
+    body.dark-mode .card-reunion {
+        background: #1E1E1E;
+    }
+    body.dark-mode .chat-message-content {
+        color: #E0E0E0;
+    }
+    body.dark-mode .action-responsable {
+        background: #2C2C2C;
+    }
+
+    @media (max-width: 992px) {
+        .reunion-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 768px) {
+        .participants-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+        .card-title {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="reunion-section">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1><i class="fas fa-video"></i> Réunion virtuelle</h1>
+                <p>Direction Générale — Équipe de coordination</p>
+                <div class="reunion-stats">
+                    <span><i class="fas fa-calendar"></i> {{ date_reunion|date:"d/m/Y" }}</span>
+                    <span><i class="fas fa-clock"></i> {{ heure_reunion|default:"14:00" }} - {{ heure_fin|default:"15:30" }}</span>
+                    <span><i class="fas fa-users"></i> {{ participants|length }} participants</span>
+                </div>
+            </div>
+            <div>
+                <span class="reunion-stats" style="background: rgba(15,28,46,0.15); padding: 0.5rem 1rem; border-radius: 50px;">
+                    <i class="fas fa-circle" style="color: var(--success); font-size: 0.6rem;"></i> En direct
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="padding: 2rem 0; max-width: 1400px; margin: 0 auto;">
+    <!-- Participants -->
+    <div class="card-title">
+        <span><i class="fas fa-users"></i> Participants</span>
+        <span class="badge-count">{{ participants|length }} connecté{{ participants|length|pluralize }}</span>
+    </div>
+    <div class="participants-grid">
+        {% for p in participants %}
+        <div class="participant-card">
+            <div class="participant-avatar" style="background: linear-gradient(135deg, {{ p.couleur }}, {{ p.couleur_dark }});">
+                {{ p.initials }}
+            </div>
+            <div class="participant-department">{{ p.departement }}</div>
+            <div class="participant-status">
+                <i class="fas fa-circle" style="font-size: 0.4rem;"></i>
+                <span class="{% if p.present %}status-online{% else %}status-offline{% endif %}">{{ p.statut }}</span>
+            </div>
+            <div style="font-size: 0.65rem; color: var(--gray); margin-top: 0.3rem;">{{ p.role }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Zone principale -->
+    <div class="reunion-layout">
+        <!-- Colonne gauche -->
+        <div>
+            <!-- Ordre du jour -->
+            <div class="card-reunion">
+                <div class="card-title">
+                    <span><i class="fas fa-list"></i> Ordre du jour</span>
+                    <button class="badge-count" onclick="openModal('agenda')" style="background: var(--primary); color: white; border: none; cursor: pointer;">+ Ajouter</button>
+                </div>
+                {% for item in ordre_du_jour %}
+                <div class="agenda-item">
+                    <div class="agenda-status {% if item.statut == 'fait' %}status-done{% elif item.statut == 'en_cours' %}status-inprogress{% else %}status-pending{% endif %}">
+                        {% if item.statut == 'fait' %}<i class="fas fa-check"></i>{% elif item.statut == 'en_cours' %}<i class="fas fa-play"></i>{% else %}<i class="fas fa-clock"></i>{% endif %}
+                    </div>
+                    <span style="flex: 1; font-size: 0.85rem;">{{ item.titre }}</span>
+                    <span style="font-size: 0.7rem; color: var(--gray);">{{ item.duree }}</span>
+                </div>
+                {% empty %}
+                <p style="text-align: center; color: var(--gray); padding: 2rem;">Aucun point à l'ordre du jour</p>
+                {% endfor %}
+            </div>
+
+            <!-- Chat en direct -->
+            <div class="card-reunion">
+                <div class="card-title">
+                    <span><i class="fas fa-comments"></i> Discussion en direct</span>
+                    <span class="badge-count">{{ chat_messages|length }} messages</span>
+                </div>
+                <div class="chat-container" id="chatContainer">
+                    {% for msg in chat_messages %}
+                    <div class="chat-message">
+                        <div class="chat-message-header">
+                            <span class="chat-author" style="color: {{ msg.couleur }};">{{ msg.auteur }}</span>
+                            <span class="chat-time">{{ msg.heure }}</span>
+                        </div>
+                        <div class="chat-message-content">{{ msg.contenu }}</div>
+                    </div>
+                    {% empty %}
+                    <p style="text-align: center; color: var(--gray); padding: 2rem;">Soyez le premier à envoyer un message</p>
+                    {% endfor %}
+                </div>
+                <form class="chat-input-form" method="post" action="{% url 'users:reunion_envoyer_message' %}" id="chatForm">
+                    {% csrf_token %}
+                    <input type="text" name="message" placeholder="Votre message..." required autocomplete="off">
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Colonne droite -->
+        <div>
+            <!-- Décisions prises -->
+            <div class="card-reunion">
+                <div class="card-title">
+                    <span><i class="fas fa-gavel"></i> Décisions prises</span>
+                    <button class="badge-count" onclick="openModal('decision')" style="background: var(--success); color: white; border: none; cursor: pointer;">+ Ajouter</button>
+                </div>
+                {% for d in decisions %}
+                <div class="decision-item">
+                    <div class="decision-check"><i class="fas fa-check"></i></div>
+                    <span style="flex: 1; font-size: 0.85rem;">{{ d }}</span>
+                </div>
+                {% empty %}
+                <p style="text-align: center; color: var(--gray); padding: 2rem;">Aucune décision enregistrée</p>
+                {% endfor %}
+            </div>
+
+            <!-- Actions à réaliser -->
+            <div class="card-reunion">
+                <div class="card-title">
+                    <span><i class="fas fa-tasks"></i> Actions à réaliser</span>
+                    <button class="badge-count" onclick="openModal('action')" style="background: var(--warning); color: white; border: none; cursor: pointer;">+ Ajouter</button>
+                </div>
+                {% for action in actions %}
+                <div class="action-item">
+                    <div class="action-title">{{ action.tache }}</div>
+                    <div class="action-meta">
+                        <span class="action-responsable"><i class="fas fa-user"></i> {{ action.responsable }}</span>
+                        <span class="action-deadline"><i class="fas fa-calendar"></i> Échéance : {{ action.echeance }}</span>
+                        {% if action.urgent %}<span class="action-urgent">⚠️ Urgent</span>{% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <p style="text-align: center; color: var(--gray); padding: 2rem;">Aucune action planifiée</p>
+                {% endfor %}
+            </div>
+
+            <!-- Prochaine réunion -->
+            <div class="card-reunion">
+                <div class="card-title">
+                    <span><i class="fas fa-calendar-alt"></i> Prochaine réunion</span>
+                </div>
+                <div style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--gold);">{{ prochaine_reunion.date|date:"d/m/Y" }}</div>
+                    <div style="font-size: 0.85rem;">{{ prochaine_reunion.heure|default:"10:00" }} - {{ prochaine_reunion.heure_fin|default:"11:30" }}</div>
+                    <div style="font-size: 0.8rem; color: var(--gray); margin-top: 0.5rem;">{{ prochaine_reunion.ordre_du_jour|default:"Point sur l'avancement des actions" }}</div>
+                    <button class="badge-count" style="margin-top: 1rem; background: var(--primary); color: white; border: none; cursor: pointer;" onclick="openModal('next')">Planifier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'ajout -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Ajouter un élément</h3>
+        <form id="modalForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="type" id="modalType">
+            <input type="text" name="titre" id="modalTitre" placeholder="Titre" style="display: none;">
+            <textarea name="description" id="modalDescription" placeholder="Description" style="display: none;"></textarea>
+            <select name="responsable" id="modalResponsable" style="display: none;">
+                <option value="">Choisir un responsable</option>
+                {% for p in participants %}
+                <option value="{{ p.departement }}">{{ p.departement }}</option>
+                {% endfor %}
+            </select>
+            <input type="date" name="echeance" id="modalEcheance" style="display: none;">
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal()" style="background: var(--gray); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px;">Annuler</button>
+                <button type="submit" style="background: var(--success); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px;">Ajouter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(type) {
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalType = document.getElementById('modalType');
+        const modalTitre = document.getElementById('modalTitre');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalResponsable = document.getElementById('modalResponsable');
+        const modalEcheance = document.getElementById('modalEcheance');
+        
+        modalType.value = type;
+        
+        // Réinitialiser
+        modalTitre.style.display = 'none';
+        modalDescription.style.display = 'none';
+        modalResponsable.style.display = 'none';
+        modalEcheance.style.display = 'none';
+        modalTitre.required = false;
+        modalDescription.required = false;
+        
+        if (type === 'agenda') {
+            modalTitle.innerText = 'Ajouter un point à l\'ordre du jour';
+            modalTitre.style.display = 'block';
+            modalTitre.required = true;
+            modalDescription.placeholder = 'Description (optionnel)';
+            modalDescription.style.display = 'block';
+        } else if (type === 'decision') {
+            modalTitle.innerText = 'Ajouter une décision';
+            modalDescription.style.display = 'block';
+            modalDescription.placeholder = 'Décision prise...';
+            modalDescription.required = true;
+        } else if (type === 'action') {
+            modalTitle.innerText = 'Ajouter une action';
+            modalTitre.style.display = 'block';
+            modalTitre.placeholder = 'Tâche à réaliser';
+            modalTitre.required = true;
+            modalResponsable.style.display = 'block';
+            modalEcheance.style.display = 'block';
+        } else if (type === 'next') {
+            modalTitle.innerText = 'Planifier la prochaine réunion';
+            modalTitre.style.display = 'block';
+            modalTitre.placeholder = 'Ordre du jour principal';
+            modalEcheance.style.display = 'block';
+        }
+        
+        modal.classList.add('open');
+    }
+    
+    function closeModal() {
+        document.getElementById('modal').classList.remove('open');
+    }
+    
+    // Auto-scroll chat
+    const chatContainer = document.getElementById('chatContainer');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Rafraîchissement auto du chat (toutes les 10 secondes)
+    setInterval(() => {
+        fetch(window.location.href + '?ajax=1')
+            .then(r => r.json())
+            .then(data => {
+                if (data.chat_messages) {
+                    const container = document.getElementById('chatContainer');
+                    const newMessages = data.chat_messages.slice(-5);
+                    // Mise à jour
+                }
+            })
+            .catch(() => {});
+    }, 10000);
+    
+    // Fermer modal au clic en dehors
+    window.onclick = function(event) {
+        const modal = document.getElementById('modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
+
+{% endblock %}
