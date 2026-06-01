@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Hors-ligne — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Vous êtes hors-ligne. Accédez à vos cours téléchargés sur Ventoryx Academy même sans connexion internet.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --secondary: #0F1C2E;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --success: #10b981;
+        --warning: #f59e0b;
+    }
+
+    body.dark-mode .offline-card {
+        background: #1E1E1E;
+    }
+    body.dark-mode .cached-courses {
+        background: #2C2C2C;
+    }
+
+    .offline-container {
+        max-width: 550px;
+        margin: 3rem auto;
+        text-align: center;
+        padding: 0 1rem;
+        animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .offline-card {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .offline-icon {
+        font-size: 4rem;
+        color: var(--warning);
+        margin-bottom: 1rem;
+    }
+    .offline-icon .signal-icon {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        background: var(--warning);
+        border-radius: 50%;
+        margin: 0 3px;
+    }
+    .offline-icon .signal-icon:nth-child(2) { opacity: 0.5; }
+    .offline-icon .signal-icon:nth-child(3) { opacity: 0.2; }
+    .offline-card h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    .offline-card p {
+        color: var(--gray);
+        margin-bottom: 1rem;
+    }
+    .cached-courses {
+        background: var(--bg-light);
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        margin: 1.5rem 0;
+        text-align: left;
+    }
+    .cached-courses h3 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .cached-courses ul {
+        list-style: none;
+        margin-top: 0.5rem;
+    }
+    .cached-courses li {
+        padding: 0.3rem 0;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--secondary);
+    }
+    .btn-retry {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+    }
+    .btn-retry:hover {
+        background: #2563EB;
+        transform: translateY(-2px);
+    }
+    .btn-offline {
+        display: inline-block;
+        margin-top: 0.8rem;
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+    }
+    .btn-offline:hover {
+        background: var(--primary);
+        color: white;
+    }
+    .skeleton-line {
+        height: 20px;
+        background: linear-gradient(90deg, var(--gray-light) 25%, #e0e0e0 50%, var(--gray-light) 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+    }
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="offline-container">
+    <div class="offline-card">
+        <div class="offline-icon">
+            <i class="fas fa-wifi"></i>
+            <div>
+                <span class="signal-icon"></span>
+                <span class="signal-icon"></span>
+                <span class="signal-icon"></span>
+            </div>
+        </div>
+        <h1>Vous êtes hors-ligne</h1>
+        <p>Vérifiez votre connexion internet pour accéder à l'intégralité du site.</p>
+
+        <div class="cached-courses">
+            <h3><i class="fas fa-download" style="color: var(--primary);"></i> Cours disponibles hors-ligne</h3>
+            <div id="cachedCoursesContainer">
+                <div class="skeleton-line" style="width: 80%;"></div>
+                <div class="skeleton-line" style="width: 60%;"></div>
+                <div class="skeleton-line" style="width: 70%;"></div>
+            </div>
+        </div>
+
+        <button onclick="checkConnection()" class="btn-retry">
+            <i class="fas fa-sync-alt"></i> Vérifier la connexion
+        </button>
+        
+        <a href="{% url 'pages:telechargement' %}" class="btn-retry btn-offline" style="margin-top: 0.8rem;">
+            <i class="fas fa-download"></i> Gérer mes téléchargements
+        </a>
+    </div>
+</div>
+
+<script>
+    // Récupération réelle des cours téléchargés depuis IndexedDB
+    async function loadDownloadedCourses() {
+        const container = document.getElementById('cachedCoursesContainer');
+        
+        try {
+            // Ouvrir IndexedDB
+            const db = await openDatabase();
+            const courses = await getAllCourses(db);
+            
+            if (courses && courses.length > 0) {
+                container.innerHTML = `
+                    <ul>
+                        ${courses.map(course => `
+                            <li>
+                                <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                                <a href="/cours/${course.id}/" style="color: var(--primary); text-decoration: none;">
+                                    ${escapeHtml(course.title)}
+                                </a>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p style="font-size: 0.75rem; color: var(--gray); margin-top: 0.5rem;">
+                        <i class="fas fa-clock"></i> Dernier téléchargement : ${courses[0]?.downloaded_at ? new Date(courses[0].downloaded_at).toLocaleDateString() : 'récent'}
+                    </p>
+                `;
+            } else {
+                container.innerHTML = `
+                    <p style="color: var(--gray); font-size: 0.85rem;">
+                        <i class="fas fa-info-circle"></i> Aucun cours téléchargé pour le moment.
+                    </p>
+                    <p style="color: var(--gray); font-size: 0.75rem; margin-top: 0.3rem;">
+                        Passez à l'abonnement Annuel pour télécharger vos cours et y accéder hors-ligne.
+                    </p>
+                `;
+            }
+        } catch (error) {
+            console.error('Erreur chargement cours hors-ligne:', error);
+            container.innerHTML = `
+                <p style="color: var(--gray); font-size: 0.85rem;">
+                    <i class="fas fa-exclamation-triangle"></i> Chargement des cours disponibles...
+                </p>
+            `;
+        }
+    }
+    
+    function openDatabase() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('ventoryx_courses', 1);
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => resolve(request.result);
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('courses')) {
+                    db.createObjectStore('courses', { keyPath: 'id' });
+                }
+            };
+        });
+    }
+    
+    function getAllCourses(db) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['courses'], 'readonly');
+            const store = transaction.objectStore('courses');
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function checkConnection() {
+        if (navigator.onLine) {
+            window.location.reload();
+        } else {
+            alert('Toujours hors-ligne. Vérifiez votre connexion Wi-Fi ou réseau mobile.');
+        }
+    }
+    
+    // Chargement
+    loadDownloadedCourses();
+    
+    // Écouter le retour en ligne
+    window.addEventListener('online', () => {
+        const btn = document.querySelector('.btn-retry');
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Connexion rétablie ! Redirection...';
+            setTimeout(() => window.location.reload(), 1000);
+        }
+    });
+</script>
+
+{% endblock %}
