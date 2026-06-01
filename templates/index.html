@@ -522,4 +522,310 @@
                     <div class="parcours-badge badge-new">Nouveau</div>
                     <div class="parcours-badge badge-premium" style="top: 50px;">Premium</div>
                 </div>
-                <div class="parcours-content"><h3>Formation avancée</h3><p>CRM, gestion de cris
+                <div class="parcours-content"><h3>Formation avancée</h3><p>CRM, gestion de crise, aviation durable</p></div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ============ SIMULATEUR DE PRIX ============ -->
+<div class="container">
+    <div class="simulator">
+        <h2>💰 Simulez votre budget</h2>
+        <p style="text-align: center; margin-bottom: 1rem;">Calculez le coût de votre formation</p>
+        <div class="simulator-control">
+            <label>Durée de formation : <span id="monthsValue">12</span> mois</label>
+            <input type="range" id="monthsSlider" min="1" max="24" value="12" step="1">
+            <div class="result-box">
+                <div style="font-size: 0.85rem; color: var(--gray);">Coût total estimé</div>
+                <div class="total-price"><span id="totalPrice">468</span> €</div>
+                <div style="font-size: 0.8rem;">Soit <span id="pricePerMonth">39</span> €/mois</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ AVANTAGES ============ -->
+<section class="avantages">
+    <div class="container">
+        <div class="section-header">
+            <h2>Pourquoi Ventoryx Academy ?</h2>
+            <p>Une plateforme pensée pour votre réussite</p>
+        </div>
+        <div class="avantages-grid">
+            <div class="avantage-card">
+                <div class="avantage-icon"><i class="fas fa-certificate"></i></div>
+                <h3>Certificats vérifiables</h3>
+                <p>Hash SHA-256 unique. Les employeurs vérifient l'authenticité en un clic.</p>
+            </div>
+            <div class="avantage-card">
+                <div class="avantage-icon"><i class="fas fa-robot"></i></div>
+                <h3>Assistant IA intégré</h3>
+                <p>Posez vos questions 24h/24. L'IA vous répond en 15 langues.</p>
+            </div>
+            <div class="avantage-card">
+                <div class="avantage-icon"><i class="fas fa-download"></i></div>
+                <h3>Mode hors-ligne</h3>
+                <p>Téléchargez vos cours. Révisez sans Wi-Fi, dans l'avion ou le métro.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ BLOG RÉCENT (appel API) ============ -->
+<section class="blog-recent">
+    <div class="container">
+        <div class="section-header">
+            <h2>Dernières actualités</h2>
+            <p>Restez informé des nouveautés du secteur aéronautique</p>
+        </div>
+        <div class="blog-grid" id="blogContainer">
+            <div class="skeleton" style="height:250px;"></div>
+            <div class="skeleton" style="height:250px;"></div>
+            <div class="skeleton" style="height:250px;"></div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'blog:index' %}" class="btn-secondary" style="border-color: var(--primary); color: var(--primary);">Voir tous les articles →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ============ TÉMOIGNAGES (appel API) ============ -->
+<section class="temoignages">
+    <div class="container">
+        <div class="section-header">
+            <h2>Ils nous font confiance</h2>
+            <p>Des milliers d'apprenants nous recommandent</p>
+        </div>
+        <div class="temoignages-grid" id="temoignagesContainer">
+            <div class="skeleton" style="height:180px;"></div>
+            <div class="skeleton" style="height:180px;"></div>
+            <div class="skeleton" style="height:180px;"></div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'core:temoignages' %}" style="color: var(--primary);">Voir tous les témoignages →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq">
+    <div class="container">
+        <div class="section-header">
+            <h2>Questions fréquentes</h2>
+            <p>Tout ce que vous devez savoir</p>
+        </div>
+        <div class="faq-grid">
+            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Les certificats sont-ils reconnus ?</span><i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">Oui, chaque certificat est signé numériquement avec un hash SHA-256 vérifiable publiquement. Les employeurs peuvent en vérifier l'authenticité instantanément.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Puis-je suivre les formations hors-ligne ?</span><i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">Oui, les abonnés Premium peuvent télécharger tous les cours sur leur appareil et les réviser sans connexion internet.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Quelles langues sont disponibles ?</span><i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">15 langues : français, anglais, espagnol, portugais, arabe, chinois, russe, allemand, italien, japonais, coréen, hindi, turc, néerlandais, suédois.</div></div>
+            <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)"><span>Comment obtenir mon certificat ?</span><i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">Après avoir terminé les 4 modules et réussi le test global, votre certificat SHA-256 est automatiquement généré.</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ NEWSLETTER ============ -->
+<section class="newsletter">
+    <div class="container">
+        <h2>Recevez nos actualités</h2>
+        <p>Inscrivez-vous à notre newsletter et recevez des conseils, offres exclusives et nouveautés.</p>
+        <form class="newsletter-form" id="newsletterForm">
+            {% csrf_token %}
+            <input type="email" id="newsletterEmail" placeholder="votre.email@exemple.com" required>
+            <button type="submit">S'abonner</button>
+        </form>
+        <p style="font-size: 0.7rem; margin-top: 1rem;">Désinscription facile. Pas de spam.</p>
+    </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section class="cta-final">
+    <div class="container">
+        <h2>Prêt à décoller ?</h2>
+        <p>Rejoignez Ventoryx Academy et accédez à 8 parcours certifiants.</p>
+        <a href="{% url 'users:register' %}" class="btn-primary">Créer un compte gratuit</a>
+    </div>
+</section>
+
+<!-- ============ SCROLL BUTTONS ============ -->
+<div class="scroll-buttons">
+    <button class="scroll-btn" id="scrollToBottom" onclick="scrollToBottom()" aria-label="Aller en bas">
+        <i class="fas fa-arrow-down"></i>
+    </button>
+    <button class="scroll-btn" id="scrollToTop" onclick="scrollToTop()" aria-label="Aller en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+</div>
+
+<script>
+// ============ SIMULATEUR DE PRIX ============
+const slider = document.getElementById('monthsSlider');
+const monthsValue = document.getElementById('monthsValue');
+const totalPrice = document.getElementById('totalPrice');
+const pricePerMonth = document.getElementById('pricePerMonth');
+
+if (slider) {
+    slider.addEventListener('input', () => {
+        const months = parseInt(slider.value);
+        monthsValue.innerText = months;
+        const total = months * 39;
+        totalPrice.innerText = total;
+        pricePerMonth.innerText = 39;
+    });
+}
+
+// ============ FAQ ACCORDÉON ============
+function toggleFaq(element) {
+    element.parentElement.classList.toggle('open');
+}
+
+// ============ SCROLL BUTTONS ============
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToBottom() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', () => {
+    const scrollTopBtn = document.getElementById('scrollToTop');
+    const scrollBottomBtn = document.getElementById('scrollToBottom');
+    if (window.scrollY > 300) {
+        scrollTopBtn.classList.add('show');
+    } else {
+        scrollTopBtn.classList.remove('show');
+    }
+    if (window.scrollY < document.body.scrollHeight - window.innerHeight - 300) {
+        scrollBottomBtn.classList.add('show');
+    } else {
+        scrollBottomBtn.classList.remove('show');
+    }
+});
+
+// ============ RECHERCHE ============
+document.getElementById('searchInput')?.addEventListener('input', (e) => {
+    if (e.target.value.length > 2) {
+        window.location.href = `/recherche/?q=${encodeURIComponent(e.target.value)}`;
+    }
+});
+
+// ============ NEWSLETTER ============
+document.getElementById('newsletterForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('newsletterEmail').value;
+    const btn = e.target.querySelector('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    try {
+        const response = await fetch('/api/newsletter/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': window.CSRF_TOKEN || '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ email })
+        });
+        if (response.ok) {
+            btn.innerHTML = '✅ Inscrit !';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                document.getElementById('newsletterEmail').value = '';
+            }, 3000);
+        } else {
+            btn.innerHTML = '❌ Erreur';
+            setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 3000);
+        }
+    } catch(e) {
+        btn.innerHTML = '❌ Erreur';
+        setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 3000);
+    }
+});
+
+// ============ BLOG RÉCENT (appel API) ============
+fetch('/api/blog/recent/')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('blogContainer');
+        if (container && data.articles && data.articles.length > 0) {
+            container.innerHTML = data.articles.slice(0, 3).map(article => `
+                <div class="blog-card">
+                    <img src="${article.image || '{% static "images/default-blog.jpg" %}'}" alt="${article.title}" loading="lazy">
+                    <div class="blog-content">
+                        <div class="blog-date">${article.date || ''}</div>
+                        <div class="blog-title"><a href="/blog/${article.slug}/">${article.title}</a></div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 2rem;">Aucun article pour le moment.</div>';
+        }
+    })
+    .catch(() => {
+        const container = document.getElementById('blogContainer');
+        if (container) {
+            container.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 2rem;">Service blog temporairement indisponible.</div>';
+        }
+    });
+
+// ============ TÉMOIGNAGES (appel API) ============
+fetch('/api/temoignages/recentes/?limit=3')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('temoignagesContainer');
+        if (container && data.temoignages && data.temoignages.length > 0) {
+            container.innerHTML = data.temoignages.map(t => `
+                <div class="temoignage-card">
+                    <div class="temoignage-text">"${t.message.substring(0, 120)}${t.message.length > 120 ? '...' : ''}"</div>
+                    <div class="temoignage-name">${t.name}</div>
+                    <div class="temoignage-role">${t.role || 'Apprenant'}</div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 2rem;">Soyez le premier à laisser un témoignage !</div>';
+        }
+    })
+    .catch(() => {
+        const container = document.getElementById('temoignagesContainer');
+        if (container) {
+            container.innerHTML = '<div style="grid-column: span 3; text-align: center; padding: 2rem;">Témoignages bientôt disponibles.</div>';
+        }
+    });
+
+// ============ DÉTECTION AUTOMATIQUE DE LA LANGUE ============
+(async function autoDetectLanguage() {
+    const savedLang = localStorage.getItem('preferred_language');
+    if (savedLang && savedLang !== 'fr') {
+        try {
+            await fetch('/set-language/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': window.CSRF_TOKEN || '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ language: savedLang })
+            });
+        } catch(e) {}
+        return;
+    }
+    const browserLang = navigator.language || navigator.userLanguage;
+    const langCode = browserLang.split('-')[0];
+    const supportedLangs = ['fr', 'en', 'es', 'pt', 'ar', 'zh', 'ru', 'de', 'it', 'ja', 'ko', 'hi', 'tr', 'nl', 'sv'];
+    if (supportedLangs.includes(langCode) && langCode !== 'fr') {
+        try {
+            await fetch('/set-language/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': window.CSRF_TOKEN || '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ language: langCode })
+            });
+            localStorage.setItem('preferred_language', langCode);
+        } catch(e) {}
+    }
+})();
+</script>
+{% endblock %}
