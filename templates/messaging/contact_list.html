@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Messages de contact - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <h1 style="font-family: 'Montserrat', sans-serif; margin-bottom: 1.5rem;">Messages de contact</h1>
+    
+    <div style="background: white; border-radius: 12px; overflow-x: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #F8F9FA; border-bottom: 1px solid #E9ECEF;">
+                    <th style="padding: 0.8rem; text-align: left;">Date</th>
+                    <th style="padding: 0.8rem; text-align: left;">Nom</th>
+                    <th style="padding: 0.8rem; text-align: left;">Email</th>
+                    <th style="padding: 0.8rem; text-align: left;">Catégorie</th>
+                    <th style="padding: 0.8rem; text-align: left;">Sujet</th>
+                    <th style="padding: 0.8rem; text-align: left;">Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in messages %}
+                <tr style="border-bottom: 1px solid #E9ECEF;">
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ msg.date_envoi|date:"d/m/Y H:i" }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ msg.nom }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ msg.email }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ msg.get_categorie_display|default:msg.categorie }}</td>
+                    <td style="padding: 0.8rem; font-size: 0.85rem;">{{ msg.sujet|truncatechars:50 }}</td>
+                    <td style="padding: 0.8rem;">
+                        <span style="display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;
+                            {% if msg.statut == 'non_lu' %}background: #FEE2E2; color: #dc2626;
+                            {% elif msg.statut == 'repondu' %}background: #E0F7EC; color: #10b981;
+                            {% else %}background: #E9ECEF; color: #6C757D;{% endif %}">
+                            {{ msg.get_statut_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 3rem; text-align: center; color: #6C757D;">Aucun message de contact.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
