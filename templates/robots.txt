@@ -1,0 +1,62 @@
+# ============================================
+# ROBOTS.TXT — Ventoryx Academy
+# Version: 1.0
+# Dernière mise à jour: 2025-01-01
+# ============================================
+
+User-agent: *
+Allow: /
+
+# ============ DISALLOW : ADMINISTRATION ============
+Disallow: /admin/
+Disallow: /dg/
+Disallow: /coordinateur/
+Disallow: /gestionnaire/
+
+# ============ DISALLOW : AUTHENTIFICATION ============
+Disallow: /login/
+Disallow: /register/
+Disallow: /password-reset/
+Disallow: /logout/
+
+# ============ DISALLOW : PAGES UTILISATEUR PRIVÉES ============
+Disallow: /dashboard/
+Disallow: /mon-compte/
+Disallow: /parametres/
+Disallow: /historique-commandes/
+Disallow: /mes-certificats/
+Disallow: /notifications/
+Disallow: /parrainage/
+
+# ============ DISALLOW : PAGES ENTREPRISE PRIVÉES ============
+Disallow: /entreprise/dashboard/
+Disallow: /entreprise/payment-success/
+Disallow: /entreprise/payment-cancel/
+
+# ============ DISALLOW : PAGES PARTENAIRES PRIVÉES ============
+Disallow: /partenaires/dashboard/
+Disallow: /partenaires/convention/
+
+# ============ DISALLOW : API ============
+Disallow: /api/
+Disallow: /stripe/
+
+# ============ DISALLOW : PAIEMENT ============
+Disallow: /checkout/
+Disallow: /payment/
+
+# ============ DISALLOW : FICHIERS STATIQUES ADMIN ============
+Disallow: /static/admin/
+Disallow: /static/debug_toolbar/
+
+# ============ DISALLOW : VAULT (documents sensibles) ============
+Disallow: /media/vault/
+
+# ============ SITEMAP ============
+Sitemap: https://ventoryx-academy.com/sitemap.xml
+
+# ============ CRAWL DELAY (pour les bots lents) ============
+Crawl-delay: 2
+
+# ============ HOST (recommandé) ============
+Host: https://ventoryx-academy.com
