@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vérification OTP - Ventoryx Academy{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-wrapper {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+    .auth-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        max-width: 440px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+    .otp-icon-circle {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #D4AF37, #b8860b);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        color: #0F1C2E;
+        font-size: 2rem;
+    }
+    .auth-card h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        color: #0F1C2E;
+        margin-bottom: 0.5rem;
+    }
+    .auth-subtitle {
+        color: #6C757D;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    .auth-form-group {
+        margin-bottom: 1.5rem;
+    }
+    .auth-form-group input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #E9ECEF;
+        border-radius: 12px;
+        font-size: 1.3rem;
+        text-align: center;
+        letter-spacing: 6px;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .auth-form-group input:focus {
+        outline: none;
+        border-color: #D4AF37;
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+    .btn-auth {
+        width: 100%;
+        padding: 0.9rem;
+        background: #D4AF37;
+        color: #0F1C2E;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .btn-auth:hover {
+        background: #c9a030;
+        transform: translateY(-2px);
+    }
+    .auth-footer-note {
+        margin-top: 1.5rem;
+        font-size: 0.8rem;
+        color: #6C757D;
+    }
+    .auth-alert {
+        padding: 0.8rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        text-align: left;
+    }
+    .auth-alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    .auth-alert-info {
+        background: #cce5ff;
+        color: #004085;
+        border: 1px solid #b8daff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        
+        <div class="otp-icon-circle">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        
+        <h1>Vérification OTP</h1>
+        <p class="auth-subtitle">Un code de vérification est requis pour accéder aux fonctions de Direction Générale.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="auth-alert {% if message.tags == 'error' %}auth-alert-error{% else %}auth-alert-info{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'users:otp_verify' %}">
+            {% csrf_token %}
+
+            <div class="auth-form-group">
+                <input type="text" name="code" required 
+                       placeholder="000000"
+                       maxlength="6" 
+                       inputmode="numeric" 
+                       autocomplete="one-time-code">
+            </div>
+
+            <button type="submit" class="btn-auth">
+                <i class="fas fa-check-circle"></i> Vérifier
+            </button>
+        </form>
+
+        <p class="auth-footer-note">
+            <i class="fas fa-info-circle"></i> 
+            Code généré par votre application d'authentification.
+        </p>
+
+    </div>
+</div>
+{% endblock %}
