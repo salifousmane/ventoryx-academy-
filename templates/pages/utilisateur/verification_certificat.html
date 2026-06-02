@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vérification de certificat — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .verify-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+    }
+    .verify-hero h1 {
+        color: white;
+        font-size: 2.2rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .verify-hero p {
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+    
+    .verify-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        padding: 3rem 2rem;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+    
+    .verify-input {
+        width: 100%;
+        padding: 1rem 1.2rem;
+        border: 2px solid #E9ECEF;
+        border-radius: 12px;
+        font-size: 1rem;
+        text-align: center;
+        letter-spacing: 1px;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s ease;
+    }
+    .verify-input:focus {
+        outline: none;
+        border-color: #0077B6;
+        box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
+    }
+    
+    .btn-verify {
+        width: 100%;
+        padding: 1rem;
+        background: #0077B6;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+    .btn-verify:hover {
+        background: #0F1C2E;
+        transform: translateY(-2px);
+    }
+    
+    .verify-options {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+    .verify-option {
+        padding: 0.6rem 1.2rem;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s ease;
+        border: 2px solid #E9ECEF;
+        background: white;
+        color: #6C757D;
+    }
+    .verify-option.active {
+        border-color: #0077B6;
+        background: #0077B6;
+        color: white;
+    }
+    
+    .result-valid {
+        background: #d4edda;
+        border: 2px solid #10b981;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+    }
+    .result-valid .icon-circle {
+        width: 80px;
+        height: 80px;
+        background: #10b981;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 2.5rem;
+    }
+    .result-valid h3 {
+        color: #155724;
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .result-invalid {
+        background: #f8d7da;
+        border: 2px solid #ef4444;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+    }
+    .result-invalid .icon-circle {
+        width: 80px;
+        height: 80px;
+        background: #ef4444;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 2.5rem;
+    }
+    .result-invalid h3 {
+        color: #721c24;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .certif-details {
+        text-align: left;
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    .certif-detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
+    .certif-detail-row:last-child {
+        border-bottom: none;
+    }
+    .certif-detail-row .label {
+        color: #6C757D;
+        font-weight: 500;
+    }
+    .certif-detail-row .value {
+        font-weight: 600;
+        color: #0F1C2E;
+        text-align: right;
+    }
+    
+    .hash-display {
+        background: #f8f9fa;
+        padding: 0.8rem;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.75rem;
+        word-break: break-all;
+        color: #6C757D;
+        margin-top: 0.3rem;
+    }
+    
+    .security-footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: #6C757D;
+        font-size: 0.9rem;
+    }
+    .security-footer i {
+        color: #10b981;
+        margin-right: 0.3rem;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @media (max-width: 768px) {
+        .verify-hero h1 {
+            font-size: 1.6rem;
+        }
+        .verify-card {
+            padding: 1.5rem;
+            margin: 0 1rem;
+        }
+        .certif-detail-row {
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .certif-detail-row .value {
+            text-align: left;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="verify-hero">
+    <div class="container">
+        <h1><i class="fas fa-certificate" style="color: #D4AF37;"></i> Vérification de certificat</h1>
+        <p>Vérifiez l'authenticité d'un certificat émis par {{ site_name }}</p>
+    </div>
+</section>
+
+<!-- Formulaire -->
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <div class="verify-card">
+
+            <!-- Options de vérification -->
+            <div class="verify-options">
+                <button class="verify-option active" onclick="switchMode('numero')" id="btn-numero">
+                    <i class="fas fa-hashtag"></i> Numéro de série
+                </button>
+                <button class="verify-option" onclick="switchMode('hash')" id="btn-hash">
+                    <i class="fas fa-fingerprint"></i> Hash
+                </button>
+            </div>
+
+            <!-- Mode : Numéro de série -->
+            <form method="post" action="{% url 'core:verification_certificat' %}" id="form-numero">
+                {% csrf_token %}
+                <input type="hidden" name="mode" value="numero">
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.5rem; color: #0F1C2E;">
+                        Numéro de série du certificat
+                    </label>
+                    <input type="text" name="numero_serie" required
+                           placeholder="Ex: VTX-2026-0001"
+                           class="verify-input"
+                           value="{{ numero_recherche|default:'' }}">
+                </div>
+                <button type="submit" class="btn-verify">
+                    <i class="fas fa-search"></i> Vérifier le certificat
+                </button>
+            </form>
+
+            <!-- Mode : Hash -->
+            <form method="post" action="{% url 'core:verification_certificat' %}" id="form-hash" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="mode" value="hash">
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; display: block; margin-bottom: 0.5rem; color: #0F1C2E;">
+                        Hash de vérification
+                    </label>
+                    <input type="text" name="hash_verification" required
+                           placeholder="Ex: a1b2c3d4e5f6..."
+                           class="verify-input"
+                           style="font-size: 0.85rem; letter-spacing: 0;"
+                           value="{{ hash_recherche|default:'' }}">
+                </div>
+                <button type="submit" class="btn-verify">
+                    <i class="fas fa-fingerprint"></i> Vérifier par hash
+                </button>
+            </form>
+
+            <!-- Résultat : Certificat valide -->
+            {% if certificat %}
+            <div class="result-valid" style="margin-top: 2rem;">
+                <div class="icon-circle">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>✅ Certificat authentique</h3>
+                <p style="color: #155724; margin-bottom: 1rem;">
+                    Ce certificat a bien été émis par {{ site_name }}.
+                </p>
+                
+                <div class="certif-details">
+                    <div class="certif-detail-row">
+                        <span class="label"><i class="fas fa-user"></i> Titulaire</span>
+                        <span class="value">{{ certificat.full_name }}</span>
+                    </div>
+                    <div class="certif-detail-row">
+                        <span class="label"><i class="fas fa-graduation-cap"></i> Parcours</span>
+                        <span class="value">{{ certificat.parcours }}</span>
+                    </div>
+                    <div class="certif-detail-row">
+                        <span class="label"><i class="fas fa-calendar"></i> Date de délivrance</span>
+                        <span class="value">{{ certificat.date_delivrance|date:"d F Y" }}</span>
+                    </div>
+                    <div class="certif-detail-row">
+                        <span class="label"><i class="fas fa-hashtag"></i> Numéro de série</span>
+                        <span class="value">{{ certificat.numero_serie }}</span>
+                    </div>
+                    <div class="certif-detail-row">
+                        <span class="label"><i class="fas fa-check-circle"></i> Statut</span>
+                        <span class="value" style="color: #10b981;">
+                            {% if certificat.statut == 'valide' %}
+                                Valide
+                            {% elif certificat.statut == 'revoke' %}
+                                Révoqué
+                            {% else %}
+                                {{ certificat.statut }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem;">
+                    <span style="font-size: 0.8rem; color: #6C757D;">Hash de vérification :</span>
+                    <div class="hash-display">{{ certificat.hash_verification }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Résultat : Certificat invalide -->
+            {% if erreur %}
+            <div class="result-invalid" style="margin-top: 2rem;">
+                <div class="icon-circle">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h3>❌ Certificat non trouvé</h3>
+                <p style="color: #721c24;">
+                    {% if erreur == 'non_trouve' %}
+                        Aucun certificat ne correspond à ce numéro de série ou ce hash.
+                    {% elif erreur == 'revoke' %}
+                        Ce certificat a été révoqué et n'est plus valide.
+                    {% else %}
+                        {{ erreur }}
+                    {% endif %}
+                </p>
+                <p style="color: #721c24; font-size: 0.85rem; margin-top: 0.5rem;">
+                    Vérifiez le numéro et réessayez, ou contactez le support.
+                </p>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Footer sécurité -->
+        <div class="security-footer">
+            <p>
+                <i class="fas fa-shield-alt"></i>
+                Chaque certificat possède un hash SHA-256 unique garantissant son authenticité et son inviolabilité.
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+function switchMode(mode) {
+    document.getElementById('form-numero').style.display = mode === 'numero' ? 'block' : 'none';
+    document.getElementById('form-hash').style.display = mode === 'hash' ? 'block' : 'none';
+    document.getElementById('btn-numero').classList.toggle('active', mode === 'numero');
+    document.getElementById('btn-hash').classList.toggle('active', mode === 'hash');
+}
+</script>
+{% endblock %}
