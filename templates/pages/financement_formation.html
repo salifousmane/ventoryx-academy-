@@ -1,0 +1,596 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Financez votre formation — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Découvrez les 25 solutions pour financer votre formation aéronautique : CPF, France Travail, OPCO, transition pro, bourses, aides handicap, crowdfunding, prêts bancaires, paiement fractionné. Ventoryx Academy certifiée Qualiopi.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .finance-container {
+        max-width: 1300px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+    .finance-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .finance-header h1 {
+        font-size: 2rem;
+        color: #0F1C2E;
+    }
+    .finance-subtitle {
+        color: #4A5568;
+        max-width: 750px;
+        margin: 0.5rem auto 0;
+    }
+    .badges {
+        display: flex;
+        justify-content: center;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .badge {
+        background: #E8F4FD;
+        color: #0077B6;
+        padding: 0.25rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+    .section-title {
+        font-size: 1.3rem;
+        margin: 2.5rem 0 1.2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #E2E8F0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .finance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.2rem;
+        margin: 1.5rem 0;
+    }
+    .finance-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #E2E8F0;
+        transition: all 0.2s;
+        position: relative;
+    }
+    .finance-card:hover {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+    .card-badge {
+        position: absolute;
+        top: 0.8rem;
+        right: 1rem;
+        font-size: 0.6rem;
+        background: #FEF5E7;
+        color: #C47A2E;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+    }
+    .finance-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.8rem;
+    }
+    .finance-icon {
+        font-size: 1.5rem;
+        width: 44px;
+        text-align: center;
+    }
+    .finance-card h2 {
+        font-size: 1rem;
+        margin: 0;
+        color: #0F1C2E;
+    }
+    .amount {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #0077B6;
+        margin: 0.5rem 0;
+    }
+    .amount small {
+        font-size: 0.7rem;
+        font-weight: normal;
+        color: #718096;
+    }
+    .finance-card p {
+        color: #4A5568;
+        font-size: 0.8rem;
+        line-height: 1.4;
+        margin-bottom: 0.6rem;
+    }
+    .small-note {
+        font-size: 0.65rem;
+        color: #718096;
+        margin-top: 0.5rem;
+        padding-top: 0.4rem;
+        border-top: 1px dashed #E2E8F0;
+    }
+    .btn-outline {
+        display: inline-block;
+        border: 1px solid #0077B6;
+        color: #0077B6;
+        padding: 0.3rem 0.7rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        text-decoration: none;
+        margin-top: 0.5rem;
+    }
+    .btn-outline:hover {
+        background: #0077B6;
+        color: white;
+    }
+    .highlight-box {
+        background: linear-gradient(135deg, #0F1C2E, #1A2A45);
+        color: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        margin: 2rem 0;
+    }
+    .price-big {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #FFB347;
+    }
+    .disclaimer {
+        font-size: 0.7rem;
+        color: #718096;
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #E2E8F0;
+    }
+    .two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        background: #F8FAFE;
+        padding: 1rem;
+        border-radius: 12px;
+        margin: 0.5rem 0;
+    }
+    .eligibility-check {
+        background: #E8F4FD;
+        padding: 0.3rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.6rem;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+    @media (max-width: 700px) {
+        .finance-grid { grid-template-columns: 1fr; }
+        .two-columns { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="finance-container">
+    <div class="finance-header">
+        <div class="badges">
+            <span class="badge">✓ Qualiopi</span>
+            <span class="badge">✓ Datadocké</span>
+            <span class="badge">✓ accessible handicap</span>
+            <span class="badge">✓ financements publics</span>
+        </div>
+        <h1>🔎 Financez votre formation aéronautique</h1>
+        <p class="finance-subtitle">Salarié, demandeur d'emploi, indépendant, étudiant, personne en situation de handicap — découvrez toutes les aides possibles.</p>
+    </div>
+
+    <!-- ===== 1. ABONNEMENT DIRECT & PAIEMENTS ===== -->
+    <div class="section-title">
+        <span>💳</span> Paiement direct — Sans aide
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📅</div><h2>Mensuel</h2></div>
+            <div class="amount">39€ <small>/mois</small></div>
+            <p>Sans engagement, résiliable à tout mois. Accès illimité à toutes les formations Premium.</p>
+            <a href="#" class="btn-outline">S'abonner →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📆</div><h2>Annuel</h2></div>
+            <div class="amount">329€ <small>/an</small></div>
+            <p>Soit <strong>2 mois offerts</strong> (27,40€/mois). Économie immédiate.</p>
+            <a href="#" class="btn-outline">S'abonner →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">💳</div><h2>Paiement fractionné (3x/4x)</h2></div>
+            <div class="amount">dès 110€ <small>/3x</small></div>
+            <p>Payez en 3 ou 4 fois sans frais par carte bancaire (Stripe).</p>
+            <div class="small-note">Éligible à partir de 100€ d'achat</div>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📱</div><h2>PayFit / Lydia / KePay</h2></div>
+            <p>Paiement sécurisé via nos partenaires. Possibilité de mensualisation via Lydia Premium.</p>
+        </div>
+    </div>
+
+    <!-- ===== 2. FINANCEMENTS PUBLICS PRINCIPAUX ===== -->
+    <div class="section-title">
+        <span>🏛️</span> Financements publics — Demandeur d'emploi & salarié
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="card-badge">+ de 10 millions d'euros</div>
+            <div class="finance-card-header"><div class="finance-icon">🇫🇷</div><h2>Compte Personnel de Formation (CPF)</h2></div>
+            <p>Utilisez vos droits CPF. Votre solde sur <strong>moncompteformation.gouv.fr</strong>.</p>
+            <div class="small-note">📌 Référence CPF : <strong>XXX-XXXXX</strong> (nous contacter)</div>
+            <a href="#" class="btn-outline">Vérifier mon solde →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🎯</div><h2>France Travail — AIF</h2></div>
+            <div class="amount">Jusqu'à 15 000€</div>
+            <p>Aide individuelle à la formation pour demandeurs d'emploi. À demander à votre conseiller.</p>
+            <div class="small-note">Délai d'instruction : 2 à 6 semaines</div>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📋</div><h2>France Travail — POEC</h2></div>
+            <div class="amount">Prise en charge totale</div>
+            <p>Préparation Opérationnelle à l'Emploi Collectif. Formation préalable au recrutement.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🔄</div><h2>Transition professionnelle (Transitions Pro)</h2></div>
+            <div class="amount">Prise en charge totale</div>
+            <p>Pour les salariés qui veulent changer de métier. Maintien de salaire possible.</p>
+            <div class="small-note">Dépôt du dossier : 2 à 4 mois avant le début</div>
+            <a href="#" class="btn-outline">Simuler mon éligibilité →</a>
+        </div>
+    </div>
+
+    <!-- ===== 3. FINANCEMENTS SALARIÉS ===== -->
+    <div class="section-title">
+        <span>👔</span> Financements pour salariés
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏢</div><h2>OPCO (Opérateur de compétences)</h2></div>
+            <p>AKTO, Atlas, Opco Mobilités, Uniformation, Constructys, etc. Jusqu'à 100% de prise en charge.</p>
+            <a href="#" class="btn-outline">Identifier mon OPCO →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📖</div><h2>Plan de développement des compétences</h2></div>
+            <p>Votre employeur peut inscrire la formation dans le plan de formation de l'entreprise.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🤝</div><h2>Pro-A (Promotion par l'Alternance)</h2></div>
+            <div class="amount">100% pris en charge</div>
+            <p>Pour les salariés en CDI. Formation pendant le temps de travail + salaire maintenu.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📦</div><h2>Compte épargne temps (CET)</h2></div>
+            <p>Utilisez vos jours de CET pour financer votre formation (sous accord employeur).</p>
+        </div>
+    </div>
+
+    <!-- ===== 4. AIDES SPÉCIFIQUES (2025) ===== -->
+    <div class="section-title">
+        <span>⚡</span> Dispositifs 2024-2025
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="card-badge">Nouveauté 2025</div>
+            <div class="finance-card-header"><div class="finance-icon">🚪</div><h2>Démissionnaire (expérimentation)</h2></div>
+            <div class="amount">Jusqu'à 15 000€</div>
+            <p>Depuis 2025, un démissionnaire peut bénéficier de l'AIF sous conditions (5 ans d'ancienneté, projet pro).</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🧳</div><h2>Mobilité professionnelle</h2></div>
+            <div class="amount">Jusqu'à 10 000€</div>
+            <p>Aide à la mobilité géographique pour suivre une formation (déménagement, transport, hébergement).</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🎓</div><h2>Garantie Jeunes (Missions Locales)</h2></div>
+            <div class="amount">Jusqu'à 500€/mois</div>
+            <p>Pour les 16-25 ans (jusqu'à 29 ans pour handicap). La Mission locale peut financer votre formation.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">💰</div><h2>ARCE (démissionnaire / rupture)</h2></div>
+            <div class="amount">60% des droits ARE</div>
+            <p>Pour les créateurs/repreneurs d'entreprise. Versement en deux fois.</p>
+        </div>
+    </div>
+
+    <!-- ===== 5. AIDES AUX PERSONNES EN SITUATION DE HANDICAP ===== -->
+    <div class="section-title">
+        <span>♿</span> Aides handicap — AGEFIPH / FIPHFP
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🤝</div><h2>AGEFIPH (secteur privé)</h2></div>
+            <div class="amount">Prise en charge totale possible</div>
+            <p>Pour les personnes en situation de handicap (RQTH). Financement de la formation + aménagements.</p>
+            <div class="eligibility-check">✓ RQTH obligatoire</div>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏛️</div><h2>FIPHFP (secteur public)</h2></div>
+            <div class="amount">Prise en charge totale possible</div>
+            <p>Pour les agents publics en situation de handicap.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🦻</div><h2>Cap emploi</h2></div>
+            <p>Accompagnement personnalisé et financement de formations pour personnes handicapées.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📝</div><h2>PCH (Prestation de compensation du handicap)</h2></div>
+            <p>Utilisable pour financer des aménagements de formation (matériel, transport, tiers-temps).</p>
+        </div>
+    </div>
+
+    <!-- ===== 6. BOURSES VENTORYX ===== -->
+    <div class="section-title">
+        <span>🎓</span> Bourses Ventoryx Academy
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">⭐</div><h2>Bourse au mérite</h2></div>
+            <div class="amount">-50%</div>
+            <p>Résultats exceptionnels au test d'entrée (top 10%). Sur abonnement annuel.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">👩‍✈️</div><h2>Bourse "Femmes dans l'aéronautique"</h2></div>
+            <div class="amount">Gratuit (10 places/an)</div>
+            <p>Pour les femmes souhaitant se former aux métiers aéronautiques.</p>
+            <a href="#" class="btn-outline">Candidater →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🎓</div><h2>Bourse "Jeune talent"</h2></div>
+            <div class="amount">-30%</div>
+            <p>Pour les étudiants de moins de 26 ans (sur justificatif).</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🧑‍🌾</div><h2>Bourse sociale</h2></div>
+            <div class="amount">Jusqu'à 100%</div>
+            <p>Sous conditions de ressources (quotient familial &lt; 800€). Dossier sur demande.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🪖</div><h2>Bourse "Militaires / Pompiers"</h2></div>
+            <div class="amount">-20%</div>
+            <p>Pour les personnels de la Défense, sécurité civile, pompiers volontaires.</p>
+        </div>
+    </div>
+
+    <!-- ===== 7. CROWDFUNDING & DONS ===== -->
+    <div class="section-title">
+        <span>🎯</span> Crowdfunding & dons défiscalisés
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🤲</div><h2>HelloAsso (sans frais)</h2></div>
+            <p>Plateforme à 0% de frais pour les associations. Montez une cagnotte pour votre formation.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🎬</div><h2>KissKissBankBank / Ulule</h2></div>
+            <p>Crowdfunding avec contreparties. Commission environ 5-8%.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📦</div><h2>Leetchi / PayPlug Don</h2></div>
+            <p>Cagnotte en ligne rapide. Idéal pour un financement participatif familial.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📄</div><h2>Défiscalisation des dons</h2></div>
+            <p>Les donateurs particuliers peuvent déduire 66% du don (plafond 20% du revenu imposable).</p>
+        </div>
+    </div>
+
+    <!-- ===== 8. PRÊTS & FINANCEMENTS BANCAIRES ===== -->
+    <div class="section-title">
+        <span>🏦</span> Prêts bancaires & financements privés
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏦</div><h2>Prêt personnel Younited Credit</h2></div>
+            <div class="amount">TAEG à partir de 4,90%</div>
+            <p>Montant de 1 000€ à 50 000€. Réponse sous 48h.</p>
+            <a href="#" class="btn-outline">Simuler →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏦</div><h2>Floa Bank (ex-Banque Casino)</h2></div>
+            <div class="amount">3x, 4x, 10x</div>
+            <p>Paiement fractionné jusqu'à 10 fois (TAEG 0% à 4,90%).</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏭</div><h2>Bpifrance — Prêt à la formation</h2></div>
+            <div class="amount">Jusqu'à 50 000€</div>
+            <p>Pour les TPE/PME et indépendants. Taux préférentiel, différé de remboursement possible.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🤝</div><h2>Crédit Coopératif</h2></div>
+            <div class="amount">Prêt solidaire</div>
+            <p>Pour les personnes à faibles revenus ou en insertion professionnelle.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🌱</div><h2>Éco-prêt formation</h2></div>
+            <div class="amount">Taux 0% possible</div>
+            <p>Dispositif expérimental dans certaines régions pour les formations aux métiers verts (dont aéronautique durable).</p>
+        </div>
+    </div>
+
+    <!-- ===== 9. AIDES RÉGIONALES & LOCALES ===== -->
+    <div class="section-title">
+        <span>🗺️</span> Aides régionales & locales
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🇫🇷</div><h2>Île-de-France</h2></div>
+            <div class="amount">AIF jusqu'à 3 000€</div>
+            <p>Aide individuelle à la formation pour demandeurs d'emploi franciliens.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">☀️</div><h2>Région Sud (PACA)</h2></div>
+            <div class="amount">Pack'Avenir : jusqu'à 5 000€</div>
+            <p>Pour les formations certifiantes. Aide aux frais annexes (transport, hébergement).</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">⛰️</div><h2>Auvergne-Rhône-Alpes</h2></div>
+            <div class="amount">Aide "Formation clé" : 500 à 3 000€</div>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🌊</div><h2>Nouvelle-Aquitaine</h2></div>
+            <div class="amount">Aide "Pass Pro" : jusqu'à 2 000€</div>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏙️</div><h2>Aides départementales</h2></div>
+            <p>De nombreux départements proposent des aides à la formation (RSJ, FAL, aides au permis, etc.).</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏫</div><h2>Fonds social des mairies</h2></div>
+            <p>Certaines communes disposent d'un fonds social pour la formation des habitants.</p>
+        </div>
+    </div>
+
+    <!-- ===== 10. ALTERNANCE & APPRENTISSAGE ===== -->
+    <div class="section-title">
+        <span>🔧</span> Alternance & apprentissage
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">📖</div><h2>Contrat d'apprentissage</h2></div>
+            <div class="amount">Prise en charge totale</div>
+            <p>Pour les 16-29 ans. Formation gratuite + rémunération.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🤝</div><h2>Contrat de professionnalisation</h2></div>
+            <div class="amount">Prise en charge par OPCO</div>
+            <p>Pour les demandeurs d'emploi de plus de 26 ans et bénéficiaires du RSA.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">⚙️</div><h2>Pro-A (alternance courte)</h2></div>
+            <div class="amount">100% OPCO</div>
+            <p>Pour les salariés en CDI. Formation de 6 à 12 mois.</p>
+        </div>
+    </div>
+
+    <!-- ===== 11. INTERNATIONAL ===== -->
+    <div class="section-title">
+        <span>🌍</span> Financements internationaux
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🇪🇺</div><h2>Erasmus+</h2></div>
+            <div class="amount">Jusqu'à 3 000€</div>
+            <p>Pour les mobilités de formation en Europe. Bourse sur critères.</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🌐</div><h2>Fonds de solidarité mondiale</h2></div>
+            <p>Pour les ressortissants de pays en développement (bourse France Excellence).</p>
+        </div>
+    </div>
+
+    <!-- ===== 12. FORMATIONS GRATUITES ===== -->
+    <div class="section-title">
+        <span>📚</span> 100% gratuites — Sans financement
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">✈️</div><h2>Contrôleur aérien</h2></div>
+            <div class="amount">0€</div>
+            <p>Parcours complet théorique de contrôleur aérien. Certification incluse.</p>
+            <a href="#" class="btn-outline">Commencer →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🔧</div><h2>Technicien aéronautique</h2></div>
+            <div class="amount">0€</div>
+            <p>Parcours technicien. Attestation de suivi délivrée.</p>
+            <a href="#" class="btn-outline">Commencer →</a>
+        </div>
+    </div>
+
+    <!-- ===== 13. PARRAINAGE ===== -->
+    <div class="section-title">
+        <span>👥</span> Parrainage
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🤝</div><h2>Parrainage simple</h2></div>
+            <div class="amount">1 mois offert</div>
+            <p>Parrainez un ami. Lorsqu'il s'abonne, vous gagnez 1 mois gratuit. Lui aussi bénéficie de 1 mois offert.</p>
+            <a href="#" class="btn-outline">Mon lien de parrainage →</a>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🏆</div><h2>Parrainage VIP (+5 filleuls)</h2></div>
+            <div class="amount">3 mois offerts + kit exclusif</div>
+            <p>Pour les ambassadeurs Ventoryx Academy.</p>
+        </div>
+    </div>
+
+    <!-- ===== 14. AIDES COMPLÉMENTAIRES ===== -->
+    <div class="section-title">
+        <span>🛟</span> Aides de dernier recours
+    </div>
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">🤝</div><h2>Fonds d'urgence Ventoryx</h2></div>
+            <div class="amount">Jusqu'à 200€</div>
+            <p>Aide exceptionnelle pour les personnes en grande difficulté (sur dossier social).</p>
+        </div>
+        <div class="finance-card">
+            <div class="finance-card-header"><div class="finance-icon">⛪</div><h2>Secours catholique / Restos du cœur</h2></div>
+            <p>Certaines associations peuvent financer des formations dans le cadre d'un parcours d'insertion.</p>
+        </div>
+    </div>
+
+    <!-- ===== 15. QUESTIONNAIRE D'ÉLIGIBILITÉ ===== -->
+    <div class="section-title">
+        <span>📋</span> Questionnaire d'éligibilité
+    </div>
+    <div class="two-columns">
+        <div>
+            <p style="font-weight: 600; margin-bottom: 0.5rem;">Quel est votre statut ?</p>
+            <select style="width:100%; padding:0.5rem; border:1px solid #E2E8F0; border-radius:8px;">
+                <option>— Sélectionnez —</option>
+                <option>Salarié en CDI</option>
+                <option>Demandeur d'emploi</option>
+                <option>Indépendant / auto-entrepreneur</option>
+                <option>Étudiant (-26 ans)</option>
+                <option>Fonctionnaire / agent public</option>
+                <option>En situation de handicap (RQTH)</option>
+                <option>En reconversion professionnelle</option>
+            </select>
+        </div>
+        <div>
+            <p style="font-weight: 600; margin-bottom: 0.5rem;">Votre projet ?</p>
+            <select style="width:100%; padding:0.5rem; border:1px solid #E2E8F0; border-radius:8px;">
+                <option>— Sélectionnez —</option>
+                <option>Pilote de ligne — ATPL théorique</option>
+                <option>Ingénieur aéronautique</option>
+                <option>Contrôleur aérien</option>
+                <option>Technicien aéronautique</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- ===== CALL TO ACTION ===== -->
+    <div class="highlight-box">
+        <p style="margin-bottom: 0.5rem;">Ventoryx Academy — Formation aéronautique certifiante</p>
+        <div class="price-big">Dès 39€/mois</div>
+        <p style="margin: 1rem 0;">1 mois d'essai gratuit · Sans engagement · Certificat inclus</p>
+        <a href="#" style="background: #FFB347; color: #0F1C2E; padding: 0.6rem 1.8rem; border-radius: 40px; text-decoration: none; font-weight: 600; display: inline-block;">Créer un compte gratuit →</a>
+    </div>
+
+    <!-- ===== CONTACT & DISCLAIMER ===== -->
+    <div class="disclaimer">
+        <p>❓ Aucune option ne correspond à votre situation ? Contactez notre <strong>service financement</strong> : 
+        <a href="mailto:financement@{{ domain }}" style="color:#0077B6;">financement@{{ domain }}</a> ou 📞 01 84 80 55 20</p>
+        <p style="margin-top: 0.5rem;">📌 Ventoryx Academy est certifié <strong>Qualiopi</strong> (n° XXX-XXXX), <strong>Datadocké</strong> et référencé sur le CPF. Ces certifications ouvrent les droits aux financements publics.</p>
+        <p style="margin-top: 0.5rem;">Les montants et conditions des aides publiques sont susceptibles d'être modifiés par décret ou arrêté préfectoral. Vérifiez votre éligibilité auprès des organismes concernés.</p>
+    </div>
+</div>
+
+{% endblock %} 
