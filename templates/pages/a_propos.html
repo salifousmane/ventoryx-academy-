@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}À propos - {{ site_name }}{% endblock %}
+
+{% block meta_description %}Découvrez {{ site_name }}, une plateforme de formation aéronautique innovante.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white;
+        padding: 5rem 0 4rem;
+        text-align: center;
+    }
+    .about-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.8rem;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    .about-hero p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+    }
+    .about-content h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        color: #0F1C2E;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    .about-content h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: #0077B6;
+    }
+    .about-content p {
+        color: #495057;
+        margin-bottom: 1.2rem;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+    .about-image {
+        background: #F8F9FA;
+        border-radius: 16px;
+        height: 350px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    .about-image img {
+        max-width: 75%;
+        max-height: 75%;
+        object-fit: contain;
+    }
+
+    .mission-card {
+        max-width: 850px;
+        margin: 0 auto;
+        background: white;
+        padding: 3rem;
+        border-radius: 16px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        border-left: 5px solid #0077B6;
+        text-align: center;
+    }
+
+    .section-header {
+        text-align: center;
+        max-width: 750px;
+        margin: 0 auto 3.5rem;
+    }
+    .section-header h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.3rem;
+        color: #0F1C2E;
+        position: relative;
+        display: inline-block;
+    }
+    .section-header h2::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: #0077B6;
+        border-radius: 2px;
+    }
+    .section-header p {
+        color: #6C757D;
+        margin-top: 1.5rem;
+        font-size: 1.05rem;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+    .value-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        border-top: 4px solid #0077B6;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .value-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    .value-icon {
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 1.2rem;
+        background: linear-gradient(135deg, #0077B6, #0F1C2E);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+    }
+    .value-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: #0F1C2E;
+        margin-bottom: 0.8rem;
+        font-size: 1.2rem;
+    }
+    .value-card p {
+        color: #6C757D;
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    .approach-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
+    }
+    .approach-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        border-bottom: 4px solid #0077B6;
+        transition: transform 0.3s ease;
+    }
+    .approach-card:hover {
+        transform: translateY(-5px);
+    }
+    .approach-icon {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 1.2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+    }
+    .approach-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: #0F1C2E;
+        margin-bottom: 0.8rem;
+        font-size: 1.1rem;
+    }
+    .approach-card p {
+        color: #6C757D;
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+
+    .partners-grid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+    .partner-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        min-width: 160px;
+    }
+    .partner-item i {
+        font-size: 2.5rem;
+        color: #0077B6;
+        margin-bottom: 0.5rem;
+    }
+    .partner-item span {
+        display: block;
+        font-size: 0.85rem;
+        color: #6C757D;
+        font-weight: 500;
+    }
+
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+    .testimonial-card {
+        background: #F8F9FA;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        position: relative;
+        border-left: 4px solid #0077B6;
+    }
+    .testimonial-card::before {
+        content: '\201C';
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        font-size: 4rem;
+        color: rgba(0,119,182,0.08);
+        font-family: Georgia, serif;
+        line-height: 1;
+    }
+    .testimonial-text {
+        font-style: italic;
+        color: #495057;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+        padding-top: 0.5rem;
+    }
+    .testimonial-author {
+        font-weight: 600;
+        color: #0F1C2E;
+        font-size: 0.9rem;
+    }
+    .testimonial-role {
+        color: #6C757D;
+        font-size: 0.8rem;
+    }
+    .testimonial-note {
+        font-size: 0.7rem;
+        color: #ADB5BD;
+        font-style: italic;
+        margin-top: 0.5rem;
+    }
+
+    .disclaimer-box {
+        background: #FFF8E6;
+        border-left: 4px solid #D4AF37;
+        padding: 1.5rem 2rem;
+        border-radius: 0 12px 12px 0;
+        max-width: 850px;
+        margin: 0 auto;
+    }
+    .disclaimer-box p {
+        color: #6C757D;
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+    .disclaimer-box strong {
+        color: #0F1C2E;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #FF6B35, #e55a2b);
+        color: white;
+        text-align: center;
+        padding: 4rem 0;
+    }
+    .cta-section h2 {
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+    }
+
+    @media (max-width: 992px) {
+        .about-grid { grid-template-columns: 1fr; }
+        .about-image { height: 250px; }
+    }
+    @media (max-width: 768px) {
+        .about-hero h1 { font-size: 2rem; }
+        .about-hero p { font-size: 1rem; }
+        .about-content h2 { font-size: 1.6rem; }
+        .section-header h2 { font-size: 1.8rem; }
+        .values-grid, .approach-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================ -->
+<!-- HERO                                                           -->
+<!-- ============================================================ -->
+<section class="about-hero">
+    <div class="container">
+        <h1>À propos de {{ site_name }}</h1>
+        <p>
+            Une plateforme dédiée à la formation théorique aéronautique, 
+            conçue pour les passionnés d'aviation du monde entier.
+        </p>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- NOTRE HISTOIRE                                                 -->
+<!-- ============================================================ -->
+<section style="padding: 5rem 0;">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-content">
+                <h2>Notre vision</h2>
+                <p>
+                    {{ site_name }} est née d'une ambition : rendre la formation théorique 
+                    aéronautique accessible à tous, partout dans le monde. Nous construisons 
+                    une plateforme où chaque passionné d'aviation peut acquérir les 
+                    connaissances fondamentales nécessaires à sa progression.
+                </p>
+                <p>
+                    Notre objectif est de couvrir les principaux métiers de l'aviation — 
+                    pilote de ligne, personnel navigant commercial, ingénieur aéronautique, 
+                    contrôleur aérien et technicien aéronautique — avec des parcours 
+                    structurés et progressifs.
+                </p>
+                <p>
+                    Les formations proposées sont <strong>exclusivement théoriques</strong>. 
+                    Elles ne remplacent pas les formations pratiques obligatoires pour 
+                    l'obtention des licences aéronautiques officielles.
+                </p>
+            </div>
+            <div class="about-image">
+                <img src="{% static 'images/logo.png' %}" alt="{{ site_name }}">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- NOTRE AMBITION                                                 -->
+<!-- ============================================================ -->
+<section style="background: #F8F9FA; padding: 5rem 0;">
+    <div class="container">
+        <div class="mission-card">
+            <i class="fas fa-bullseye" style="font-size: 2.8rem; color: #0077B6; margin-bottom: 1.2rem;"></i>
+            <h2 style="font-family: 'Montserrat', sans-serif; font-size: 1.8rem; color: #0F1C2E;">
+                Notre ambition
+            </h2>
+            <p style="font-size: 1.1rem; color: #495057; max-width: 600px; margin: 0 auto;">
+                Devenir une référence de la formation théorique aéronautique en ligne, 
+                reconnue pour la rigueur de ses contenus, l'innovation de sa pédagogie 
+                et la fiabilité de ses certifications numériques.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- NOS VALEURS                                                    -->
+<!-- ============================================================ -->
+<section style="padding: 5rem 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Les principes qui nous animent</h2>
+            <p>Ce qui façonne chacune de nos décisions</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-book"></i></div>
+                <h3>Exigence</h3>
+                <p>Nous visons un haut niveau de rigueur dans la conception de chaque module de formation.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-lightbulb"></i></div>
+                <h3>Innovation</h3>
+                <p>Nous explorons les meilleures approches numériques pour rendre l'apprentissage efficace et engageant.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-globe"></i></div>
+                <h3>Accessibilité</h3>
+                <p>Nous souhaitons que la connaissance aéronautique soit disponible partout, sans barrière géographique.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Confiance</h3>
+                <p>Nous mettons en œuvre des standards de sécurité et de transparence pour protéger nos utilisateurs.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-hand-sparkles"></i></div>
+                <h3>Transparence</h3>
+                <p>Nous communiquons ouvertement sur l'état d'avancement de la Plateforme et ses limites.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-users"></i></div>
+                <h3>Communauté</h3>
+                <p>Nous croyons en la force des échanges entre apprenants pour enrichir l'expérience de formation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- NOTRE APPROCHE                                                 -->
+<!-- ============================================================ -->
+<section style="background: #F8F9FA; padding: 5rem 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Comment nous travaillons</h2>
+            <p>Notre méthode pour construire la Plateforme</p>
+        </div>
+        <div class="approach-grid">
+            <div class="approach-card">
+                <div class="approach-icon" style="background: #E8F4FD; color: #0077B6;">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Recherche documentaire</h3>
+                <p>Chaque contenu est élaboré à partir de sources documentaires publiques, croisées et vérifiées.</p>
+            </div>
+            <div class="approach-card">
+                <div class="approach-icon" style="background: #ECFDF5; color: #10b981;">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3>Amélioration continue</h3>
+                <p>Les modules sont revus et mis à jour pour intégrer les évolutions du secteur aéronautique.</p>
+            </div>
+            <div class="approach-card">
+                <div class="approach-icon" style="background: #FFF8E6; color: #D4AF37;">
+                    <i class="fas fa-pencil-alt"></i>
+                </div>
+                <h3>Apprentissage actif</h3>
+                <p>Quiz, exercices et mises en situation pour permettre à chacun de tester ses connaissances.</p>
+            </div>
+            <div class="approach-card">
+                <div class="approach-icon" style="background: #F3E8FF; color: #8B5CF6;">
+                    <i class="fas fa-fingerprint"></i>
+                </div>
+                <h3>Certification vérifiable</h3>
+                <p>Attestations numériques avec hash SHA-256, consultables en ligne à tout moment.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PARTENAIRES                                                    -->
+<!-- ============================================================ -->
+{% if partenaires %}
+<section style="padding: 5rem 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Ils nous accompagnent</h2>
+            <p>Des organisations qui partagent notre vision</p>
+        </div>
+        <div class="partners-grid">
+            {% for partenaire in partenaires %}
+            <div class="partner-item">
+                {% if partenaire.logo %}
+                <img src="{{ partenaire.logo.url }}" alt="{{ partenaire.nom }}" style="max-height:55px;margin-bottom:0.5rem;">
+                {% else %}
+                <i class="fas fa-handshake"></i>
+                {% endif %}
+                <span>{{ partenaire.nom }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ============================================================ -->
+<!-- TÉMOIGNAGES                                                    -->
+<!-- ============================================================ -->
+{% if temoignages %}
+<section style="background: #F8F9FA; padding: 5rem 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Retours d'utilisateurs</h2>
+            <p>Ce que disent les premiers testeurs de la Plateforme</p>
+        </div>
+        <div class="testimonials-grid">
+            {% for temoignage in temoignages %}
+            <div class="testimonial-card">
+                <p class="testimonial-text">{{ temoignage.texte }}</p>
+                <p class="testimonial-author">{{ temoignage.auteur }}</p>
+                <p class="testimonial-role">{{ temoignage.role }}</p>
+                <p class="testimonial-note">{{ temoignage.note|default:"* Avis recueilli lors de la phase de test de la Plateforme." }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ============================================================ -->
+<!-- INFORMATIONS IMPORTANTES                                       -->
+<!-- ============================================================ -->
+<section style="padding: 4rem 0;">
+    <div class="container" style="max-width: 850px;">
+        <div class="disclaimer-box">
+            <p><strong>À savoir :</strong></p>
+            <p>• Les formations proposées sont exclusivement théoriques.</p>
+            <p>• Les attestations délivrées n'ont pas valeur de licence ou qualification officielle.</p>
+            <p>• Tout personnage ou témoignage est fictif ou présenté avec l'accord de la personne concernée.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CONTACT                                                        -->
+<!-- ============================================================ -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Une question, une suggestion ?</h2>
+        <p style="max-width: 600px; margin: 1rem auto 2rem; opacity: 0.95; font-size: 1.05rem;">
+            Nous sommes à l'écoute de vos retours pour améliorer la Plateforme.
+        </p>
+        <a href="{% url 'core:contact' %}" style="display: inline-block; padding: 0.9rem 2.5rem; background: white; color: #FF6B35; border-radius: 50px; text-decoration: none; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 1rem; transition: transform 0.3s ease;">
+            <i class="fas fa-envelope"></i> Nous contacter
+        </a>
+    </div>
+</section>
+
+{% endblock %}
