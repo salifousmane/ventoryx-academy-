@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Forum — {{ site_name }}{% endblock %}
+
+{% block meta_description %}Forum communautaire {{ site_name }} — Échangez avec les passionnés d'aviation.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .forum-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white; padding: 3rem 0 2.5rem; text-align: center;
+    }
+    .forum-hero h1 {
+        font-family: 'Montserrat', sans-serif; font-size: 2.5rem; color: white; margin-bottom: 0.5rem;
+    }
+    .forum-hero p { font-size: 1rem; opacity: 0.85; max-width: 600px; margin: 0 auto; }
+
+    .forums-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 2rem; padding: 3rem 0;
+    }
+    .forum-category {
+        background: white; border-radius: 16px; padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        border-top: 4px solid #0077B6; transition: transform 0.3s ease;
+    }
+    .forum-category:hover { transform: translateY(-5px); }
+    .forum-header {
+        display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .forum-icon {
+        width: 55px; height: 55px; border-radius: 50%;
+        background: linear-gradient(135deg, #0077B6, #0F1C2E);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .forum-info h3 {
+        font-family: 'Montserrat', sans-serif; color: #0F1C2E; font-size: 1.15rem; margin: 0 0 0.2rem;
+    }
+    .forum-meta { color: #6C757D; font-size: 0.8rem; margin: 0; }
+
+    .subforums-list { margin-bottom: 1.5rem; }
+    .subforum-item {
+        display: flex; align-items: center; padding: 0.7rem 0;
+        border-bottom: 1px solid #f5f5f5; text-decoration: none; color: inherit;
+        transition: padding 0.2s ease;
+    }
+    .subforum-item:hover { padding-left: 0.5rem; color: #0077B6; }
+    .subforum-item i { margin-right: 0.8rem; color: #0077B6; width: 20px; text-align: center; }
+    .subforum-info h4 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin: 0; }
+    .subforum-stats { font-size: 0.7rem; color: #ADB5BD; display: flex; gap: 1rem; }
+
+    .btn-forum {
+        display: block; text-align: center; padding: 0.7rem;
+        background: #0077B6; color: white; border-radius: 50px;
+        text-decoration: none; font-weight: 600; font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem; transition: all 0.3s ease;
+    }
+    .btn-forum:hover { background: #0F1C2E; transform: translateY(-2px); }
+
+    .empty-forum {
+        text-align: center; padding: 4rem 2rem; background: white;
+        border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    @media (max-width: 768px) {
+        .forum-hero h1 { font-size: 1.8rem; }
+        .forums-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="forum-hero">
+    <div class="container">
+        <h1>Forum communautaire</h1>
+        <p>Échangez avec les passionnés d'aviation. Posez vos questions, partagez vos expériences.</p>
+    </div>
+</section>
+
+<section style="padding: 0 0 4rem;">
+    <div class="container">
+        <div class="forums-grid">
+            {% for categorie in forums %}
+            <div class="forum-category">
+                <div class="forum-header">
+                    <div class="forum-icon">
+                        <i class="fas {{ categorie.icone|default:'fa-comments' }}"></i>
+                    </div>
+                    <div class="forum-info">
+                        <h3>{{ categorie.nom }}</h3>
+                        <p class="forum-meta">
+                            {{ categorie.sous_forums.count }} sous-forum{{ categorie.sous_forums.count|pluralize }}
+                            · {{ categorie.total_messages }} message{{ categorie.total_messages|pluralize }}
+                        </p>
+                    </div>
+                </div>
+                <div class="subforums-list">
+                    {% for sous in categorie.sous_forums.all %}
+                    <a href="{% url 'forum:sous_forum' metier=categorie.metier slug=sous.slug %}" class="subforum-item">
+                        <i class="fas fa-circle"></i>
+                        <div class="subforum-info">
+                            <h4>{{ sous.nom }}</h4>
+                            <div class="subforum-stats">
+                                <span><i class="fas fa-comment"></i> {{ sous.total_messages }}</span>
+                                <span><i class="fas fa-eye"></i> {{ sous.total_vues }}</span>
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <p style="color:#ADB5BD;font-size:0.85rem;">Aucun sous-forum pour le moment.</p>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'forum:metier' metier=categorie.metier %}" class="btn-forum">
+                    <i class="fas fa-arrow-right"></i> Accéder au forum {{ categorie.nom }}
+                </a>
+            </div>
+            {% empty %}
+            <div class="empty-forum" style="grid-column:1/-1;">
+                <i class="fas fa-comments" style="font-size:3rem;color:#0077B6;margin-bottom:1rem;"></i>
+                <h3>Le forum est ouvert</h3>
+                <p style="color:#6C757D;">Aucune catégorie n'a encore été créée.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
