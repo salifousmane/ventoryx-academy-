@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Paiement annulé — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cancel-container { max-width: 600px; margin: 4rem auto; text-align: center; padding: 0 1rem; }
+    .cancel-card {
+        background: white; border-radius: 16px; padding: 3rem 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #f59e0b;
+    }
+    .cancel-icon { font-size: 4rem; color: #f59e0b; margin-bottom: 1rem; }
+    .cancel-card h1 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; }
+    .btn-retry {
+        display: inline-block; margin-top: 1.5rem; padding: 0.9rem 2rem;
+        background: #0077B6; color: white; border-radius: 50px;
+        text-decoration: none; font-weight: 700; font-family: 'Montserrat', sans-serif; margin-right: 1rem;
+    }
+    .btn-home {
+        display: inline-block; margin-top: 1.5rem; padding: 0.9rem 2rem;
+        background: #E9ECEF; color: #0F1C2E; border-radius: 50px;
+        text-decoration: none; font-weight: 700; font-family: 'Montserrat', sans-serif;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="cancel-container">
+    <div class="cancel-card">
+        <div class="cancel-icon"><i class="fas fa-times-circle"></i></div>
+        <h1>Paiement annulé</h1>
+        <p style="color: #6C757D; margin: 1rem 0;">Aucun montant n'a été débité. Votre compte reste en formule gratuite.</p>
+        
+        <a href="{% url 'users:checkout' %}?plan={{ request.GET.plan|default:'mensuel' }}" class="btn-retry">
+            <i class="fas fa-redo"></i> Réessayer
+        </a>
+        <a href="{% url 'core:premium' %}" class="btn-home">
+            <i class="fas fa-home"></i> Voir les formules
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+
