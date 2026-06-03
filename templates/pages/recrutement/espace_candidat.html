@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon espace candidat — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .candidat-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white; padding: 2rem 0;
+    }
+    .candidat-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; color: white; margin: 0; }
+
+    .dashboard-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem; padding: 2rem 0;
+    }
+    .candidat-card {
+        background: white; border-radius: 16px; padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .card-header {
+        display: flex; align-items: center; gap: 0.8rem;
+        margin-bottom: 1.2rem; padding-bottom: 1rem;
+        border-bottom: 2px solid #E9ECEF;
+    }
+    .card-header i { font-size: 1.8rem; color: #0077B6; }
+    .card-header h2 { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: #0F1C2E; margin: 0; }
+
+    .info-row { margin-bottom: 0.7rem; display: flex; }
+    .info-label { font-weight: 600; width: 80px; color: #6C757D; font-size: 0.85rem; }
+    .info-value { flex: 1; color: #212529; font-size: 0.9rem; }
+
+    .status-badge {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.4rem 1rem; border-radius: 40px; font-weight: 700; font-size: 0.85rem;
+    }
+    .status-recue { background: #FFF3E0; color: #f59e0b; }
+    .status-en_revision { background: #E0F0FF; color: #0077B6; }
+    .status-retenue { background: #ECFDF5; color: #10b981; }
+    .status-refusee { background: #FEF2F2; color: #ef4444; }
+
+    .message-box {
+        background: #FFF8E6; border-left: 4px solid #D4AF37;
+        padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.85rem;
+    }
+    .btn-back {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: transparent; border: 1px solid #E9ECEF;
+        padding: 0.5rem 1.2rem; border-radius: 40px;
+        text-decoration: none; color: #6C757D; font-weight: 500; margin-bottom: 1.5rem;
+    }
+    .btn-back:hover { background: #E9ECEF; color: #0F1C2E; }
+
+    .empty-state {
+        text-align: center; padding: 4rem 2rem; background: white;
+        border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div style="background:white;padding:1rem 0;border-bottom:1px solid #E9ECEF;">
+    <div class="container">
+        <a href="{% url 'core:index' %}" style="color:#0077B6;text-decoration:none;">Accueil</a>
+        <span style="color:#6C757D;margin:0 0.5rem;">/</span>
+        <a href="{% url 'core:carriere' %}" style="color:#0077B6;text-decoration:none;">Carrières</a>
+        <span style="color:#6C757D;margin:0 0.5rem;">/</span>
+        <strong>Espace candidat</strong>
+    </div>
+</div>
+
+<section class="candidat-hero">
+    <div class="container"><h1>Mon espace candidat</h1></div>
+</section>
+
+<div class="container">
+    <a href="{% url 'core:carriere' %}" class="btn-back"><i class="fas fa-arrow-left"></i> Retour aux offres</a>
+
+    {% if candidatures %}
+    <div class="dashboard-grid">
+        {% for c in candidatures %}
+        <div class="candidat-card">
+            <div class="card-header">
+                <i class="fas fa-file-alt"></i>
+                <h2>{{ c.poste }}</h2>
+            </div>
+            <div class="info-row"><span class="info-label">Nom :</span><span class="info-value">{{ c.prenom }} {{ c.nom }}</span></div>
+            <div class="info-row"><span class="info-label">Email :</span><span class="info-value">{{ c.email }}</span></div>
+            <div class="info-row"><span class="info-label">Date :</span><span class="info-value">{{ c.date_soumission|date:"d F Y" }}</span></div>
+            <div style="margin:1rem 0;">
+                <span class="status-badge status-{{ c.statut }}">
+                    {% if c.statut == 'recue' %}<i class="fas fa-clock"></i> Reçue
+                    {% elif c.statut == 'en_revision' %}<i class="fas fa-search"></i> En révision
+                    {% elif c.statut == 'retenue' %}<i class="fas fa-check-circle"></i> Retenue
+                    {% elif c.statut == 'refusee' %}<i class="fas fa-times-circle"></i> Non retenue
+                    {% else %}{{ c.get_statut_display }}{% endif %}
+                </span>
+            </div>
+            <div class="message-box"><i class="fas fa-info-circle"></i> Collaboration non rémunérée actuellement, avec évolution vers un poste salarié.</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-folder-open" style="font-size:3rem;color:#ADB5BD;display:block;margin-bottom:1rem;"></i>
+        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;">Aucune candidature</h3>
+        <p style="color:#6C757D;">Vous n'avez pas encore postulé.</p>
+        <a href="{% url 'core:carriere' %}" class="btn btn-primary" style="margin-top:1rem;display:inline-block;padding:0.7rem 2rem;background:#0077B6;color:white;border-radius:50px;text-decoration:none;font-weight:600;">
+            Voir les offres
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
