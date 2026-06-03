@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contrôleur Aérien - {{ site_name }}{% endblock %}
+
+{% block meta_description %}Formation théorique Contrôleur Aérien — {{ site_name }}. Tour de contrôle, approche, en-route, gestion du trafic.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .program-hero {
+        background: linear-gradient(rgba(15,28,46,0.82), rgba(30,58,95,0.88)), url('{% static "images/program-controleur.jpg" %}');
+        background-size: cover; background-position: center;
+        color: white; padding: 4rem 0; text-align: center;
+    }
+    .program-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; color: white; margin-bottom: 1rem; }
+    .program-hero p { font-size: 1.1rem; max-width: 700px; margin: 0 auto; opacity: 0.9; }
+    .program-hero .badge-gratuit { display: inline-block; background: #10b981; color: white; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; }
+    .section-header { text-align: center; max-width: 750px; margin: 0 auto 3rem; }
+    .section-header h2 { font-family: 'Montserrat', sans-serif; font-size: 2.2rem; color: #0F1C2E; position: relative; display: inline-block; }
+    .section-header h2::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: #0077B6; border-radius: 2px; }
+    .section-header p { color: #6C757D; margin-top: 1.5rem; }
+    .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .overview-card { background: white; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06); transition: transform 0.3s; }
+    .overview-card:hover { transform: translateY(-5px); }
+    .overview-icon { width: 70px; height: 70px; margin: 0 auto 1rem; background: linear-gradient(135deg, #0077B6, #0F1C2E); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; }
+    .overview-card h3 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; }
+    .module-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border-left: 4px solid #f59e0b; margin-bottom: 1.5rem; }
+    .module-card h3 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; display: flex; align-items: center; gap: 0.7rem; }
+    .module-card .module-meta { font-size: 0.8rem; color: #6C757D; margin-bottom: 1rem; }
+    .module-card ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 2rem; list-style: none; }
+    .module-card ul li { padding: 0.3rem 0; color: #495057; font-size: 0.9rem; }
+    .module-card ul li::before { content: '✓'; color: #10b981; margin-right: 0.5rem; font-weight: bold; }
+    .detail-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .detail-card { background: white; border-radius: 16px; padding: 1.8rem; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+    .detail-card h3 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; display: flex; align-items: center; gap: 0.5rem; }
+    .detail-card h3 i { color: #0077B6; }
+    .detail-card ul { list-style: none; margin-top: 1rem; }
+    .detail-card ul li { padding: 0.3rem 0; color: #495057; font-size: 0.9rem; }
+    .detail-card ul li::before { content: '✓'; color: #10b981; margin-right: 0.5rem; }
+    .disclaimer-box { background: #FFF8E6; border-left: 4px solid #D4AF37; padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 2rem 0; font-size: 0.85rem; color: #6C757D; }
+    .cta-section { background: linear-gradient(135deg, #1E3A5F, #0F1C2E); color: white; text-align: center; padding: 4rem 0; }
+    .cta-section h2 { color: white; font-family: 'Montserrat', sans-serif; }
+    @media (max-width: 768px) { .program-hero h1 { font-size: 1.8rem; } .module-card ul { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="program-hero">
+    <div class="container">
+        <span class="badge-gratuit">Gratuit</span>
+        <h1>Contrôleur Aérien</h1>
+        <p>Formation théorique au contrôle aérien : tour de contrôle, approche, en-route, gestion du trafic et communication.</p>
+    </div>
+</section>
+
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <div class="overview-grid">
+            <div class="overview-card">
+                <div class="overview-icon"><i class="fas fa-tower-broadcast"></i></div>
+                <h3>Tour de contrôle</h3>
+                <p>Gestion des mouvements au sol, décollages et atterrissages.</p>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon"><i class="fas fa-radar"></i></div>
+                <h3>Contrôle d'approche</h3>
+                <p>Séquençage des arrivées et départs, espace aérien terminal.</p>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon"><i class="fas fa-route"></i></div>
+                <h3>Contrôle en-route</h3>
+                <p>Surveillance du trafic de croisière et coordination entre secteurs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section style="background: #F8F9FA; padding: 4rem 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Programme de formation</h2>
+            <p>4 modules, 80 cours, 16 quiz — Un parcours complet et gratuit</p>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-book" style="color:#f59e0b;"></i> Module 1 — Théorie du contrôle aérien</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Réglementation aéronautique (OACI)</li>
+                <li>Météorologie aéronautique</li>
+                <li>Navigation et procédures</li>
+                <li>Séparation des aéronefs</li>
+                <li>Espaces aériens et classification</li>
+                <li>Altimétrie et niveaux de vol</li>
+                <li>Plans de vol</li>
+                <li>Cartes aéronautiques</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-microphone-alt" style="color:#f59e0b;"></i> Module 2 — Communication & Phraséologie</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Phraséologie ATC standard</li>
+                <li>Communication en anglais</li>
+                <li>Gestion des urgences radio</li>
+                <li>Coordination entre secteurs</li>
+                <li>Clairances et autorisations</li>
+                <li>Messages normalisés</li>
+                <li>Panne radio et procédures</li>
+                <li>Communications data-link</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-tachometer-alt" style="color:#f59e0b;"></i> Module 3 — Gestion du trafic</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Séquençage des arrivées</li>
+                <li>Gestion des départs</li>
+                <li>Espaces aériens complexes</li>
+                <li>Situations de trafic dense</li>
+                <li>Régulation des flux (ATFM)</li>
+                <li>Gestion des créneaux</li>
+                <li>Coordination civile-militaire</li>
+                <li>Outils radar et surveillance</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-trophy" style="color:#f59e0b;"></i> Module 4 — Urgences & Test global</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Procédures d'urgence standard</li>
+                <li>Détresse et panne radio</li>
+                <li>Coordination avec les services de secours</li>
+                <li>Gestion des priorités</li>
+                <li>Révisions complètes</li>
+                <li>Test global final (40 questions)</li>
+                <li>Obtention du certificat</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <div class="section-header"><h2>Équipement & qualités</h2></div>
+        <div class="detail-box">
+            <div class="detail-card">
+                <h3><i class="fas fa-laptop"></i> Équipement requis</h3>
+                <ul><li>Ordinateur, tablette ou smartphone</li><li>Connexion internet stable</li><li>Casque audio avec micro recommandé</li></ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-language"></i> Langues</h3>
+                <ul><li>Français courant</li><li>Anglais aéronautique essentiel</li></ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-brain"></i> Qualités utiles</h3>
+                <ul><li>Capacité d'analyse rapide</li><li>Résistance au stress</li><li>Rigueur et méthode</li></ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-chart-bar"></i> Chiffres clés</h3>
+                <ul><li><strong>4</strong> modules</li><li><strong>80</strong> cours</li><li><strong>16</strong> quiz</li><li><strong>1</strong> test global</li></ul>
+            </div>
+        </div>
+        <div class="disclaimer-box">
+            <strong>À noter :</strong> Cette formation est exclusivement théorique. Le métier de contrôleur aérien nécessite une formation pratique certifiée et un concours d'entrée spécifique (DGAC, Eurocontrol). Ce parcours est <strong>gratuit</strong> dans le cadre de l'offre de découverte de {{ site_name }}.
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Prêt à découvrir le contrôle aérien ?</h2>
+        <p style="max-width:600px;margin:1rem auto 2rem;opacity:0.9;">Ce parcours est gratuit. Créez votre compte pour y accéder.</p>
+        <a href="{% url 'users:register' %}" style="display:inline-block;padding:0.9rem 2.5rem;background:#f59e0b;color:#0F1C2E;border-radius:50px;text-decoration:none;font-weight:700;font-family:'Montserrat',sans-serif;">
+            <i class="fas fa-user-plus"></i> Créer un compte gratuit
+        </a>
+    </div>
+</section>
+
+{% endblock %}
