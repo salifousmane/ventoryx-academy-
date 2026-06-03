@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Abonnement entreprise activé — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        text-align: center;
+        padding: 0 1rem;
+    }
+    .success-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border-top: 5px solid #10b981;
+    }
+    .success-icon { font-size: 4rem; color: #10b981; margin-bottom: 1rem; }
+    .info-box {
+        background: #F8FAFE;
+        padding: 1rem;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+        text-align: left;
+    }
+    .btn-dashboard {
+        display: inline-block;
+        padding: 0.9rem 2rem;
+        background: #0077B6;
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+        <h1>Abonnement Entreprise activé !</h1>
+        <p>Bienvenue à bord, {{ company_name }}.</p>
+
+        <div class="info-box">
+            <p><strong>📧 Administrateur :</strong> {{ admin_email }}</p>
+            <p><strong>👥 Sièges :</strong> {{ seats }} utilisateurs</p>
+            <p><strong>📅 Prochaine facturation :</strong> {{ next_billing_date }}</p>
+        </div>
+
+        <a href="{% url 'entreprises:dashboard' %}" class="btn-dashboard">
+            <i class="fas fa-building"></i> Accéder à l'espace entreprise
+        </a>
+    </div>
+</div>
+
+{% endblock %}rd, {{ company_name }}. Vos équipes peuvent maintenant accéder à toutes les formations.
+        </p>
+
+        <div class="info-entreprise">
+            <p><strong>📧 Email administrateur :</strong> {{ admin_email }}</p>
+            <p><strong>👥 Sièges disponibles :</strong> {{ seats }} utilisateurs</p>
+            <p><strong>📅 Prochaine facturation :</strong> {{ next_billing_date }}</p>
+        </div>
+
+        <div>
+            <a href="{% url 'users:dashboard_entreprise' %}" class="btn-espace">
+                <i class="fas fa-building"></i> Accéder à l'espace entreprise
+            </a>
+            <a href="#" class="btn-inviter" onclick="openInviteModal()">
+                <i class="fas fa-user-plus"></i> Inviter des collaborateurs
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function openInviteModal() {
+    alert("Fonctionnalité d'invitation - Interface à connecter");
+}
+</script>
+
+{% endblock %}
