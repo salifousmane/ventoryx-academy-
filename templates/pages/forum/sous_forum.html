@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ sous_forum.nom }} — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .forum-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white; padding: 2.5rem 0;
+    }
+    .forum-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 2rem; color: white; }
+    .forum-hero p { opacity: 0.85; margin: 0; font-size: 0.9rem; }
+
+    .forum-layout {
+        display: grid; grid-template-columns: 1fr 300px; gap: 2rem; padding: 2rem 0;
+    }
+    .section-title {
+        font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: #0F1C2E;
+        margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;
+    }
+    .btn-nouveau {
+        padding: 0.5rem 1.2rem; background: #0077B6; color: white;
+        border-radius: 50px; text-decoration: none; font-size: 0.85rem;
+        font-weight: 600; font-family: 'Montserrat', sans-serif;
+    }
+    .btn-nouveau:hover { background: #0F1C2E; }
+
+    .sujet-card {
+        background: white; border-radius: 12px; padding: 1.2rem 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 0.8rem;
+        display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit;
+    }
+    .sujet-card:hover { transform: translateX(5px); }
+    .sujet-avatar {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: linear-gradient(135deg, #0077B6, #0F1C2E);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+    }
+    .sujet-titre { font-weight: 600; color: #0F1C2E; font-size: 0.95rem; }
+    .sujet-meta { font-size: 0.75rem; color: #ADB5BD; margin-top: 0.2rem; }
+    .sujet-stats { font-size: 0.8rem; color: #6C757D; text-align: center; flex-shrink: 0; }
+
+    .sidebar-card {
+        background: white; border-radius: 16px; padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06); margin-bottom: 1.5rem;
+    }
+    .sidebar-card h3 {
+        font-family: 'Montserrat', sans-serif; font-size: 1rem; color: #0F1C2E;
+        margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #E9ECEF;
+    }
+
+    @media (max-width: 768px) {
+        .forum-layout { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="forum-hero">
+    <div class="container">
+        <a href="{% url 'forum:metier' metier=forum.metier %}" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.85rem;">
+            <i class="fas fa-arrow-left"></i> {{ forum.nom }}
+        </a>
+        <h1>{{ sous_forum.nom }}</h1>
+        <p>{{ sous_forum.description }}</p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="forum-layout">
+        <div>
+            <div class="section-title">
+                Sujets
+                <a href="{% url 'forum:nouveau_sujet' metier=forum.metier slug=sous_forum.slug %}" class="btn-nouveau">
+                    <i class="fas fa-plus"></i> Nouveau sujet
+                </a>
+            </div>
+
+            {% for sujet in sujets %}
+            <a href="{% url 'forum:sujet' metier=forum.metier sujet_id=sujet.id %}" class="sujet-card">
+                <div class="sujet-avatar">{{ sujet.auteur.first_name|first|upper }}{{ sujet.auteur.last_name|first|upper }}</div>
+                <div class="sujet-content" style="flex:1;">
+                    <div class="sujet-titre">{{ sujet.titre }}</div>
+                    <div class="sujet-meta">Par {{ sujet.auteur.get_full_name }} · {{ sujet.date_creation|date:"d/m/Y" }}</div>
+                </div>
+                <div class="sujet-stats"><strong>{{ sujet.total_reponses }}</strong> réponses</div>
+            </a>
+            {% empty %}
+            <div style="text-align:center;padding:3rem;background:white;border-radius:16px;">
+                <p style="color:#6C757D;">Aucun sujet dans ce sous-forum.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <aside>
+            <div class="sidebar-card">
+                <h3>Retour</h3>
+                <a href="{% url 'forum:metier' metier=forum.metier %}">
+                    <i class="fas fa-arrow-left"></i> {{ forum.nom }}
+                </a>
+                <a href="{% url 'forum:index' %}">
+                    <i class="fas fa-list"></i> Tous les forums
+                </a>
+            </div>
+        </aside>
+    </div>
+</div>
+
+{% endblock %}
