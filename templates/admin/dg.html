@@ -1,0 +1,809 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Direction Générale | {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #0F1C2E; --primary-light: #1E3A5F; --secondary: #D4AF37;
+        --accent: #FF6B35; --gold: #D4AF37; --light: #F8F9FA; --dark: #212529;
+        --gray: #6C757D; --light-gray: #E9ECEF; --success: #10b981; --warning: #f59e0b;
+        --danger: #ef4444; --info: #3b82f6; --purple: #8B5CF6;
+        --transition: all 0.3s ease; --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        --shadow-hover: 0 15px 40px rgba(0,0,0,0.15); --radius: 12px;
+    }
+
+    .dg-dashboard { background: #f5f7fa; min-height: 100vh; }
+
+    /* Welcome Section */
+    .dg-welcome {
+        background: linear-gradient(135deg, var(--secondary), #b8860b);
+        color: var(--primary);
+        padding: 1.5rem 2rem;
+        border-radius: var(--radius);
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+    }
+    .dg-welcome h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .dg-welcome p { margin: 0; opacity: 0.9; }
+
+    /* Stats Grid */
+    .dg-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .dg-stat {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1.2rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.3s;
+        cursor: default;
+    }
+    .dg-stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .dg-stat-icon {
+        width: 50px; height: 50px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem; color: white;
+        flex-shrink: 0;
+    }
+    .dg-stat-value {
+        font-size: 1.6rem; font-weight: 700;
+        color: var(--primary); font-family: 'Montserrat', sans-serif;
+    }
+    .dg-stat-label { font-size: 0.75rem; color: var(--gray); }
+
+    /* Charts Grid */
+    .dg-charts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .dg-chart-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+    }
+    .dg-chart-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem; color: var(--primary);
+        margin-bottom: 1rem;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .dg-chart-card canvas { max-height: 280px; }
+
+    /* Section Title */
+    .dg-section-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem; color: var(--primary);
+        margin: 1.5rem 0 1rem;
+        display: flex; align-items: center; gap: 0.8rem;
+        border-left: 4px solid var(--secondary);
+        padding-left: 1rem;
+    }
+
+    /* Quick Actions - 17 boutons */
+    .dg-quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.8rem;
+        margin-bottom: 2rem;
+    }
+    .dg-action-btn {
+        background: white;
+        border: none;
+        border-radius: var(--radius);
+        padding: 0.9rem 0.6rem;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        font-size: 0.72rem;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .dg-action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+        background: var(--secondary);
+        color: var(--primary);
+    }
+    .dg-action-btn:hover .dg-action-icon {
+        background: var(--primary);
+        color: var(--secondary);
+    }
+    .dg-action-btn.critique {
+        border: 1px solid var(--warning);
+    }
+    .dg-action-icon {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 0.9rem;
+        transition: all 0.3s;
+    }
+
+    /* Section Cards */
+    .dg-section {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Tables */
+    .dg-table-container { overflow-x: auto; }
+    .dg-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 700px; }
+    .dg-table th, .dg-table td { padding: 0.8rem; text-align: left; border-bottom: 1px solid var(--light-gray); }
+    .dg-table th { background: var(--light); font-weight: 600; color: var(--primary); white-space: nowrap; }
+    .dg-table tr:hover { background: #fafafa; }
+
+    /* Badges */
+    .badge {
+        display: inline-block; padding: 0.25rem 0.7rem;
+        border-radius: 20px; font-size: 0.7rem; font-weight: 600;
+    }
+    .badge-non-lu { background: #FEE2E2; color: var(--danger); }
+    .badge-lu { background: #FFF3E0; color: var(--warning); }
+    .badge-traite { background: #E0F7EC; color: var(--success); }
+    .badge-pedagogie { background: #10B981; color: white; }
+    .badge-technique { background: #3B82F6; color: white; }
+    .badge-marketing { background: #F59E0B; color: white; }
+    .badge-support { background: #8B5CF6; color: white; }
+    .badge-operations { background: #059669; color: white; }
+    .badge-qualite { background: #EC4899; color: white; }
+    .badge-design { background: #6366F1; color: white; }
+    .badge-actif { background: #E0F7EC; color: var(--success); }
+    .badge-inactif { background: #FEE2E2; color: var(--danger); }
+
+    /* Toast */
+    .toast {
+        position: fixed; bottom: 2rem; right: 2rem;
+        background: var(--success); color: white;
+        padding: 0.8rem 1.5rem; border-radius: 10px;
+        z-index: 9999; font-weight: 600;
+        box-shadow: var(--shadow-hover);
+        animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dg-charts { grid-template-columns: 1fr; }
+        .dg-stats { grid-template-columns: repeat(2, 1fr); }
+        .dg-quick-actions { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 480px) {
+        .dg-quick-actions { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dg-dashboard">
+    <div class="container" style="padding: 2rem 1rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- ==================== WELCOME ==================== -->
+        <div class="dg-welcome">
+            <h1><i class="fas fa-crown"></i> Direction Générale</h1>
+            <p>Supervision globale — {{ site_name }} — {{ current_year }}</p>
+        </div>
+
+        <!-- ==================== STATISTIQUES ==================== -->
+        <div class="dg-stats">
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#3B82F6,#2563EB);"><i class="fas fa-envelope"></i></div>
+                <div><div class="dg-stat-value">{{ total_messages }}</div><div class="dg-stat-label">Messages</div></div>
+            </div>
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);"><i class="fas fa-exclamation-circle"></i></div>
+                <div><div class="dg-stat-value">{{ messages_non_lus }}</div><div class="dg-stat-label">Non lus</div></div>
+            </div>
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-check-circle"></i></div>
+                <div><div class="dg-stat-value">{{ messages_traites }}</div><div class="dg-stat-label">Traités</div></div>
+            </div>
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#D4AF37,#B8941E);"><i class="fas fa-users"></i></div>
+                <div><div class="dg-stat-value">{{ total_coordinateurs }}</div><div class="dg-stat-label">Coordinateurs</div></div>
+            </div>
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);"><i class="fas fa-user-cog"></i></div>
+                <div><div class="dg-stat-value">{{ total_gestionnaires }}</div><div class="dg-stat-label">Gestionnaires</div></div>
+            </div>
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><i class="fas fa-user-graduate"></i></div>
+                <div><div class="dg-stat-value">{{ total_etudiants }}</div><div class="dg-stat-label">Étudiants</div></div>
+            </div>
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#EC4899,#DB2777);"><i class="fas fa-newspaper"></i></div>
+                <div><div class="dg-stat-value">{{ total_articles }}</div><div class="dg-stat-label">Articles</div></div>
+            </div>
+            <div class="dg-stat">
+                <div class="dg-stat-icon" style="background:linear-gradient(135deg,#6366F1,#4F46E5);"><i class="fas fa-briefcase"></i></div>
+                <div><div class="dg-stat-value">{{ candidatures_total }}</div><div class="dg-stat-label">Candidatures</div></div>
+            </div>
+        </div>
+
+        <!-- ==================== 15 ACTIONS RAPIDES ==================== -->
+        <h2 class="dg-section-title"><i class="fas fa-bolt" style="color: var(--accent);"></i> Actions rapides</h2>
+        <div class="dg-quick-actions">
+            <!-- 1. Exporter messages -->
+            <a href="{% url 'gestion:dg_exporter_messages' %}" class="dg-action-btn">
+                <div class="dg-action-icon"><i class="fas fa-download"></i></div>
+                <span>Exporter messages</span>
+            </a>
+
+            <!-- 2. Exporter candidatures -->
+            <a href="{% url 'gestion:dg_exporter_candidatures' %}" class="dg-action-btn">
+                <div class="dg-action-icon"><i class="fas fa-file-csv"></i></div>
+                <span>Exporter candidatures</span>
+            </a>
+
+            <!-- 3. Rapport hebdo -->
+            <a href="{% url 'gestion:dg_rapport_hebdo' %}" class="dg-action-btn">
+                <div class="dg-action-icon"><i class="fas fa-file-alt"></i></div>
+                <span>Rapport hebdo</span>
+            </a>
+
+            <!-- 4. Message aux coordinateurs -->
+            <button class="dg-action-btn" onclick="openMessageModal()">
+                <div class="dg-action-icon"><i class="fas fa-bullhorn"></i></div>
+                <span>Message aux coord.</span>
+            </button>
+
+            <!-- 5. Archiver messages -->
+            <button class="dg-action-btn" onclick="archiverMessages()">
+                <div class="dg-action-icon"><i class="fas fa-archive"></i></div>
+                <span>Archiver messages</span>
+            </button>
+
+            <!-- 6. Auditer département -->
+            <button class="dg-action-btn" onclick="auditerDepartement()">
+                <div class="dg-action-icon"><i class="fas fa-search"></i></div>
+                <span>Auditer département</span>
+            </button>
+
+            <!-- 7. Valider budget -->
+            <button class="dg-action-btn critique" onclick="validerBudget()">
+                <div class="dg-action-icon"><i class="fas fa-euro-sign"></i></div>
+                <span>Valider budget</span>
+            </button>
+
+            <!-- 8. Créer alerte -->
+            <button class="dg-action-btn critique" onclick="creerAlerte()">
+                <div class="dg-action-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <span>Créer alerte</span>
+            </button>
+
+            <!-- 9. Valider pages légales -->
+            <a href="{% url 'admin:core_pagestatique_changelist' %}" class="dg-action-btn">
+                <div class="dg-action-icon"><i class="fas fa-gavel"></i></div>
+                <span>Pages légales</span>
+            </a>
+
+            <!-- 10. Ajouter partenaire -->
+            <button class="dg-action-btn" onclick="ajouterPartenaire()">
+                <div class="dg-action-icon"><i class="fas fa-handshake"></i></div>
+                <span>Ajouter partenaire</span>
+            </button>
+
+            <!-- 11. Journal d'audit -->
+            <a href="{% url 'admin:audit_auditlog_changelist' %}" class="dg-action-btn">
+                <div class="dg-action-icon"><i class="fas fa-history"></i></div>
+                <span>Journal d'audit</span>
+            </a>
+
+            <!-- 12. Gérer offres emploi -->
+            <a href="{% url 'admin:institution_offreemploi_changelist' %}" class="dg-action-btn">
+                <div class="dg-action-icon"><i class="fas fa-briefcase"></i></div>
+                <span>Offres emploi</span>
+            </a>
+
+            <!-- 13. Modération forum -->
+            <a href="{% url 'admin:forum_topic_changelist' %}" class="dg-action-btn">
+                <div class="dg-action-icon"><i class="fas fa-comments"></i></div>
+                <span>Modération forum</span>
+            </a>
+             
+           <!-- 14. Réunion virtuelle -->
+           <a href="{% url 'users:reunion_virtuelle' %}" class="dg-action-btn">
+               <div class="dg-action-icon"><i class="fas fa-video"></i></div>
+               <span>Réunion virtuelle</span>
+          </a>
+
+         <!-- 15. Admin Candidatures -->
+        <a href="{% url 'gestion:admin_candidatures' %}" class="dg-action-btn">
+            <div class="dg-action-icon"><i class="fas fa-users-viewfinder"></i></div>
+            <span>Candidatures</span>
+        </a>
+
+            <!-- 16. Statistiques avancées -->
+            <button class="dg-action-btn" onclick="openStatsModal()">
+                <div class="dg-action-icon"><i class="fas fa-chart-pie"></i></div>
+                <span>Stats avancées</span>
+            </button>
+
+            <!-- 17. Vider cache -->
+            <button class="dg-action-btn" onclick="viderCache()">
+                <div class="dg-action-icon"><i class="fas fa-broom"></i></div>
+                <span>Vider cache</span>
+            </button>
+        </div>
+
+        <!-- ==================== GRAPHIQUES ==================== -->
+        <div class="dg-charts">
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-chart-line" style="color:#3B82F6;"></i> Messages (30 derniers jours)</h3>
+                <canvas id="chartMessages"></canvas>
+            </div>
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-chart-pie" style="color:#10b981;"></i> Répartition par département</h3>
+                <canvas id="chartDept"></canvas>
+            </div>
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-chart-bar" style="color:#F59E0B;"></i> Candidatures par poste</h3>
+                <canvas id="chartCandidatures"></canvas>
+            </div>
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-tachometer-alt" style="color:#ef4444;"></i> Taux de traitement</h3>
+                <canvas id="chartTaux"></canvas>
+            </div>
+        </div>
+
+        <!-- ==================== COORDINATEURS ==================== -->
+        <div class="dg-section">
+            <h2 class="dg-section-title" style="margin-top:0;"><i class="fas fa-user-tie" style="color: var(--secondary);"></i> Coordinateurs ({{ total_coordinateurs }})</h2>
+            <div class="dg-table-container">
+                <table class="dg-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th><th>Email</th><th>Département</th>
+                            <th>Gestionnaires</th><th>Dernière connexion</th><th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for coord in coordinateurs %}
+                        <tr>
+                            <td><strong>{{ coord.nom }}</strong></td>
+                            <td>{{ coord.email }}</td>
+                            <td><span class="badge badge-{{ coord.departement|default:'support' }}">{{ coord.departement|default:'Non défini' }}</span></td>
+                            <td>{{ coord.gestionnaires }}</td>
+                            <td>{{ coord.derniere_connexion|date:"d/m/Y H:i"|default:"—" }}</td>
+                            <td>
+                                {% if coord.est_actif %}
+                                <span class="badge badge-actif"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Actif</span>
+                                {% else %}
+                                <span class="badge badge-inactif">Inactif</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray);">Aucun coordinateur</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== DÉPARTEMENTS ==================== -->
+        <div class="dg-section">
+            <h2 class="dg-section-title" style="margin-top:0;"><i class="fas fa-building" style="color: var(--info);"></i> Vue par département</h2>
+            <div class="dg-table-container">
+                <table class="dg-table">
+                    <thead>
+                        <tr><th>Département</th><th>Messages</th><th>Non lus</th><th>Gestionnaires</th><th>Coordinateur</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for dept in departements_stats %}
+                        <tr>
+                            <td><span class="badge badge-{{ dept.code }}">{{ dept.nom }}</span></td>
+                            <td>{{ dept.messages }}</td>
+                            <td>{{ dept.non_lus }}</td>
+                            <td>{{ dept.gestionnaires }}</td>
+                            <td>{{ dept.coordinateur.get_full_name|default:"—" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray);">Aucun département</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== MESSAGES RÉCENTS ==================== -->
+        <div class="dg-section">
+            <h2 class="dg-section-title" style="margin-top:0;"><i class="fas fa-envelope" style="color: var(--danger);"></i> Messages récents</h2>
+            <div class="dg-table-container">
+                <table class="dg-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th><th>Expéditeur</th><th>Email</th>
+                            <th>Catégorie</th><th>Sujet</th><th>Statut</th><th>Assigné</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in messages_recents %}
+                        <tr>
+                            <td>{{ msg.date_envoi|date:"d/m/Y H:i" }}</td>
+                            <td>{{ msg.nom }}</td>
+                            <td>{{ msg.email }}</td>
+                            <td><span class="badge badge-{{ msg.categorie|default:'support' }}">{{ msg.get_categorie_display|default:msg.categorie }}</span></td>
+                            <td>{{ msg.sujet|truncatechars:40 }}</td>
+                            <td>
+                                {% if msg.statut == 'non_lu' %}
+                                <span class="badge badge-non-lu">Non lu</span>
+                                {% elif msg.statut == 'lu' %}
+                                <span class="badge badge-lu">Lu</span>
+                                {% elif msg.statut == 'repondu' %}
+                                <span class="badge badge-traite">Traité</span>
+                                {% else %}
+                                <span class="badge">{{ msg.statut }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ msg.assigne_a.get_full_name|default:msg.assigne_a.email|default:"—" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray);">Aucun message récent</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== CANDIDATURES RÉCENTES ==================== -->
+        <div class="dg-section">
+            <h2 class="dg-section-title" style="margin-top:0;"><i class="fas fa-user-plus" style="color: var(--success);"></i> Dernières candidatures</h2>
+            <div class="dg-table-container">
+                <table class="dg-table">
+                    <thead>
+                        <tr><th>Date</th><th>Candidat</th><th>Email</th><th>Poste</th><th>Statut</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for cand in dernieres_candidatures %}
+                        <tr>
+                            <td>{{ cand.date_soumission|date:"d/m/Y" }}</td>
+                            <td><strong>{{ cand.prenom }} {{ cand.nom }}</strong></td>
+                            <td>{{ cand.email }}</td>
+                            <td>{{ cand.poste|truncatechars:40 }}</td>
+                            <td>
+                                {% if cand.statut == 'shortlist' %}
+                                <span class="badge badge-traite">Shortlist</span>
+                                {% elif cand.statut == 'en_attente' %}
+                                <span class="badge badge-lu">En attente</span>
+                                {% elif cand.statut == 'refuse' %}
+                                <span class="badge badge-non-lu">Refusé</span>
+                                {% else %}
+                                <span class="badge">{{ cand.statut }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray);">Aucune candidature</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== MODAL MESSAGE COORDINATEURS ==================== -->
+<div id="messageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:white; border-radius:12px; padding:2rem; max-width:600px; width:90%;">
+        <h3 style="font-family:'Montserrat',sans-serif; margin-bottom:1rem;"><i class="fas fa-bullhorn"></i> Message à tous les coordinateurs</h3>
+        <form id="messageCoordForm" onsubmit="envoyerMessageCoords(event)">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <div style="margin-bottom:1rem;">
+                <label style="font-weight:600;font-size:0.85rem;">Priorité</label>
+                <select id="msgPriorite" style="width:100%;padding:0.6rem;border:1px solid #E9ECEF;border-radius:8px;margin-top:0.3rem;">
+                    <option value="information">Information</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="action">Action requise</option>
+                </select>
+            </div>
+            <div style="margin-bottom:1rem;">
+                <label style="font-weight:600;font-size:0.85rem;">Message</label>
+                <textarea id="msgContenu" rows="4" style="width:100%;padding:0.6rem;border:1px solid #E9ECEF;border-radius:8px;margin-top:0.3rem;font-family:inherit;" placeholder="Votre message à tous les coordinateurs..."></textarea>
+            </div>
+            <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+                <button type="button" onclick="closeMessageModal()" style="padding:0.6rem 1.2rem;background:#E9ECEF;border:none;border-radius:8px;cursor:pointer;">Annuler</button>
+                <button type="submit" style="padding:0.6rem 1.2rem;background:var(--secondary);color:var(--primary);border:none;border-radius:8px;cursor:pointer;font-weight:600;">📨 Envoyer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==================== MODAL STATISTIQUES ==================== -->
+<div id="statsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:white; border-radius:12px; padding:2rem; max-width:600px; width:90%; max-height:80vh; overflow-y:auto;">
+        <h3 style="font-family:'Montserrat',sans-serif; margin-bottom:1rem;"><i class="fas fa-chart-pie"></i> Statistiques avancées</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div><strong>Messages totaux :</strong> {{ total_messages }}</div>
+            <div><strong>Non lus :</strong> {{ messages_non_lus }}</div>
+            <div><strong>Traités :</strong> {{ messages_traites }}</div>
+            <div><strong>Taux traitement :</strong> {% if total_messages > 0 %}{% widthratio messages_traites total_messages 100 %}{% else %}0{% endif %}%</div>
+            <div><strong>Candidatures :</strong> {{ candidatures_total }}</div>
+            <div><strong>Shortlist :</strong> {{ candidatures_shortlist }}</div>
+            <div><strong>En attente :</strong> {{ candidatures_attente }}</div>
+            <div><strong>Refusées :</strong> {{ candidatures_refusees }}</div>
+            <div><strong>Coordinateurs :</strong> {{ total_coordinateurs }}</div>
+            <div><strong>Gestionnaires :</strong> {{ total_gestionnaires }}</div>
+            <div><strong>Étudiants :</strong> {{ total_etudiants }}</div>
+            <div><strong>Articles :</strong> {{ total_articles }}</div>
+            <div><strong>Discussions :</strong> {{ forum_topics }}</div>
+            <div><strong>Réponses :</strong> {{ forum_replies }}</div>
+        </div>
+        <div style="text-align:right;margin-top:1rem;">
+            <button onclick="closeStatsModal()" style="padding:0.6rem 1.2rem;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;">Fermer</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ==================== GRAPHIQUES ====================
+
+// Graphique Messages
+{% if chart_messages_labels and chart_messages_data %}
+new Chart(document.getElementById('chartMessages'), {
+    type: 'line',
+    data: {
+        labels: {{ chart_messages_labels|safe }},
+        datasets: [{
+            label: 'Messages',
+            data: {{ chart_messages_data|safe }},
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59,130,246,0.1)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+{% endif %}
+
+// Graphique Départements
+{% if chart_dept_labels and chart_dept_data %}
+new Chart(document.getElementById('chartDept'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ chart_dept_labels|safe }},
+        datasets: [{
+            data: {{ chart_dept_data|safe }},
+            backgroundColor: ['#10B981','#3B82F6','#F59E0B','#8B5CF6','#059669','#EC4899','#6366F1']
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+{% endif %}
+
+// Graphique Candidatures
+{% if chart_candidatures_labels and chart_candidatures_data %}
+new Chart(document.getElementById('chartCandidatures'), {
+    type: 'bar',
+    data: {
+        labels: {{ chart_candidatures_labels|safe }},
+        datasets: [{
+            label: 'Candidatures',
+            data: {{ chart_candidatures_data|safe }},
+            backgroundColor: '#F59E0B',
+            borderRadius: 8
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+{% endif %}
+
+// Graphique Taux traitement
+new Chart(document.getElementById('chartTaux'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Traités', 'En attente'],
+        datasets: [{
+            data: [{{ messages_traites }}, {{ total_messages }} - {{ messages_traites }}],
+            backgroundColor: ['#10b981', '#ef4444']
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+// ==================== MODALS ====================
+
+function openMessageModal() {
+    document.getElementById('messageModal').style.display = 'flex';
+}
+function closeMessageModal() {
+    document.getElementById('messageModal').style.display = 'none';
+}
+function openStatsModal() {
+    document.getElementById('statsModal').style.display = 'flex';
+}
+function closeStatsModal() {
+    document.getElementById('statsModal').style.display = 'none';
+}
+
+// Fermer les modals en cliquant à l'extérieur
+document.getElementById('messageModal').addEventListener('click', function(e) {
+    if (e.target === this) closeMessageModal();
+});
+document.getElementById('statsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeStatsModal();
+});
+
+// ==================== ACTIONS ====================
+
+function envoyerMessageCoords(event) {
+    event.preventDefault();
+    const priorite = document.getElementById('msgPriorite').value;
+    const contenu = document.getElementById('msgContenu').value;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    if (!contenu.trim()) {
+        showToast('Veuillez saisir un message.', 'error');
+        return;
+    }
+
+    fetch('{% url "gestion:dg_message_coordinateurs" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf
+        },
+        body: JSON.stringify({ priorite: priorite, message: contenu })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast('✅ Message envoyé à tous les coordinateurs', 'success');
+            closeMessageModal();
+            document.getElementById('msgContenu').value = '';
+        } else {
+            showToast('❌ Erreur : ' + (data.error || 'Inconnue'), 'error');
+        }
+    })
+    .catch(() => showToast('❌ Erreur réseau', 'error'));
+}
+
+function archiverMessages() {
+    if (!confirm('Archiver tous les messages de plus de 30 jours ?')) return;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch('{% url "gestion:dg_archiver_messages" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrf }
+    })
+    .then(r => r.json())
+    .then(data => {
+        showToast(data.message || '✅ ' + data.count + ' messages archivés', 'success');
+        setTimeout(() => location.reload(), 1500);
+    });
+}
+
+function auditerDepartement() {
+    const dept = prompt('Nom du département à auditer ?\n(pedagogie, technique, marketing, support, operations, qualite)');
+    if (!dept) return;
+    window.location.href = '{% url "gestion:dg_auditer_departement" %}?departement=' + encodeURIComponent(dept);
+}
+
+function validerBudget() {
+    if (!confirm('⚠️ Action critique : Valider le budget mensuel ?')) return;
+
+    // Redirection vers validation secondaire
+    fetch('{% url "gestion:dg_valider_budget" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.redirect) {
+            window.location.href = data.redirect;
+        } else {
+            showToast('✅ Budget validé', 'success');
+        }
+    });
+}
+
+function creerAlerte() {
+    const type = prompt('Type d\'alerte ?\n1. Maintenance\n2. Urgence\n3. Information');
+    if (!type) return;
+    const message = prompt('Message de l\'alerte :');
+    if (!message) return;
+
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch('{% url "gestion:dg_creer_alerte" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf
+        },
+        body: JSON.stringify({ type: type, message: message })
+    })
+    .then(r => r.json())
+    .then(data => {
+        showToast(data.message || '✅ Alerte créée', 'success');
+    });
+}
+
+function ajouterPartenaire() {
+    const nom = prompt('Nom du partenaire :');
+    if (!nom) return;
+    const email = prompt('Email du partenaire :');
+    if (!email) return;
+    const type = prompt('Type de partenariat (academique, corporate, media) :', 'corporate');
+
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch('{% url "gestion:dg_ajouter_partenaire" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf
+        },
+        body: JSON.stringify({ nom: nom, email: email, type: type || 'corporate' })
+    })
+    .then(r => r.json())
+    .then(data => {
+        showToast(data.message || '✅ Partenaire ajouté', 'success');
+    });
+}
+
+function viderCache() {
+    if (!confirm('Vider le cache du site ?')) return;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch('{% url "gestion:dg_vider_cache" %}', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrf }
+    })
+    .then(r => r.json())
+    .then(data => {
+        showToast(data.message || '✅ Cache vidé', 'success');
+    });
+}
+
+// ==================== TOAST ====================
+
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.background = type === 'error' ? '#ef4444' : '#10b981';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+</script>
+{% endblock %}
