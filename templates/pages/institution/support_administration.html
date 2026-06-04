@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Support & Administration — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dept-primary: #8B5CF6;
+        --dept-dark: #7C3AED;
+        --dept-light: #f3e8ff;
+        --dept-border: #e9d5ff;
+    }
+
+    .welcome-banner {
+        background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        color: white; padding: 1.5rem 2rem; border-radius: 16px; margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(139,92,246,0.2);
+    }
+    .welcome-banner h1 { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem; }
+    .welcome-banner p { opacity: 0.9; font-size: 0.9rem; }
+
+    .security-alert {
+        background: #FFF8E6; border-left: 4px solid #f59e0b;
+        padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem;
+        display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: #92400e;
+    }
+    .security-alert i { color: #f59e0b; font-size: 1.2rem; margin-top: 0.1rem; }
+
+    .stats-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative;
+    }
+    .stat-card.alert-orange { border-left: 4px solid #f59e0b; background: #FFFDF5; }
+    .stat-card.alert-red { border-left: 4px solid #ef4444; background: #FFF5F5; }
+    .stat-card.alert-green { border-left: 4px solid #8B5CF6; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #0F1C2E; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; }
+    .stat-threshold {
+        font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600;
+    }
+    .stat-threshold.green { background: #ECFDF5; color: #059669; }
+    .stat-threshold.orange { background: #FFF8E6; color: #d97706; }
+    .stat-threshold.red { background: #FEF2F2; color: #dc2626; }
+    .stat-alert-msg { font-size: 0.7rem; color: #ef4444; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+
+    .charts-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .chart-card {
+        background: white; border-radius: 12px; padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .chart-card h3 {
+        font-family: 'Montserrat', sans-serif; font-size: 0.95rem; color: #0F1C2E; margin-bottom: 1rem;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chart-card canvas { max-height: 220px; }
+
+    .section-title {
+        font-size: 1.1rem; color: #0F1C2E; margin: 1.5rem 0 1rem;
+        display: flex; align-items: center; gap: 0.7rem;
+        border-left: 4px solid #8B5CF6; padding-left: 1rem;
+    }
+
+    .quick-actions {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.7rem; margin-bottom: 2rem;
+    }
+    .action-btn {
+        background: white; border: none; border-radius: 12px; padding: 0.7rem 0.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; text-align: center;
+        transition: all 0.3s; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.72rem;
+    }
+    .action-btn:hover { transform: translateY(-3px); background: #8B5CF6; color: white; }
+    .action-btn:hover .action-icon { background: white; color: #8B5CF6; }
+    .action-icon {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 0.5rem; color: white; font-size: 0.8rem;
+        transition: all 0.3s;
+    }
+
+    .table-container {
+        background: white; border-radius: 12px; overflow-x: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #E9ECEF; font-size: 0.8rem; }
+    th { background: #F8F9FA; font-weight: 600; color: #0F1C2E; }
+    .status {
+        display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;
+    }
+    .status-success { background: rgba(16,185,129,0.1); color: #10b981; }
+    .status-warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .status-danger { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .status-info { background: rgba(59,130,246,0.1); color: #3b82f6; }
+
+    .dg-chat {
+        background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+        border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem;
+    }
+
+    .form-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 0.8rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #0F1C2E; margin-bottom: 0.3rem; }
+    .form-control {
+        width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;
+        font-family: inherit; font-size: 0.85rem;
+    }
+    .btn {
+        display: inline-block; padding: 0.5rem 1rem; border-radius: 8px;
+        font-weight: 600; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif;
+        font-size: 0.8rem; transition: all 0.3s; text-decoration: none;
+    }
+    .btn-primary { background: #8B5CF6; color: white; }
+    .btn-primary:hover { background: #7C3AED; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.7rem; }
+
+    .chat-container {
+        background: white; border-radius: 12px; overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+        display: flex; flex-direction: column; height: 300px;
+    }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+    .chat-msg { max-width: 75%; padding: 0.6rem 0.8rem; border-radius: 12px; font-size: 0.8rem; }
+    .chat-msg.sent { align-self: flex-end; background: #8B5CF6; color: white; }
+    .chat-msg.received { align-self: flex-start; background: #F8F9FA; border: 1px solid #E9ECEF; }
+    .chat-input { display: flex; padding: 0.8rem; border-top: 1px solid #E9ECEF; gap: 0.5rem; }
+    .chat-input input { flex: 1; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 20px; }
+
+    @media (max-width: 768px) {
+        .charts-grid { grid-template-columns: 1fr; }
+        .quick-actions { grid-template-columns: repeat(3, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="padding: 2rem 0;">
+
+    <section class="welcome-banner">
+        <h1><i class="fas fa-headset"></i> Support & Administration</h1>
+        <p>Gérez les tickets, le support utilisateur, les comptes et la base de connaissances.</p>
+    </section>
+
+    <div class="security-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>Rappel de sécurité — Ne partagez jamais vos identifiants</strong>
+            <p style="margin:0.3rem 0 0;">Article 7.3 des CGU. Toute connexion est tracée dans le journal d'audit immutable.</p>
+        </div>
+    </div>
+
+    <!-- Statistiques avec seuils -->
+    <div class="stats-grid">
+        <div class="stat-card {% if tickets_ouverts > 15 %}alert-red{% elif tickets_ouverts > 8 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header">
+                <span class="stat-label">Tickets ouverts</span>
+                <span class="stat-threshold {% if tickets_ouverts > 15 %}red{% elif tickets_ouverts > 8 %}orange{% else %}green{% endif %}">Seuil: 15</span>
+            </div>
+            <div class="stat-value">{{ tickets_ouverts }}</div>
+            {% if tickets_ouverts > 15 %}<div class="stat-alert-msg"><i class="fas fa-exclamation-circle"></i> Trop de tickets en attente</div>{% endif %}
+        </div>
+        <div class="stat-card {% if temps_reponse > 48 %}alert-red{% elif temps_reponse > 24 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header">
+                <span class="stat-label">Temps réponse moyen</span>
+                <span class="stat-threshold {% if temps_reponse > 48 %}red{% elif temps_reponse > 24 %}orange{% else %}green{% endif %}">Seuil: 48h</span>
+            </div>
+            <div class="stat-value">{{ temps_reponse }}h</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Satisfaction support</span></div>
+            <div class="stat-value">{{ satisfaction_support }}/5</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Utilisateurs actifs</span></div>
+            <div class="stat-value">{{ utilisateurs_actifs }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Articles base connaissance</span></div>
+            <div class="stat-value">{{ articles_base }}</div>
+        </div>
+    </div>
+
+    <!-- 4 Graphiques -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-ticket-alt" style="color:#8B5CF6;"></i> Tickets par priorité</h3>
+            <canvas id="chartTickets"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-clock" style="color:#8B5CF6;"></i> Temps de résolution</h3>
+            <canvas id="chartTemps"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-star" style="color:#8B5CF6;"></i> Satisfaction mensuelle</h3>
+            <canvas id="chartSatisfaction"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-users" style="color:#8B5CF6;"></i> Tickets par catégorie</h3>
+            <canvas id="chartCategories"></canvas>
+        </div>
+    </div>
+
+    <!-- 15 Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="handleAction('creer_ticket')"><div class="action-icon"><i class="fas fa-ticket-alt"></i></div><strong>Nouveau ticket</strong></button>
+        <button class="action-btn" onclick="handleAction('base_connaissances')"><div class="action-icon"><i class="fas fa-book"></i></div><strong>Base connaissances</strong></button>
+        <button class="action-btn" onclick="handleAction('maj_faq')"><div class="action-icon"><i class="fas fa-question-circle"></i></div><strong>Mise à jour FAQ</strong></button>
+        <button class="action-btn" onclick="handleAction('rapport_support')"><div class="action-icon"><i class="fas fa-chart-line"></i></div><strong>Rapport</strong></button>
+        <button class="action-btn" onclick="handleAction('ajouter_utilisateur')"><div class="action-icon"><i class="fas fa-user-plus"></i></div><strong>Ajouter utilisateur</strong></button>
+        <button class="action-btn" onclick="handleAction('gerer_roles')"><div class="action-icon"><i class="fas fa-user-tag"></i></div><strong>Gérer rôles</strong></button>
+        <button class="action-btn" onclick="handleAction('certificats')"><div class="action-icon"><i class="fas fa-certificate"></i></div><strong>Certificats</strong></button>
+        <button class="action-btn" onclick="handleAction('email_utilisateurs')"><div class="action-icon"><i class="fas fa-envelope"></i></div><strong>Email</strong></button>
+        <button class="action-btn" onclick="handleAction('logs_support')"><div class="action-icon"><i class="fas fa-file-alt"></i></div><strong>Logs</strong></button>
+        <button class="action-btn" onclick="handleAction('sauvegarde')"><div class="action-icon"><i class="fas fa-database"></i></div><strong>Sauvegarde</strong></button>
+        <button class="action-btn" onclick="handleAction('statistiques')"><div class="action-icon"><i class="fas fa-chart-simple"></i></div><strong>Statistiques</strong></button>
+        <button class="action-btn" onclick="handleAction('moderer_forum')"><div class="action-icon"><i class="fas fa-gavel"></i></div><strong>Modération</strong></button>
+        <button class="action-btn" onclick="handleAction('exporter_logs')"><div class="action-icon"><i class="fas fa-download"></i></div><strong>Exporter</strong></button>
+        <button class="action-btn" onclick="handleAction('audit_securite')"><div class="action-icon"><i class="fas fa-shield-alt"></i></div><strong>Sécurité</strong></button>
+        <button class="action-btn" onclick="handleAction('maintenance')"><div class="action-icon"><i class="fas fa-tools"></i></div><strong>Maintenance</strong></button>
+    </div>
+
+    <!-- Tickets actifs -->
+    <h2 class="section-title"><i class="fas fa-ticket-alt"></i> Tickets actifs</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Utilisateur</th><th>Sujet</th><th>Priorité</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td><code>#{{ ticket.id }}</code></td><td>{{ ticket.utilisateur }}</td><td>{{ ticket.sujet }}</td>
+                    <td>{% if ticket.priorite == 'urgent' %}<span class="status status-danger">Urgent</span>{% elif ticket.priorite == 'moyen' %}<span class="status status-warning">Moyen</span>{% else %}<span class="status status-info">Faible</span>{% endif %}</td>
+                    <td>{% if ticket.resolu %}<span class="status status-success">Résolu</span>{% else %}<span class="status status-warning">En cours</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-primary">👁️</button> <button class="btn btn-sm" style="background:#10B981;color:white;">✅</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="6" style="text-align:center;padding:2rem;color:#6C757D;">Aucun ticket.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Chat support en direct -->
+    <h2 class="section-title"><i class="fas fa-comments"></i> Support en direct</h2>
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            {% for msg in chat_messages %}
+            <div class="chat-msg {% if msg.expediteur == user %}sent{% else %}received{% endif %}">
+                <strong style="font-size:0.7rem;">{{ msg.expediteur_nom }}</strong>
+                <p style="margin:0.2rem 0;">{{ msg.contenu }}</p>
+                <small style="opacity:0.7;">{{ msg.date|date:"H:i" }}</small>
+            </div>
+            {% empty %}
+            <p style="text-align:center;color:#6C757D;">Aucune conversation en cours.</p>
+            {% endfor %}
+        </div>
+        <form class="chat-input" method="post" action="{% url 'gestion:support_envoyer_chat' %}">
+            {% csrf_token %}
+            <input type="text" name="message" placeholder="Tapez votre réponse..." required>
+            <button type="submit" class="btn btn-primary" style="border-radius:50%;width:35px;height:35px;padding:0;"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <!-- Communication Direction -->
+    <h2 class="section-title"><i class="fas fa-comments"></i> Communication avec la Direction</h2>
+    <div class="dg-chat">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(139,92,246,0.3);">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#FF6B35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">DG</div>
+            <strong>Direction Générale</strong>
+        </div>
+        {% for msg in dg_messages %}
+        <div style="background:white;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border-left:3px solid #D4AF37;"><small style="color:#6C757D;">{{ msg.date|date:"d/m/Y H:i" }}</small><p style="margin-top:0.3rem;">{{ msg.contenu }}</p></div>
+        {% empty %}<p style="color:#6C757D;text-align:center;">Aucun message.</p>{% endfor %}
+    </div>
+
+    <!-- Contacter le coordinateur -->
+    <h2 class="section-title"><i class="fas fa-user-tie"></i> Contacter votre coordinateur</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'messaging:envoyer_coordinateur' %}">
+            {% csrf_token %}<input type="hidden" name="departement" value="support">
+            <div class="form-group"><label>Message à votre coordinateur</label><textarea name="message" rows="2" class="form-control" placeholder="Votre message..."></textarea></div>
+            <button type="submit" class="btn btn-primary">📨 Envoyer au coordinateur</button>
+        </form>
+        <p style="font-size:0.75rem;color:#6C757D;margin-top:0.5rem;"><i class="fas fa-info-circle"></i> Les gestionnaires communiquent avec leur coordinateur. Le coordinateur relaie à la Direction si nécessaire.</p>
+    </div>
+
+    <!-- Créer un ticket -->
+    <h2 class="section-title"><i class="fas fa-plus-circle"></i> Créer un ticket</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'gestion: support_creer_ticket' %}">
+            {% csrf_token %}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group"><label>Utilisateur</label><input type="text" name="utilisateur" class="form-control" placeholder="Nom de l'utilisateur" required></div>
+                <div class="form-group"><label>Priorité</label><select name="priorite" class="form-control"><option value="faible">Faible</option><option value="moyen">Moyen</option><option value="urgent">Urgent</option></select></div>
+            </div>
+            <div class="form-group"><label>Sujet</label><input type="text" name="sujet" class="form-control" placeholder="Objet du ticket" required></div>
+            <div class="form-group"><label>Description</label><textarea name="description" rows="2" class="form-control" placeholder="Décrivez le problème..."></textarea></div>
+            <button type="submit" class="btn btn-primary">➕ Créer le ticket</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const chartData = {{ chart_data_json|safe }};
+
+new Chart(document.getElementById('chartTickets'), {
+    type: 'doughnut', data: { labels: ['Urgents', 'Moyens', 'Faibles', 'Résolus'], datasets: [{ data: [chartData.tickets_urgents, chartData.tickets_moyens, chartData.tickets_faibles, chartData.tickets_resolus], backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10B981'] }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartTemps'), {
+    type: 'bar', data: { labels: chartData.mois_labels, datasets: [{ label: 'Heures', data: chartData.temps_resolution, backgroundColor: '#8B5CF6', borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartSatisfaction'), {
+    type: 'line', data: { labels: chartData.mois_labels, datasets: [{ label: 'Satisfaction /5', data: chartData.satisfaction_data, borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.3 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 5 } } }
+});
+new Chart(document.getElementById('chartCategories'), {
+    type: 'bar', data: { labels: chartData.categories_labels, datasets: [{ label: 'Tickets', data: chartData.categories_tickets, backgroundColor: '#8B5CF6', borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+function handleAction(action) {
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(`/support/api/${action}/`, { method: 'POST', headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' } })
+        .then(r => r.json()).then(d => showToast(d.message || 'Action effectuée', d.success ? 'success' : 'error'));
+}
+function showToast(msg, type) {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;bottom:2rem;right:2rem;background:${type==='success'?'#10B981':'#ef4444'};color:white;padding:0.8rem 1.5rem;border-radius:10px;z-index:9999;font-weight:600;`;
+    t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+</script>
+{% endblock %}
