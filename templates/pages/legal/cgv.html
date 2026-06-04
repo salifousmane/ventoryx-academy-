@@ -1,0 +1,676 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Conditions Générales de Vente — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Conditions Générales de Vente de Ventoryx Academy — Abonnements formation aéronautique, paiement Stripe, droit de rétractation 14 jours, garanties légales.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #0077B6;
+        --primary-dark: #005f8a;
+        --secondary: #FF6B35;
+        --secondary-dark: #e55a2b;
+        --dark: #0F1C2E;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --success: #10b981;
+    }
+    
+    .legal-container {
+        max-width: 1280px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    
+    /* En-tête */
+    .legal-header {
+        background: linear-gradient(135deg, var(--dark) 0%, #1E3A5F 100%);
+        color: white;
+        padding: 3rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .legal-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    .legal-header h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .legal-header .version {
+        opacity: 0.8;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .legal-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 2;
+    }
+    .btn-pdf, .btn-print {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-pdf:hover, .btn-print:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+    }
+    
+    /* Layout principal */
+    .legal-content {
+        display: flex;
+        gap: 2rem;
+    }
+    
+    /* Sommaire latéral (desktop) */
+    .legal-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 100px;
+        align-self: flex-start;
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border: 1px solid var(--gray-light);
+    }
+    .legal-sidebar h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary);
+        display: inline-block;
+    }
+    .legal-sidebar ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .legal-sidebar li {
+        margin-bottom: 0.5rem;
+    }
+    .legal-sidebar a {
+        color: var(--gray);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.3s;
+        display: block;
+        padding: 0.3rem 0;
+    }
+    .legal-sidebar a:hover {
+        color: var(--primary);
+    }
+    .legal-sidebar a.active {
+        color: var(--primary);
+        font-weight: 600;
+        border-left: 3px solid var(--primary);
+        padding-left: 0.5rem;
+    }
+    
+    /* Corps des articles */
+    .legal-body {
+        flex: 1;
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    /* Articles */
+    .article {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--gray-light);
+        scroll-margin-top: 80px;
+    }
+    .article:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    .article h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.4rem;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .article h2 i {
+        color: var(--primary);
+        font-size: 1.2rem;
+    }
+    .article h3 {
+        font-size: 1rem;
+        color: var(--primary);
+        margin: 1rem 0 0.5rem;
+        font-weight: 600;
+    }
+    .article p, .article li {
+        color: #495057;
+        line-height: 1.6;
+        font-size: 0.9rem;
+    }
+    .article ul, .article ol {
+        margin: 0.5rem 0 1rem 1.5rem;
+    }
+    .article li {
+        margin-bottom: 0.3rem;
+    }
+    
+    /* Cartes de mise en avant */
+    .highlight-card {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin: 1.5rem 0;
+    }
+    .highlight-card h4 {
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .highlight-card p {
+        color: rgba(255,255,255,0.9);
+    }
+    
+    .info-card {
+        background: var(--bg-light);
+        border-left: 4px solid var(--secondary);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+    
+    /* Tableaux */
+    .table-prices {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .table-prices th, .table-prices td {
+        padding: 0.8rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-light);
+    }
+    .table-prices th {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+    }
+    .table-prices tr:last-child td {
+        border-bottom: none;
+    }
+    .table-prices tr:hover td {
+        background: var(--bg-light);
+    }
+    
+    /* Badges */
+    .badge-obligation {
+        display: inline-block;
+        background: var(--secondary);
+        color: white;
+        font-size: 0.65rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+    }
+    
+    /* Section conformité */
+    .compliance-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+    .compliance-card {
+        background: var(--bg-light);
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .compliance-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    /* Footer légal */
+    .legal-footer {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--gray-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.75rem;
+        color: var(--gray);
+    }
+    .legal-footer .logos {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    .legal-footer .logos img {
+        height: 30px;
+        opacity: 0.7;
+    }
+    
+    /* Accordéon mobile pour sommaire */
+    .mobile-summary {
+        display: none;
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--gray-light);
+        cursor: pointer;
+    }
+    .mobile-summary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+    }
+    .mobile-summary-content {
+        display: none;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        border-top: 1px solid var(--gray-light);
+    }
+    .mobile-summary.open .mobile-summary-content {
+        display: block;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .legal-content {
+            flex-direction: column;
+        }
+        .legal-sidebar {
+            display: none;
+        }
+        .mobile-summary {
+            display: block;
+        }
+        .compliance-grid {
+            grid-template-columns: 1fr;
+        }
+        .legal-header h1 {
+            font-size: 1.6rem;
+        }
+        .legal-body {
+            padding: 1.5rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .legal-container {
+            padding: 0 1rem;
+        }
+        .legal-header {
+            padding: 1.5rem;
+        }
+        .legal-actions {
+            flex-direction: column;
+        }
+        .legal-footer {
+            flex-direction: column;
+            text-align: center;
+        }
+        .table-prices {
+            font-size: 0.8rem;
+        }
+        .table-prices th, .table-prices td {
+            padding: 0.5rem;
+        }
+    }
+    
+    @media print {
+        .navbar, .footer, .legal-actions, .legal-sidebar, .mobile-summary, .scroll-buttons {
+            display: none !important;
+        }
+        .legal-container {
+            margin: 0;
+            padding: 0;
+        }
+        .legal-header {
+            background: var(--dark);
+            color: black;
+        }
+        .legal-body {
+            box-shadow: none;
+            padding: 0;
+        }
+        .article {
+            page-break-inside: avoid;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="legal-container">
+    <!-- En-tête -->
+    <div class="legal-header">
+        <h1>Conditions Générales de Vente</h1>
+        <div class="version">Version 1.0 — Applicable à compter du 1er janvier 2025</div>
+        <div class="legal-actions">
+            <button class="btn-pdf" onclick="window.print()">
+                <i class="fas fa-file-pdf"></i> Télécharger PDF
+            </button>
+            <button class="btn-print" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimer
+            </button>
+        </div>
+    </div>
+    
+    <!-- Sommaire mobile (accordéon) -->
+    <div class="mobile-summary" onclick="toggleMobileSummary(this)">
+        <div class="mobile-summary-header">
+            <span><i class="fas fa-list"></i> Sommaire</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="mobile-summary-content">
+            <a href="#article1">Article 1 — Champ d'application</a>
+            <a href="#article2">Article 2 — Abonnements proposés</a>
+            <a href="#article3">Article 3 — Prix</a>
+            <a href="#article4">Article 4 — Souscription et paiement</a>
+            <a href="#article5">Article 5 — Délai de rétractation</a>
+            <a href="#article6">Article 6 — Renouvellement et résiliation</a>
+            <a href="#article7">Article 7 — Accès aux formations</a>
+            <a href="#article8">Article 8 — Garanties légales</a>
+            <a href="#article9">Article 9 — Propriété intellectuelle</a>
+            <a href="#article10">Article 10 — Protection des données</a>
+            <a href="#article11">Article 11 — Droit applicable et litiges</a>
+            <a href="#article12">Article 12 — Contact</a>
+        </div>
+    </div>
+    
+    <!-- Layout principal -->
+    <div class="legal-content">
+        <!-- Sommaire latéral (desktop) -->
+        <div class="legal-sidebar">
+            <h3>Sommaire</h3>
+            <ul>
+                <li><a href="#article1">Article 1 — Champ d'application</a></li>
+                <li><a href="#article2">Article 2 — Abonnements proposés</a></li>
+                <li><a href="#article3">Article 3 — Prix</a></li>
+                <li><a href="#article4">Article 4 — Souscription et paiement</a></li>
+                <li><a href="#article5">Article 5 — Délai de rétractation</a></li>
+                <li><a href="#article6">Article 6 — Renouvellement et résiliation</a></li>
+                <li><a href="#article7">Article 7 — Accès aux formations</a></li>
+                <li><a href="#article8">Article 8 — Garanties légales</a></li>
+                <li><a href="#article9">Article 9 — Propriété intellectuelle</a></li>
+                <li><a href="#article10">Article 10 — Protection des données</a></li>
+                <li><a href="#article11">Article 11 — Droit applicable et litiges</a></li>
+                <li><a href="#article12">Article 12 — Contact</a></li>
+            </ul>
+        </div>
+        
+        <!-- Corps des articles -->
+        <div class="legal-body">
+            <!-- Article 1 -->
+            <div id="article1" class="article">
+                <h2><i class="fas fa-balance-scale"></i> Article 1 — Champ d'application</h2>
+                <p>Les présentes Conditions Générales de Vente (ci-après "CGV") régissent l'ensemble des ventes d'abonnements aux formations proposées par <strong>{{ site_name }}</strong> (ci-après "le Prestataire").</p>
+                <p>Elles s'appliquent à tout utilisateur (ci-après "le Client") souhaitant souscrire à un abonnement via le site internet {{ site_name }}.</p>
+                <p>Toute souscription d'abonnement implique l'acceptation sans réserve des présentes CGV par le Client.</p>
+                
+                <div class="info-card">
+                    <strong>📌 Distinction B2C / B2B :</strong> Les présentes CGV s'appliquent aux particuliers (consommateurs). Pour les professionnels (entreprises), des conditions spécifiques peuvent être convenues par contrat écrit.
+                </div>
+            </div>
+            
+            <!-- Article 2 -->
+            <div id="article2" class="article">
+                <h2><i class="fas fa-graduation-cap"></i> Article 2 — Abonnements proposés</h2>
+                <p>{{ site_name }} propose trois formules d'abonnement pour l'accès aux formations aéronautiques :</p>
+                
+                <table class="table-prices">
+                    <thead>
+                        <tr><th>Formule</th><th>Prix TTC</th><th>Parcours inclus</th><th>Caractéristiques</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Gratuit</td><td>0€</td><td>Contrôleur aérien + Technicien</td><td>Accès limité, sans certification</td></tr>
+                        <tr><td>Mensuel</td><td>29€</td><td>Tous les parcours</td><td>Résiliable à tout moment</td></tr>
+                        <tr><td>Annuel</td><td>288€</td><td>Tous les parcours + Formation avancée</td><td>2 mois offerts, économie de 33%</td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="highlight-card">
+                    <h4><i class="fas fa-info-circle"></i> Information importante</h4>
+                    <p>Les abonnements sont à utilisation personnelle et non transférables. Le partage de compte est strictement interdit et peut entraîner la résiliation immédiate de l'abonnement sans remboursement.</p>
+                </div>
+            </div>
+            
+            <!-- Article 3 -->
+            <div id="article3" class="article">
+                <h2><i class="fas fa-euro-sign"></i> Article 3 — Prix</h2>
+                <p>Les prix sont indiqués en euros <strong>toutes taxes comprises (TTC)</strong>. {{ site_name }} se réserve le droit de modifier ses prix à tout moment, étant entendu que le prix facturé au Client est celui en vigueur au moment de la souscription.</p>
+                <p>Le paiement est effectué en ligne via la plateforme sécurisée <strong>Stripe</strong> (certifiée PCI-DSS Level 1). Aucun frais supplémentaire n'est appliqué.</p>
+            </div>
+            
+            <!-- Article 4 -->
+            <div id="article4" class="article">
+                <h2><i class="fas fa-credit-card"></i> Article 4 — Souscription et paiement</h2>
+                <p>La souscription d'un abonnement s'effectue en ligne sur le site {{ site_name }} via la page dédiée. Le Client doit :</p>
+                <ol>
+                    <li>Créer un compte utilisateur (ou se connecter)</li>
+                    <li>Sélectionner la formule souhaitée (Mensuelle ou Annuelle)</li>
+                    <li>Renseigner ses coordonnées de paiement (carte bancaire via Stripe)</li>
+                    <li>Accepter les présentes CGV</li>
+                    <li>Confirmer la souscription</li>
+                </ol>
+                <p>Le paiement est immédiat et sécurisé. Un email de confirmation est envoyé au Client après validation.</p>
+            </div>
+            
+            <!-- Article 5 -->
+            <div id="article5" class="article">
+                <h2><i class="fas fa-undo-alt"></i> Article 5 — Délai de rétractation</h2>
+                <p>Conformément à l'article L221-18 du Code de la consommation, le Client dispose d'un <strong>délai de 14 jours</strong> à compter de la souscription pour exercer son droit de rétractation, sans avoir à justifier de motifs ni à payer de pénalités.</p>
+                
+                <div class="highlight-card">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Exception pour les services exécutés immédiatement</h4>
+                    <p>Conformément à l'article L221-28 du Code de la consommation, si le Client accède aux formations <strong>avant la fin du délai de rétractation</strong> (accès immédiat aux cours), il renonce expressément à son droit de rétractation.</p>
+                </div>
+                
+                <div class="info-card">
+                    <strong>Formulaire de rétractation type :</strong><br>
+                    À l'attention de {{ site_name }} — <a href="mailto:contact@{{ domain }}">contact@{{ domain }}</a><br>
+                    Je, soussigné(e) [nom], notifie par la présente ma rétractation du contrat portant sur l'abonnement souscrit le [date].<br>
+                    Signature : [nom]
+                </div>
+            </div>
+            
+            <!-- Article 6 -->
+            <div id="article6" class="article">
+                <h2><i class="fas fa-sync-alt"></i> Article 6 — Renouvellement et résiliation</h2>
+                <h3>6.1 Abonnement Mensuel</h3>
+                <p>L'abonnement mensuel est reconduit tacitement chaque mois. Le Client peut résilier à tout moment depuis son espace utilisateur. La résiliation prend effet à la fin de la période en cours. Aucun remboursement n'est dû pour la période partiellement écoulée.</p>
+                
+                <h3>6.2 Abonnement Annuel</h3>
+                <p>L'abonnement annuel est reconduit tacitement chaque année. Le Client peut résilier au moins 7 jours avant la date de renouvellement. En cas de résiliation en cours d'année, aucun remboursement n'est dû pour la période restante.</p>
+                
+                <h3>6.3 Résiliation par {{ site_name }}</h3>
+                <p>{{ site_name }} se réserve le droit de résilier immédiatement un abonnement en cas de non-paiement ou de violation grave des CGU.</p>
+            </div>
+            
+            <!-- Article 7 -->
+            <div id="article7" class="article">
+                <h2><i class="fas fa-laptop"></i> Article 7 — Accès aux formations</h2>
+                <p>L'accès aux formations est <strong>personnel, non cessible et non transférable</strong>. Le Client s'interdit de partager ses identifiants de connexion ou de diffuser les contenus des formations.</p>
+                <p>Les formations sont accessibles 24h/24, 7j/7, sous réserve des interruptions techniques nécessaires à la maintenance.</p>
+            </div>
+            
+            <!-- Article 8 — GARANTIES LÉGALES (NOUVEAU) -->
+            <div id="article8" class="article">
+                <h2><i class="fas fa-shield-alt"></i> Article 8 — Garanties légales</h2>
+                
+                <div class="compliance-grid">
+                    <div class="compliance-card">
+                        <div class="compliance-icon"><i class="fas fa-check"></i></div>
+                        <div>
+                            <strong>Garantie légale de conformité</strong>
+                            <p style="margin:0; font-size:0.8rem;">Articles L217-4 à L217-14 du Code de la consommation</p>
+                        </div>
+                    </div>
+                    <div class="compliance-card">
+                        <div class="compliance-icon"><i class="fas fa-check"></i></div>
+                        <div>
+                            <strong>Garantie des vices cachés</strong>
+                            <p style="margin:0; font-size:0.8rem;">Articles 1641 à 1648 du Code civil</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>8.1 Garantie légale de conformité</h3>
+                <p>Le service est conforme au contrat et répond à l'usage attendu. Le Client bénéficie d'un délai de <strong>2 ans</strong> à compter de la souscription pour agir en cas de non-conformité. En cas de non-conformité, le Client peut choisir entre la réparation ou le remplacement du service, ou le remboursement si impossible.</p>
+                
+                <h3>8.2 Garantie des vices cachés</h3>
+                <p>Le Client bénéficie de la garantie légale des vices cachés (article 1641 du Code civil). Si un défaut caché rend le service impropre à son usage, le Client peut demander le remboursement intégral.</p>
+            </div>
+            
+            <!-- Article 9 — PROPRIÉTÉ INTELLECTUELLE (NOUVEAU) -->
+            <div id="article9" class="article">
+                <h2><i class="fas fa-copyright"></i> Article 9 — Propriété intellectuelle</h2>
+                <p>Tous les contenus des formations (textes, images, vidéos, quiz, supports pédagogiques) sont la propriété exclusive de {{ site_name }} et sont protégés par le droit d'auteur et la propriété intellectuelle.</p>
+                <p>Le Client s'interdit de copier, reproduire, distribuer, ou exploiter commercialement tout ou partie des contenus sans autorisation écrite.</p>
+            </div>
+            
+            <!-- Article 10 — PROTECTION DES DONNÉES (NOUVEAU) -->
+            <div id="article10" class="article">
+                <h2><i class="fas fa-lock"></i> Article 10 — Protection des données personnelles</h2>
+                <p>Conformément au RGPD, {{ site_name }} collecte et traite les données personnelles des Clients pour la gestion des abonnements. Le Client dispose d'un droit d'accès, de rectification et de suppression de ses données.</p>
+                <p>Pour plus d'informations, consultez notre <a href="{% url 'core:page_legale' type_page='confidentialite' %}">Politique de confidentialité</a>.</p>
+            </div>
+            
+            <!-- Article 11 -->
+            <div id="article11" class="article">
+                <h2><i class="fas fa-gavel"></i> Article 11 — Droit applicable et litiges</h2>
+                <p>Les présentes CGV sont régies par le <strong>droit français</strong>. En cas de litige, une solution amiable sera recherchée avant toute action judiciaire.</p>
+                
+                <div class="info-card">
+                    <strong>Médiation de la consommation :</strong><br>
+                    Conformément à l'article L612-1 du Code de la consommation, le Client peut recourir à un médiateur :<br>
+                    <strong>CNPM - Médiation de la consommation</strong><br>
+                    27 avenue de la Grande Armée, 75116 Paris<br>
+                    <a href="https://www.cnpm-mediation-consommation.eu" target="_blank">www.cnpm-mediation-consommation.eu</a>
+                </div>
+                
+                <p>Le Client peut également saisir la plateforme de Règlement en Ligne des Litiges (RLL) : <a href="https://ec.europa.eu/consumers/odr/" target="_blank">https://ec.europa.eu/consumers/odr/</a></p>
+            </div>
+            
+            <!-- Article 12 -->
+            <div id="article12" class="article">
+                <h2><i class="fas fa-envelope"></i> Article 12 — Contact</h2>
+                <p>Pour toute question relative aux présentes CGV, le Client peut contacter {{ site_name }} :</p>
+                <ul>
+                    <li><strong>Email :</strong> <a href="mailto:contact@{{ domain }}">contact@{{ domain }}</a></li>
+                    <li><strong>Formulaire de contact :</strong> <a href="{% url 'core:support:contact' %}">Page de contact</a></li>
+                    <li><strong>Réponse garantie :</strong> sous 48h ouvrées</li>
+                </ul>
+            </div>
+            
+            <!-- Footer légal -->
+            <div class="legal-footer">
+                <div class="logos">
+                    <img src="{% static 'images/stripe-logo.png' %}" alt="Stripe" onerror="this.style.display='none'">
+                    <img src="{% static 'images/rgpd-logo.png' %}" alt="RGPD" onerror="this.style.display='none'">
+                    <span style="font-size:0.7rem;">🔒 Paiement 100% sécurisé</span>
+                </div>
+                <div>
+                    <strong>Informations légales :</strong><br>
+                    {{ site_name }} — SIRET : [À compléter] — RCS [À compléter] — TVA : [À compléter]<br>
+                    Hébergeur : [À compléter]
+                </div>
+                <div>
+                    Dernière mise à jour : 1er janvier 2025
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sommaire mobile accordéon
+    function toggleMobileSummary(element) {
+        element.classList.toggle('open');
+    }
+    
+    // Active link highlighting dans le sommaire (scroll spy)
+    const sections = document.querySelectorAll('.article');
+    const navLinks = document.querySelectorAll('.legal-sidebar a');
+    
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            if (scrollY >= sectionTop) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+{% endblock %}
