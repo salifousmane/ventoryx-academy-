@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Développement & Technique — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dept-primary: #3B82F6;
+        --dept-dark: #2563EB;
+        --dept-light: #eff6ff;
+        --dept-border: #dbeafe;
+    }
+
+    .welcome-banner {
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        color: white; padding: 1.5rem 2rem; border-radius: 16px; margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(59,130,246,0.2);
+    }
+    .welcome-banner h1 { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem; }
+    .welcome-banner p { opacity: 0.9; font-size: 0.9rem; }
+
+    .security-alert {
+        background: #FFF8E6; border-left: 4px solid #f59e0b;
+        padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem;
+        display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: #92400e;
+    }
+    .security-alert i { color: #f59e0b; font-size: 1.2rem; margin-top: 0.1rem; }
+
+    .stats-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative;
+    }
+    .stat-card.alert-orange { border-left: 4px solid #f59e0b; background: #FFFDF5; }
+    .stat-card.alert-red { border-left: 4px solid #ef4444; background: #FFF5F5; }
+    .stat-card.alert-green { border-left: 4px solid #3B82F6; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #0F1C2E; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; }
+    .stat-threshold {
+        font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600;
+    }
+    .stat-threshold.green { background: #ECFDF5; color: #059669; }
+    .stat-threshold.orange { background: #FFF8E6; color: #d97706; }
+    .stat-threshold.red { background: #FEF2F2; color: #dc2626; }
+    .stat-alert-msg { font-size: 0.7rem; color: #ef4444; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+
+    .charts-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .chart-card {
+        background: white; border-radius: 12px; padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .chart-card h3 {
+        font-family: 'Montserrat', sans-serif; font-size: 0.95rem; color: #0F1C2E; margin-bottom: 1rem;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chart-card canvas { max-height: 220px; }
+
+    .section-title {
+        font-size: 1.1rem; color: #0F1C2E; margin: 1.5rem 0 1rem;
+        display: flex; align-items: center; gap: 0.7rem;
+        border-left: 4px solid #3B82F6; padding-left: 1rem;
+    }
+
+    .quick-actions {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.7rem; margin-bottom: 2rem;
+    }
+    .action-btn {
+        background: white; border: none; border-radius: 12px; padding: 0.7rem 0.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; text-align: center;
+        transition: all 0.3s; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.72rem;
+    }
+    .action-btn:hover { transform: translateY(-3px); background: #3B82F6; color: white; }
+    .action-btn:hover .action-icon { background: white; color: #3B82F6; }
+    .action-icon {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 0.5rem; color: white; font-size: 0.8rem;
+        transition: all 0.3s;
+    }
+
+    .table-container {
+        background: white; border-radius: 12px; overflow-x: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #E9ECEF; font-size: 0.8rem; }
+    th { background: #F8F9FA; font-weight: 600; color: #0F1C2E; }
+    .status {
+        display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;
+    }
+    .status-success { background: rgba(16,185,129,0.1); color: #10b981; }
+    .status-warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .status-danger { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .status-info { background: rgba(59,130,246,0.1); color: #3b82f6; }
+
+    .progress-bar {
+        background: #E9ECEF; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 0.3rem;
+    }
+    .progress-fill { height: 100%; background: #3B82F6; border-radius: 3px; }
+
+    .dg-chat {
+        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem;
+    }
+
+    .form-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 0.8rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #0F1C2E; margin-bottom: 0.3rem; }
+    .form-control {
+        width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;
+        font-family: inherit; font-size: 0.85rem;
+    }
+    .btn {
+        display: inline-block; padding: 0.5rem 1rem; border-radius: 8px;
+        font-weight: 600; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif;
+        font-size: 0.8rem; transition: all 0.3s; text-decoration: none;
+    }
+    .btn-primary { background: #3B82F6; color: white; }
+    .btn-primary:hover { background: #2563EB; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.7rem; }
+
+    @media (max-width: 768px) {
+        .charts-grid { grid-template-columns: 1fr; }
+        .quick-actions { grid-template-columns: repeat(3, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="padding: 2rem 0;">
+
+    <section class="welcome-banner">
+        <h1><i class="fas fa-code"></i> Développement & Technique</h1>
+        <p>Supervisez les serveurs, les déploiements, les bugs et la sécurité.</p>
+    </section>
+
+    <div class="security-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>Rappel de sécurité — Ne partagez jamais vos identifiants</strong>
+            <p style="margin:0.3rem 0 0;">Article 7.3 des CGU. Toute connexion est tracée dans le journal d'audit immutable.</p>
+        </div>
+    </div>
+
+    <!-- Statistiques avec seuils -->
+    <div class="stats-grid">
+        <div class="stat-card {% if bugs_critiques > 3 %}alert-red{% elif bugs_critiques > 0 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header">
+                <span class="stat-label">Bugs critiques</span>
+                <span class="stat-threshold {% if bugs_critiques > 3 %}red{% elif bugs_critiques > 0 %}orange{% else %}green{% endif %}">Seuil: 3</span>
+            </div>
+            <div class="stat-value">{{ bugs_critiques }}/{{ bugs_total }}</div>
+            {% if bugs_critiques > 3 %}<div class="stat-alert-msg"><i class="fas fa-exclamation-circle"></i> Alerte : bugs critiques non résolus</div>{% endif %}
+        </div>
+        <div class="stat-card {% if disponibilite < 99.5 %}alert-orange{% elif disponibilite < 99 %}alert-red{% else %}alert-green{% endif %}">
+            <div class="stat-header">
+                <span class="stat-label">Disponibilité</span>
+                <span class="stat-threshold {% if disponibilite < 99.5 %}orange{% else %}green{% endif %}">Seuil: 99.5%</span>
+            </div>
+            <div class="stat-value">{{ disponibilite }}%</div>
+        </div>
+        <div class="stat-card {% if taches_retard > 5 %}alert-red{% elif taches_retard > 2 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header"><span class="stat-label">Tâches en retard</span><span class="stat-threshold {% if taches_retard > 5 %}red{% elif taches_retard > 2 %}orange{% else %}green{% endif %}">Seuil: 5</span></div>
+            <div class="stat-value">{{ taches_retard }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Déploiements/mois</span></div>
+            <div class="stat-value">{{ deploiements_mois }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Temps réponse moyen</span></div>
+            <div class="stat-value">{{ temps_reponse }}ms</div>
+        </div>
+    </div>
+
+    <!-- 4 Graphiques -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-server" style="color:#3B82F6;"></i> Charge serveurs</h3>
+            <canvas id="chartCharge"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-bug" style="color:#3B82F6;"></i> Bugs par priorité</h3>
+            <canvas id="chartBugs"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-rocket" style="color:#3B82F6;"></i> Déploiements par mois</h3>
+            <canvas id="chartDeploiements"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-tasks" style="color:#3B82F6;"></i> Progression des tâches</h3>
+            <canvas id="chartTaches"></canvas>
+        </div>
+    </div>
+
+    <!-- 15 Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="handleAction('deployer')"><div class="action-icon"><i class="fas fa-rocket"></i></div><strong>Déployer</strong></button>
+        <button class="action-btn" onclick="handleAction('sauvegarde')"><div class="action-icon"><i class="fas fa-database"></i></div><strong>Sauvegarde</strong></button>
+        <button class="action-btn" onclick="handleAction('signaler_bug')"><div class="action-icon"><i class="fas fa-bug"></i></div><strong>Signaler bug</strong></button>
+        <button class="action-btn" onclick="handleAction('monitoring')"><div class="action-icon"><i class="fas fa-chart-line"></i></div><strong>Monitoring</strong></button>
+        <button class="action-btn" onclick="handleAction('securite')"><div class="action-icon"><i class="fas fa-shield-alt"></i></div><strong>Sécurité</strong></button>
+        <button class="action-btn" onclick="handleAction('logs')"><div class="action-icon"><i class="fas fa-file-alt"></i></div><strong>Logs</strong></button>
+        <button class="action-btn" onclick="handleAction('vider_cache')"><div class="action-icon"><i class="fas fa-broom"></i></div><strong>Vider cache</strong></button>
+        <button class="action-btn" onclick="handleAction('optimisation_sql')"><div class="action-icon"><i class="fas fa-bolt"></i></div><strong>Optimisation SQL</strong></button>
+        <button class="action-btn" onclick="handleAction('tests')"><div class="action-icon"><i class="fas fa-vial"></i></div><strong>Tests</strong></button>
+        <button class="action-btn" onclick="handleAction('api_docs')"><div class="action-icon"><i class="fas fa-book"></i></div><strong>Documentation</strong></button>
+        <button class="action-btn" onclick="handleAction('migration')"><div class="action-icon"><i class="fas fa-exchange-alt"></i></div><strong>Migration BD</strong></button>
+        <button class="action-btn" onclick="handleAction('ssl')"><div class="action-icon"><i class="fas fa-lock"></i></div><strong>Certificat SSL</strong></button>
+        <button class="action-btn" onclick="handleAction('rapport_technique')"><div class="action-icon"><i class="fas fa-chart-simple"></i></div><strong>Rapport</strong></button>
+        <button class="action-btn" onclick="handleAction('audit_securite')"><div class="action-icon"><i class="fas fa-search"></i></div><strong>Audit sécurité</strong></button>
+        <button class="action-btn" onclick="handleAction('redemarrer_service')"><div class="action-icon"><i class="fas fa-sync"></i></div><strong>Redémarrer</strong></button>
+    </div>
+
+    <!-- Statut des serveurs -->
+    <h2 class="section-title"><i class="fas fa-server"></i> Statut des serveurs</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Service</th><th>Statut</th><th>CPU</th><th>RAM</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for server in serveurs %}
+                <tr>
+                    <td><strong>{{ server.nom }}</strong></td>
+                    <td>{% if server.online %}<span class="status status-success">Opérationnel</span>{% else %}<span class="status status-danger">Hors ligne</span>{% endif %}</td>
+                    <td>{{ server.cpu }}%<div class="progress-bar"><div class="progress-fill" style="width:{{ server.cpu }}%;{% if server.cpu > 80 %}background:#ef4444{% elif server.cpu > 60 %}background:#f59e0b{% endif %}"></div></div></td>
+                    <td>{{ server.ram }}%</td>
+                    <td><button class="btn btn-sm btn-primary">🔄</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="5" style="text-align:center;padding:2rem;color:#6C757D;">Aucun serveur.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tâches techniques -->
+    <h2 class="section-title"><i class="fas fa-tasks"></i> Tâches techniques</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Tâche</th><th>Progression</th><th>Priorité</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for tache in taches %}
+                <tr>
+                    <td><strong>{{ tache.titre }}</strong></td>
+                    <td><div class="progress-bar"><div class="progress-fill" style="width:{{ tache.progression }}%"></div></div><small>{{ tache.progression }}%</small></td>
+                    <td>{% if tache.priorite == 'critique' %}<span class="status status-danger">Critique</span>{% elif tache.priorite == 'haute' %}<span class="status status-warning">Haute</span>{% else %}<span class="status status-info">Normale</span>{% endif %}</td>
+                    <td>{% if tache.termine %}<span class="status status-success">Terminé</span>{% else %}<span class="status status-warning">En cours</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-primary">✏️</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="5" style="text-align:center;padding:2rem;color:#6C757D;">Aucune tâche.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bugs -->
+    <h2 class="section-title"><i class="fas fa-bug"></i> Bugs à corriger</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Description</th><th>Priorité</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for bug in bugs %}
+                <tr>
+                    <td><code>#{{ bug.id }}</code></td><td>{{ bug.description }}</td>
+                    <td>{% if bug.priorite == 'critique' %}<span class="status status-danger">Critique</span>{% elif bug.priorite == 'haute' %}<span class="status status-warning">Haute</span>{% else %}<span class="status status-info">Normale</span>{% endif %}</td>
+                    <td>{% if bug.resolu %}<span class="status status-success">Résolu</span>{% else %}<span class="status status-warning">En cours</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-primary">👁️</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="5" style="text-align:center;padding:2rem;color:#6C757D;">Aucun bug.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Communication Direction -->
+    <h2 class="section-title"><i class="fas fa-comments"></i> Communication avec la Direction</h2>
+    <div class="dg-chat">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(59,130,246,0.3);">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#FF6B35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">DG</div>
+            <strong>Direction Générale</strong>
+        </div>
+        {% for msg in dg_messages %}
+        <div style="background:white;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border-left:3px solid #D4AF37;">
+            <small style="color:#6C757D;">{{ msg.date|date:"d/m/Y H:i" }}</small>
+            <p style="margin-top:0.3rem;">{{ msg.contenu }}</p>
+        </div>
+        {% empty %}<p style="color:#6C757D;text-align:center;">Aucun message.</p>{% endfor %}
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-top:1rem;">
+            {% csrf_token %}<input type="hidden" name="departement" value="technique">
+            <textarea name="message" rows="2" class="form-control" placeholder="Message à la Direction..." style="margin-bottom:0.5rem;"></textarea>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Communication équipe -->
+    <h2 class="section-title"><i class="fas fa-users"></i> Communication interne</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'messaging:envoyer_equipe' %}">
+            {% csrf_token %}<input type="hidden" name="departement" value="technique">
+            <div class="form-group">
+                <label>Destinataires</label>
+                <select name="destinataire" class="form-control">
+                    <option value="equipe">Toute l'équipe Technique</option>
+                    <option value="coordinateur">Coordinateur uniquement</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Message</label><textarea name="message" rows="2" class="form-control" placeholder="Votre message..."></textarea></div>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Ajouter une tâche -->
+    <h2 class="section-title"><i class="fas fa-plus-circle"></i> Ajouter une tâche</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'gestion: technique_creer_tache' %}">
+            {% csrf_token %}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group"><label>Nom de la tâche</label><input type="text" name="titre" class="form-control" placeholder="Ex: Mise à jour dépendances" required></div>
+                <div class="form-group"><label>Priorité</label><select name="priorite" class="form-control"><option value="normale">Normale</option><option value="haute">Haute</option><option value="critique">Critique</option></select></div>
+            </div>
+            <button type="submit" class="btn btn-primary">➕ Ajouter la tâche</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const chartData = {{ chart_data_json|safe }};
+
+new Chart(document.getElementById('chartCharge'), {
+    type: 'bar', data: { labels: chartData.serveurs_labels, datasets: [{ label: 'CPU %', data: chartData.serveurs_cpu, backgroundColor: chartData.serveurs_cpu.map(v => v > 80 ? '#ef4444' : v > 60 ? '#f59e0b' : '#3B82F6'), borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
+});
+new Chart(document.getElementById('chartBugs'), {
+    type: 'doughnut', data: { labels: ['Critiques', 'Hauts', 'Normaux', 'Résolus'], datasets: [{ data: [chartData.bugs_critiques, chartData.bugs_hauts, chartData.bugs_normaux, chartData.bugs_resolus], backgroundColor: ['#ef4444', '#f59e0b', '#3B82F6', '#10B981'] }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartDeploiements'), {
+    type: 'line', data: { labels: chartData.mois_labels, datasets: [{ label: 'Déploiements', data: chartData.deploiements_data, borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.3 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartTaches'), {
+    type: 'bar', data: { labels: chartData.taches_labels, datasets: [{ label: 'Progression %', data: chartData.taches_progression, backgroundColor: '#3B82F6', borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
+});
+
+function handleAction(action) {
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(`/technique/api/${action}/`, { method: 'POST', headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' } })
+        .then(r => r.json()).then(d => showToast(d.message || 'Action effectuée', d.success ? 'success' : 'error'));
+}
+function showToast(msg, type) {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;bottom:2rem;right:2rem;background:${type==='success'?'#10B981':'#ef4444'};color:white;padding:0.8rem 1.5rem;border-radius:10px;z-index:9999;font-weight:600;`;
+    t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+</script>
+{% endblock %}
