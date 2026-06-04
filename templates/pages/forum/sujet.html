@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ sujet.titre }} — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sujet-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+
+    .sujet-header {
+        background: white; border-radius: 16px; padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06); margin-bottom: 1.5rem;
+    }
+    .sujet-header h1 { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: #0F1C2E; margin-bottom: 0.8rem; }
+    .sujet-header .meta { font-size: 0.85rem; color: #6C757D; }
+    .sujet-header .meta strong { color: #0F1C2E; }
+
+    .message-card {
+        background: white; border-radius: 16px; padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1rem;
+        display: flex; gap: 1.2rem;
+    }
+    .message-avatar {
+        width: 45px; height: 45px; border-radius: 50%;
+        background: linear-gradient(135deg, #0077B6, #0F1C2E);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; flex-shrink: 0;
+    }
+    .message-content { flex: 1; }
+    .message-author { font-weight: 600; color: #0F1C2E; font-size: 0.9rem; }
+    .message-date { font-size: 0.75rem; color: #ADB5BD; margin-left: 0.8rem; }
+    .message-text { color: #495057; margin-top: 0.8rem; line-height: 1.7; }
+
+    .reponse-form {
+        background: white; border-radius: 16px; padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06); margin-top: 1.5rem;
+    }
+    .reponse-form textarea {
+        width: 100%; padding: 0.8rem; border: 1px solid #E9ECEF; border-radius: 10px;
+        font-family: 'Open Sans', sans-serif; font-size: 0.9rem; resize: vertical;
+        min-height: 100px;
+    }
+    .reponse-form textarea:focus { outline: none; border-color: #0077B6; }
+    .btn-repondre {
+        margin-top: 0.8rem; padding: 0.7rem 2rem; background: #0077B6; color: white;
+        border: none; border-radius: 50px; font-weight: 600; cursor: pointer;
+        font-family: 'Montserrat', sans-serif; transition: all 0.3s ease;
+    }
+    .btn-repondre:hover { background: #0F1C2E; }
+
+    @media (max-width: 768px) {
+        .sujet-container { padding: 1rem; }
+        .message-card { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="sujet-container">
+    <div style="margin-bottom:1rem;">
+        <a href="{% url 'forum:metier' metier=sujet.forum.metier %}" style="color:#0077B6;text-decoration:none;font-size:0.85rem;">
+            <i class="fas fa-arrow-left"></i> {{ sujet.forum.nom }}
+        </a>
+    </div>
+
+    <div class="sujet-header">
+        <h1>{{ sujet.titre }}</h1>
+        <p class="meta">
+            Par <strong>{{ sujet.auteur.get_full_name }}</strong> · 
+            {{ sujet.date_creation|date:"d/m/Y à H:i" }} · 
+            {{ messages.count }} réponse{{ messages.count|pluralize }} · 
+            {{ sujet.total_vues }} vue{{ sujet.total_vues|pluralize }}
+        </p>
+    </div>
+
+    <!-- Premier message (le sujet lui-même) -->
+    <div class="message-card">
+        <div class="message-avatar">{{ sujet.auteur.first_name|first|upper }}{{ sujet.auteur.last_name|first|upper }}</div>
+        <div class="message-content">
+            <span class="message-author">{{ sujet.auteur.get_full_name }}</span>
+            <span class="message-date">{{ sujet.date_creation|date:"d/m/Y à H:i" }}</span>
+            <div class="message-text">{{ sujet.contenu|linebreaks }}</div>
+        </div>
+    </div>
+
+    <!-- Réponses -->
+    {% for message in messages %}
+    <div class="message-card">
+        <div class="message-avatar">{{ message.auteur.first_name|first|upper }}{{ message.auteur.last_name|first|upper }}</div>
+        <div class="message-content">
+            <span class="message-author">{{ message.auteur.get_full_name }}</span>
+            <span class="message-date">{{ message.date_creation|date:"d/m/Y à H:i" }}</span>
+            <div class="message-text">{{ message.contenu|linebreaks }}</div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Formulaire de réponse -->
+    {% if user.is_authenticated and not sujet.est_ferme %}
+    <div class="reponse-form">
+        <h3 style="font-family:'Montserrat',sans-serif;font-size:1rem;margin-bottom:0.8rem;">Répondre</h3>
+        <form method="post">
+            {% csrf_token %}
+            <textarea name="contenu" placeholder="Votre réponse..." required></textarea>
+            <button type="submit" class="btn-repondre"><i class="fas fa-paper-plane"></i> Publier</button>
+        </form>
+    </div>
+    {% elif sujet.est_ferme %}
+    <p style="text-align:center;color:#ef4444;margin-top:1rem;">Ce sujet est fermé.</p>
+    {% else %}
+    <p style="text-align:center;margin-top:1rem;">
+        <a href="{% url 'users:login' %}" style="color:#0077B6;">Connectez-vous</a> pour répondre.
+    </p>
+    {% endif %}
+</div>
+
+{% endblock %}
