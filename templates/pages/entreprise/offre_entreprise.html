@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Offre Entreprise — Formation aéronautique {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-entreprise {
+        background: linear-gradient(135deg, #0F1C2E 0%, #1E3A5F 100%);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+    }
+    .badge-qualiopi {
+        background: #FF6B35;
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+    .stats-entreprise {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: -2rem auto 3rem;
+        flex-wrap: wrap;
+    }
+    .stat-card {
+        background: white;
+        padding: 1.5rem 2rem;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        min-width: 140px;
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0077B6;
+    }
+    .forfaits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+    .forfait-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+        position: relative;
+    }
+    .forfait-card:hover { transform: translateY(-5px); }
+    .forfait-card.populaire { border: 2px solid #FF6B35; }
+    .populaire-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #FF6B35;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0 0 0 12px;
+        font-size: 0.75rem;
+    }
+    .forfait-header {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .forfait-prix { font-size: 2rem; font-weight: 800; margin: 0.5rem 0; }
+    .forfait-body { padding: 1.5rem; }
+    .forfait-body ul { list-style: none; padding: 0; }
+    .forfait-body li { margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative; }
+    .forfait-body li:before { content: "✓"; color: #10b981; position: absolute; left: 0; }
+    .btn-devis {
+        display: block;
+        text-align: center;
+        background: #0077B6;
+        color: white;
+        padding: 0.8rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        margin-top: 1.5rem;
+    }
+    .avantages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+    .avantage { text-align: center; padding: 1rem; }
+    .avantage-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #0077B6, #0F1C2E);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.3rem;
+    }
+    .formulaire-b2b {
+        background: #F8F9FA;
+        border-radius: 24px;
+        padding: 2.5rem;
+        margin-top: 3rem;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .formulaire-b2b input, .formulaire-b2b select, .formulaire-b2b textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #E9ECEF;
+        border-radius: 8px;
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: #FF6B35;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    @media (max-width: 768px) {
+        .form-row { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-entreprise">
+    <div class="container">
+        <div class="badge-qualiopi"><i class="fas fa-certificate"></i> Certification Qualiopi</div>
+        <h1>Formez vos équipes à l'excellence aéronautique</h1>
+        <p style="margin-top: 1rem;">Accès illimité • Reporting avancé • Support prioritaire</p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="stats-entreprise">
+        <div class="stat-card"><div class="stat-number">150+</div><div>entreprises clientes</div></div>
+        <div class="stat-card"><div class="stat-number">98%</div><div>de satisfaction</div></div>
+        <div class="stat-card"><div class="stat-number">15k+</div><div>collaborateurs formés</div></div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <h2>Des formules adaptées à tous les besoins</h2>
+        <p>Sans engagement - Résiliable à tout moment</p>
+    </div>
+
+    <div class="forfaits-grid">
+        <div class="forfait-card">
+            <div class="forfait-header"><h3>Starter</h3><div class="forfait-prix">490€<small>/mois</small></div><small>+20€/utilisateur</small></div>
+            <div class="forfait-body"><ul><li>Jusqu'à 5 utilisateurs</li><li>Accès à 20 formations</li><li>Support email 48h</li><li>Certificats individuels</li></ul><a href="#contact" class="btn-devis">Demander un devis</a></div>
+        </div>
+        <div class="forfait-card populaire">
+            <div class="populaire-badge"><i class="fas fa-star"></i> Le plus populaire</div>
+            <div class="forfait-header"><h3>Business</h3><div class="forfait-prix">1 290€<small>/mois</small></div><small>Tarif dégressif</small></div>
+            <div class="forfait-body"><ul><li>Jusqu'à 25 utilisateurs</li><li>Accès illimité</li><li>Support prioritaire 24/7</li><li>Reporting avancé + API</li><li>Account manager dédié</li></ul><a href="#contact" class="btn-devis">Demander une démo</a></div>
+        </div>
+        <div class="forfait-card">
+            <div class="forfait-header"><h3>Enterprise</h3><div class="forfait-prix">Sur mesure</div><small>Grands groupes</small></div>
+            <div class="forfait-body"><ul><li>Utilisateurs illimités</li><li>Formations personnalisées</li><li>LMS intégré / SSO</li><li>Support dédié 24/7</li></ul><a href="#contact" class="btn-devis">Nous contacter</a></div>
+        </div>
+    </div>
+
+    <div class="avantages-grid">
+        <div class="avantage"><div class="avantage-icon"><i class="fas fa-chart-line"></i></div><h4>Suivi de progression</h4><p>Tableau de bord temps réel</p></div>
+        <div class="avantage"><div class="avantage-icon"><i class="fas fa-euro-sign"></i></div><h4>Financements OPCO</h4><p>Éligible CPF</p></div>
+        <div class="avantage"><div class="avantage-icon"><i class="fas fa-clock"></i></div><h4>Formation asynchrone</h4><p>Accès 24/7</p></div>
+        <div class="avantage"><div class="avantage-icon"><i class="fas fa-headset"></i></div><h4>Onboarding inclus</h4><p>Accompagnement personnalisé</p></div>
+    </div>
+
+    <div id="contact" class="formulaire-b2b">
+        <div style="text-align: center; margin-bottom: 2rem;"><h2>Vous êtes une entreprise ?</h2><p>Un expert vous répond sous 24h</p></div>
+        <form method="post" action="{% url 'entreprises:contact' %}">
+            {% csrf_token %}
+            <div class="form-row">
+                <input type="text" name="company" placeholder="Société *" required>
+                <input type="text" name="name" placeholder="Votre nom *" required>
+            </div>
+            <div class="form-row">
+                <input type="email" name="email" placeholder="Email professionnel *" required>
+                <input type="tel" name="phone" placeholder="Téléphone">
+            </div>
+            <div class="form-row">
+                <select name="employees" required><option value="">Nombre de collaborateurs *</option><option>Moins de 10</option><option>10-50</option><option>51-200</option><option>201-1000</option><option>Plus de 1000</option></select>
+                <select name="formule"><option value="">Formule souhaitée</option><option>Starter</option><option>Business</option><option>Enterprise</option></select>
+            </div>
+            <textarea name="message" rows="4" placeholder="Décrivez votre projet..." required style="width:100%; margin-bottom:1rem; padding:0.8rem;"></textarea>
+            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Demander un devis</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
