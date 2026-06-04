@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ cours.titre }} — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+{{ cours.titre }} — Formation {{ parcours.nom }}. {{ cours.resume|default:"Cours théorique aéronautique avec quiz et certificat." }}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --success: #10b981;
+    }
+
+    .cours-container { 
+        max-width: 1000px; 
+        margin: 0 auto; 
+        padding: 2rem; 
+        animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Barre de progression globale */
+    .global-progress {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .progress-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--secondary);
+    }
+    .progress-percent {
+        font-size: 0.8rem;
+        color: var(--primary);
+        font-weight: 700;
+    }
+    .progress-bar {
+        background: var(--gray-light);
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, var(--primary), var(--success));
+        transition: width 0.5s ease;
+    }
+
+    .cours-nav {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .breadcrumb a { 
+        color: var(--primary); 
+        text-decoration: none; 
+        font-size: 0.85rem;
+        transition: color 0.3s;
+    }
+    .breadcrumb a:hover { color: var(--primary-dark); text-decoration: underline; }
+    .breadcrumb i { color: var(--gray); font-size: 0.7rem; margin: 0 0.4rem; }
+    .breadcrumb span { font-size: 0.85rem; color: var(--gray); }
+    .cours-compteur {
+        background: var(--bg-light);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: var(--gray);
+        font-weight: 600;
+    }
+
+    .cours-contenu {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+        min-height: 400px;
+        transition: box-shadow 0.3s;
+    }
+    .cours-contenu:hover {
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    .cours-contenu h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        color: var(--secondary);
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary);
+        padding-left: 1rem;
+    }
+    .cours-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.8rem;
+        color: var(--gray);
+        flex-wrap: wrap;
+    }
+    .cours-meta i {
+        color: var(--primary);
+        margin-right: 0.3rem;
+    }
+    .cours-contenu p { 
+        color: var(--text-dark); 
+        line-height: 1.8; 
+        margin-bottom: 1rem;
+    }
+
+    .cours-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .btn-cours {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.7rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        border: none;
+        cursor: pointer;
+    }
+    .btn-precedent { background: var(--bg-light); color: var(--gray); }
+    .btn-precedent:hover { background: var(--gray-light); transform: translateX(-3px); }
+    .btn-suivant { background: var(--primary); color: white; }
+    .btn-suivant:hover { background: var(--primary-dark); transform: translateX(3px); }
+    .btn-terminer { background: var(--success); color: white; }
+    .btn-terminer:hover { background: #059669; transform: translateY(-2px); }
+    .btn-test { background: #f59e0b; color: white; }
+    .btn-test:hover { background: #d97706; transform: translateY(-2px); }
+    .btn-ia {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+    }
+    .btn-ia:hover {
+        transform: scale(1.02);
+    }
+
+    /* Assistant IA contextuel */
+    .ia-context {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+    .ia-toggle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    .ia-toggle:hover {
+        transform: scale(1.1);
+    }
+    .ia-panel {
+        display: none;
+        position: absolute;
+        bottom: 60px;
+        right: 0;
+        width: 320px;
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+    .ia-panel.open {
+        display: block;
+    }
+
+    /* Dark mode */
+    body.dark-mode .cours-contenu,
+    body.dark-mode .cours-nav,
+    body.dark-mode .global-progress {
+        background: #1E1E1E;
+    }
+    body.dark-mode .cours-contenu h1,
+    body.dark-mode .progress-title {
+        color: #E0E0E0;
+    }
+    body.dark-mode .ia-panel {
+        background: #1E1E1E;
+    }
+
+    @media (max-width: 768px) {
+        .cours-container { padding: 1rem; }
+        .cours-contenu { padding: 1.5rem; }
+        .cours-contenu h1 { font-size: 1.4rem; }
+        .cours-actions { flex-direction: column; }
+        .cours-actions div { width: 100%; }
+        .btn-cours { width: 100%; justify-content: center; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="cours-container">
+    <!-- Barre de progression globale -->
+    <div class="global-progress">
+        <div class="progress-header">
+            <span class="progress-title"><i class="fas fa-chart-line"></i> Progression dans {{ parcours.nom }}</span>
+            <span class="progress-percent">{{ progression_globale }}%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ progression_globale }}%;"></div>
+        </div>
+    </div>
+
+    <div class="cours-nav">
+        <div class="breadcrumb">
+            <a href="{% url 'parcours:selection_metier' %}">Parcours</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'parcours:accueil_parcours' metier=metier %}">{{ parcours.nom }}</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Module {{ module.numero }}</span>
+            <i class="fas fa-chevron-right"></i>
+            <strong>{{ cours.titre|truncatechars:30 }}</strong>
+        </div>
+        <div class="cours-compteur">
+            Cours {{ cours.numero }} / {{ module.cours_count }} — Module {{ module.numero }}
+        </div>
+    </div>
+
+    <div class="cours-contenu">
+        <h1>{{ cours.titre }}</h1>
+        <div class="cours-meta">
+            <span><i class="fas fa-clock"></i> Temps de lecture estimé : {{ cours.temps_lecture|default:"10" }} min</span>
+            <span><i class="fas fa-question-circle"></i> Quiz à la fin du module</span>
+            <span><i class="fas fa-certificate"></i> Certificat SHA-256</span>
+        </div>
+        {% if cours.contenu %}
+            {{ cours.contenu|safe }}
+        {% else %}
+            <p style="color: var(--gray);">Contenu en cours de rédaction. Revenez bientôt !</p>
+        {% endif %}
+    </div>
+
+    <div class="cours-actions">
+        <div>
+            {% if cours_precedent %}
+            <a href="{% url 'parcours:cours' metier=metier module_num=module.numero cours_num=cours_precedent.numero %}" class="btn-cours btn-precedent">
+                <i class="fas fa-arrow-left"></i> Cours précédent
+            </a>
+            {% endif %}
+        </div>
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+            <button onclick="askIA()" class="btn-cours btn-ia">
+                <i class="fas fa-robot"></i> Poser une question à l'IA
+            </button>
+            {% if not progression.termine %}
+            <button onclick="terminerCours({{ cours.id }})" class="btn-cours btn-terminer">
+                <i class="fas fa-check"></i> Terminer ce cours
+            </button>
+            {% endif %}
+            {% if test_suivant %}
+            <a href="{% url 'parcours:test' metier=metier module_num=module.numero test_num=test_suivant.numero %}" class="btn-cours btn-test">
+                <i class="fas fa-clipboard-check"></i> Passer le test
+            </a>
+            {% elif cours_suivant %}
+            <a href="{% url 'parcours:cours' metier=metier module_num=module.numero cours_num=cours_suivant.numero %}" class="btn-cours btn-suivant">
+                Cours suivant <i class="fas fa-arrow-right"></i>
+            </a>
+            {% else %}
+            <a href="{% url 'parcours:accueil_parcours' metier=metier %}" class="btn-cours btn-suivant">
+                Retour aux modules <i class="fas fa-arrow-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Assistant IA contextuel -->
+<div class="ia-context">
+    <button class="ia-toggle" onclick="toggleIaPanel()">
+        <i class="fas fa-robot"></i>
+    </button>
+    <div class="ia-panel" id="iaPanel">
+        <div style="background: var(--primary); color: white; padding: 0.8rem; display: flex; justify-content: space-between;">
+            <strong><i class="fas fa-robot"></i> Assistant IA</strong>
+            <button onclick="toggleIaPanel()" style="background: none; border: none; color: white;">✕</button>
+        </div>
+        <div style="padding: 0.8rem; max-height: 300px; overflow-y: auto;" id="iaMessages">
+            <div style="background: var(--bg-light); padding: 0.5rem; border-radius: 12px; margin-bottom: 0.5rem;">
+                👋 Bonjour ! Des questions sur <strong>{{ cours.titre }}</strong> ? Je suis là pour vous aider.
+            </div>
+        </div>
+        <div style="padding: 0.8rem; border-top: 1px solid var(--gray-light); display: flex; gap: 0.5rem;">
+            <input type="text" id="iaInput" placeholder="Posez votre question..." style="flex: 1; padding: 0.5rem; border-radius: 20px; border: 1px solid var(--gray-light);">
+            <button onclick="sendIaQuestion('{{ cours.titre }}')" style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px;">Envoyer</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function terminerCours(itemId) {
+    fetch('{% url "parcours:terminer_cours" %}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+        body: JSON.stringify({ item_id: itemId })
+    }).then(r => r.json()).then(data => { 
+        if (data.ok) location.reload(); 
+    });
+}
+
+function toggleIaPanel() {
+    const panel = document.getElementById('iaPanel');
+    panel.classList.toggle('open');
+}
+
+function sendIaQuestion(coursTitre) {
+    const input = document.getElementById('iaInput');
+    const question = input.value.trim();
+    if (!question) return;
+    
+    const messages = document.getElementById('iaMessages');
+    messages.innerHTML += `<div style="background: var(--primary); color: white; padding: 0.5rem; border-radius: 12px; margin-bottom: 0.5rem; text-align: right;">${question}</div>`;
+    messages.innerHTML += `<div style="background: var(--bg-light); padding: 0.5rem; border-radius: 12px; margin-bottom: 0.5rem;"><i class="fas fa-spinner fa-spin"></i> Réflexion...</div>`;
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+    
+    fetch('/api/chatbot/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            question: `Dans le cours "${coursTitre}", ${question}`,
+            context: 'cours'
+        })
+    }).then(r => r.json()).then(data => {
+        const loading = messages.querySelector('.fa-spinner')?.parentElement;
+        if (loading) loading.remove();
+        messages.innerHTML += `<div style="background: var(--bg-light); padding: 0.5rem; border-radius: 12px; margin-bottom: 0.5rem;">🤖 ${data.reponse || 'Je recherche la réponse...'}</div>`;
+        messages.scrollTop = messages.scrollHeight;
+    }).catch(() => {
+        const loading = messages.querySelector('.fa-spinner')?.parentElement;
+        if (loading) loading.remove();
+        messages.innerHTML += `<div style="background: #f8d7da; padding: 0.5rem; border-radius: 12px; margin-bottom: 0.5rem;">⚠️ Service indisponible. Réessayez plus tard.</div>`;
+        messages.scrollTop = messages.scrollHeight;
+    });
+}
+</script>
+{% endblock %}
