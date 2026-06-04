@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Marketing & Communication — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dept-primary: #F59E0B;
+        --dept-dark: #D97706;
+        --dept-light: #fffbeb;
+        --dept-border: #fef3c7;
+    }
+
+    .welcome-banner {
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        color: #0F1C2E; padding: 1.5rem 2rem; border-radius: 16px; margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(245,158,11,0.2);
+    }
+    .welcome-banner h1 { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem; }
+    .welcome-banner p { opacity: 0.9; font-size: 0.9rem; color: #0F1C2E; }
+
+    .security-alert {
+        background: #FFF8E6; border-left: 4px solid #f59e0b;
+        padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem;
+        display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: #92400e;
+    }
+    .security-alert i { color: #f59e0b; font-size: 1.2rem; margin-top: 0.1rem; }
+
+    .stats-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative;
+    }
+    .stat-card.alert-orange { border-left: 4px solid #f59e0b; background: #FFFDF5; }
+    .stat-card.alert-red { border-left: 4px solid #ef4444; background: #FFF5F5; }
+    .stat-card.alert-green { border-left: 4px solid #F59E0B; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #0F1C2E; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; }
+    .stat-threshold {
+        font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600;
+    }
+    .stat-threshold.green { background: #ECFDF5; color: #059669; }
+    .stat-threshold.orange { background: #FFF8E6; color: #d97706; }
+    .stat-threshold.red { background: #FEF2F2; color: #dc2626; }
+    .stat-alert-msg { font-size: 0.7rem; color: #ef4444; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+
+    .charts-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .chart-card {
+        background: white; border-radius: 12px; padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .chart-card h3 {
+        font-family: 'Montserrat', sans-serif; font-size: 0.95rem; color: #0F1C2E; margin-bottom: 1rem;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chart-card canvas { max-height: 220px; }
+
+    .section-title {
+        font-size: 1.1rem; color: #0F1C2E; margin: 1.5rem 0 1rem;
+        display: flex; align-items: center; gap: 0.7rem;
+        border-left: 4px solid #F59E0B; padding-left: 1rem;
+    }
+
+    .quick-actions {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.7rem; margin-bottom: 2rem;
+    }
+    .action-btn {
+        background: white; border: none; border-radius: 12px; padding: 0.7rem 0.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; text-align: center;
+        transition: all 0.3s; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.72rem;
+    }
+    .action-btn:hover { transform: translateY(-3px); background: #F59E0B; color: #0F1C2E; }
+    .action-btn:hover .action-icon { background: #0F1C2E; color: #F59E0B; }
+    .action-icon {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 0.5rem; color: #0F1C2E; font-size: 0.8rem;
+        transition: all 0.3s;
+    }
+
+    .table-container {
+        background: white; border-radius: 12px; overflow-x: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #E9ECEF; font-size: 0.8rem; }
+    th { background: #F8F9FA; font-weight: 600; color: #0F1C2E; }
+    .status {
+        display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;
+    }
+    .status-success { background: rgba(16,185,129,0.1); color: #10b981; }
+    .status-warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .status-info { background: rgba(59,130,246,0.1); color: #3b82f6; }
+    .status-danger { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+    .progress-bar {
+        background: #E9ECEF; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 0.3rem;
+    }
+    .progress-fill { height: 100%; background: #F59E0B; border-radius: 3px; }
+
+    .dg-chat {
+        background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem;
+    }
+
+    .form-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 0.8rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #0F1C2E; margin-bottom: 0.3rem; }
+    .form-control {
+        width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;
+        font-family: inherit; font-size: 0.85rem;
+    }
+    .btn {
+        display: inline-block; padding: 0.5rem 1rem; border-radius: 8px;
+        font-weight: 600; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif;
+        font-size: 0.8rem; transition: all 0.3s; text-decoration: none;
+    }
+    .btn-primary { background: #F59E0B; color: #0F1C2E; }
+    .btn-primary:hover { background: #D97706; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.7rem; }
+
+    @media (max-width: 768px) {
+        .charts-grid { grid-template-columns: 1fr; }
+        .quick-actions { grid-template-columns: repeat(3, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="padding: 2rem 0;">
+
+    <section class="welcome-banner">
+        <h1><i class="fas fa-bullhorn"></i> Marketing & Communication</h1>
+        <p>Gérez les campagnes, les réseaux sociaux, la newsletter et les partenariats.</p>
+    </section>
+
+    <div class="security-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>Rappel de sécurité — Ne partagez jamais vos identifiants</strong>
+            <p style="margin:0.3rem 0 0;">Article 7.3 des CGU. Toute connexion est tracée dans le journal d'audit immutable.</p>
+        </div>
+    </div>
+
+    <!-- Statistiques avec seuils -->
+    <div class="stats-grid">
+        <div class="stat-card {% if campagnes_actives == 0 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header">
+                <span class="stat-label">Campagnes actives</span>
+                <span class="stat-threshold {% if campagnes_actives == 0 %}orange{% else %}green{% endif %}">Seuil: 1</span>
+            </div>
+            <div class="stat-value">{{ campagnes_actives }}</div>
+            {% if campagnes_actives == 0 %}<div class="stat-alert-msg"><i class="fas fa-exclamation-circle"></i> Aucune campagne en cours</div>{% endif %}
+        </div>
+        <div class="stat-card {% if taux_engagement < 2 %}alert-red{% elif taux_engagement < 5 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header">
+                <span class="stat-label">Taux engagement</span>
+                <span class="stat-threshold {% if taux_engagement < 2 %}red{% elif taux_engagement < 5 %}orange{% else %}green{% endif %}">Seuil: 5%</span>
+            </div>
+            <div class="stat-value">{{ taux_engagement }}%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Abonnés newsletter</span></div>
+            <div class="stat-value">{{ abonnes_newsletter }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Partenaires actifs</span></div>
+            <div class="stat-value">{{ partenaires_actifs }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Budget mensuel</span></div>
+            <div class="stat-value">{{ budget_mensuel }}€</div>
+        </div>
+    </div>
+
+    <!-- 4 Graphiques -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line" style="color:#F59E0B;"></i> Évolution abonnés</h3>
+            <canvas id="chartAbonnes"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-bullhorn" style="color:#F59E0B;"></i> CTR par campagne</h3>
+            <canvas id="chartCTR"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-hashtag" style="color:#F59E0B;"></i> Engagement réseaux</h3>
+            <canvas id="chartReseaux"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-euro-sign" style="color:#F59E0B;"></i> ROI par plateforme</h3>
+            <canvas id="chartROI"></canvas>
+        </div>
+    </div>
+
+    <!-- 15 Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="handleAction('nouvelle_campagne')"><div class="action-icon"><i class="fas fa-bullhorn"></i></div><strong>Nouvelle campagne</strong></button>
+        <button class="action-btn" onclick="handleAction('newsletter')"><div class="action-icon"><i class="fas fa-envelope"></i></div><strong>Newsletter</strong></button>
+        <button class="action-btn" onclick="handleAction('post_reseaux')"><div class="action-icon"><i class="fas fa-hashtag"></i></div><strong>Post réseaux</strong></button>
+        <button class="action-btn" onclick="handleAction('article_blog')"><div class="action-icon"><i class="fas fa-newspaper"></i></div><strong>Article blog</strong></button>
+        <button class="action-btn" onclick="handleAction('rapport_seo')"><div class="action-icon"><i class="fas fa-chart-line"></i></div><strong>Rapport SEO</strong></button>
+        <button class="action-btn" onclick="handleAction('communique_presse')"><div class="action-icon"><i class="fas fa-file-alt"></i></div><strong>Communiqué</strong></button>
+        <button class="action-btn" onclick="handleAction('emailing')"><div class="action-icon"><i class="fas fa-envelope"></i></div><strong>Emailing</strong></button>
+        <button class="action-btn" onclick="handleAction('landing_page')"><div class="action-icon"><i class="fas fa-file-code"></i></div><strong>Landing page</strong></button>
+        <button class="action-btn" onclick="handleAction('analyse_reseaux')"><div class="action-icon"><i class="fas fa-chart-simple"></i></div><strong>Analyse</strong></button>
+        <button class="action-btn" onclick="handleAction('partenariat')"><div class="action-icon"><i class="fas fa-handshake"></i></div><strong>Partenariat</strong></button>
+        <button class="action-btn" onclick="handleAction('rapport_marketing')"><div class="action-icon"><i class="fas fa-file-pdf"></i></div><strong>Rapport</strong></button>
+        <button class="action-btn" onclick="handleAction('calendrier_editorial')"><div class="action-icon"><i class="fas fa-calendar"></i></div><strong>Calendrier</strong></button>
+        <button class="action-btn" onclick="handleAction('benchmark')"><div class="action-icon"><i class="fas fa-chart-bar"></i></div><strong>Benchmark</strong></button>
+    </div>
+
+    <!-- Campagnes actives -->
+    <h2 class="section-title"><i class="fas fa-rocket"></i> Campagnes actives</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Campagne</th><th>Plateforme</th><th>Budget</th><th>CTR</th><th>Conversions</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for campagne in campagnes %}
+                <tr>
+                    <td><strong>{{ campagne.nom }}</strong></td><td>{{ campagne.plateforme }}</td>
+                    <td>{{ campagne.budget }}€</td>
+                    <td>{{ campagne.ctr }}%<div class="progress-bar"><div class="progress-fill" style="width:{{ campagne.ctr }}%"></div></div></td>
+                    <td>{{ campagne.conversions }}</td>
+                    <td>{% if campagne.active %}<span class="status status-success">Active</span>{% else %}<span class="status status-info">Inactive</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-primary">✏️</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="7" style="text-align:center;padding:2rem;color:#6C757D;">Aucune campagne.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Performance réseaux sociaux -->
+    <h2 class="section-title"><i class="fas fa-hashtag"></i> Performance réseaux sociaux</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Réseau</th><th>Abonnés</th><th>Engagement</th><th>Publications</th><th>Évolution</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for reseau in reseaux %}
+                <tr>
+                    <td><strong>{{ reseau.nom }}</strong></td><td>{{ reseau.abonnes }}</td>
+                    <td>{{ reseau.engagement }}%</td><td>{{ reseau.publications }}</td>
+                    <td>{% if reseau.evolution > 0 %}<span class="status status-success">+{{ reseau.evolution }}%</span>{% else %}<span class="status status-danger">{{ reseau.evolution }}%</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-primary">📊</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="6" style="text-align:center;padding:2rem;color:#6C757D;">Aucune donnée.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Communication Direction -->
+    <h2 class="section-title"><i class="fas fa-comments"></i> Communication avec la Direction</h2>
+    <div class="dg-chat">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(245,158,11,0.3);">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#FF6B35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">DG</div>
+            <strong>Direction Générale</strong>
+        </div>
+        {% for msg in dg_messages %}
+        <div style="background:white;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border-left:3px solid #D4AF37;">
+            <small style="color:#6C757D;">{{ msg.date|date:"d/m/Y H:i" }}</small>
+            <p style="margin-top:0.3rem;">{{ msg.contenu }}</p>
+        </div>
+        {% empty %}<p style="color:#6C757D;text-align:center;">Aucun message.</p>{% endfor %}
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-top:1rem;">
+            {% csrf_token %}<input type="hidden" name="departement" value="marketing">
+            <textarea name="message" rows="2" class="form-control" placeholder="Message à la Direction..." style="margin-bottom:0.5rem;"></textarea>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Communication équipe -->
+    <h2 class="section-title"><i class="fas fa-users"></i> Communication interne</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'messaging:envoyer_equipe' %}">
+            {% csrf_token %}<input type="hidden" name="departement" value="marketing">
+            <div class="form-group">
+                <label>Destinataires</label>
+                <select name="destinataire" class="form-control">
+                    <option value="equipe">Toute l'équipe Marketing</option>
+                    <option value="coordinateur">Coordinateur uniquement</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Message</label><textarea name="message" rows="2" class="form-control" placeholder="Votre message..."></textarea></div>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Créer une campagne -->
+    <h2 class="section-title"><i class="fas fa-plus-circle"></i> Créer une campagne</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'gestion: marketing_creer_campagne' %}">
+            {% csrf_token %}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div class="form-group"><label>Nom de la campagne</label><input type="text" name="nom" class="form-control" placeholder="Ex: Recrutement Pilotes" required></div>
+                <div class="form-group"><label>Plateforme</label><select name="plateforme" class="form-control"><option>Google Ads</option><option>LinkedIn</option><option>Facebook</option><option>Instagram</option><option>Emailing</option></select></div>
+            </div>
+            <button type="submit" class="btn btn-primary">➕ Créer la campagne</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const chartData = {{ chart_data_json|safe }};
+
+new Chart(document.getElementById('chartAbonnes'), {
+    type: 'line', data: { labels: chartData.mois_labels, datasets: [{ label: 'Abonnés', data: chartData.abonnes_data, borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartCTR'), {
+    type: 'bar', data: { labels: chartData.campagnes_labels, datasets: [{ label: 'CTR %', data: chartData.campagnes_ctr, backgroundColor: '#F59E0B', borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
+});
+new Chart(document.getElementById('chartReseaux'), {
+    type: 'bar', data: { labels: ['Facebook', 'Twitter', 'Instagram', 'LinkedIn'], datasets: [{ label: 'Engagement %', data: [chartData.fb_engagement, chartData.tw_engagement, chartData.ig_engagement, chartData.li_engagement], backgroundColor: ['#1877F2', '#1DA1F2', '#E4405F', '#0A66C2'], borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartROI'), {
+    type: 'bar', data: { labels: chartData.plateformes_labels, datasets: [{ label: 'ROI (€)', data: chartData.plateformes_roi, backgroundColor: '#F59E0B', borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+function handleAction(action) {
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(`/marketing/api/${action}/`, { method: 'POST', headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' } })
+        .then(r => r.json()).then(d => showToast(d.message || 'Action effectuée', d.success ? 'success' : 'error'));
+}
+function showToast(msg, type) {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;bottom:2rem;right:2rem;background:${type==='success'?'#10B981':'#ef4444'};color:white;padding:0.8rem 1.5rem;border-radius:10px;z-index:9999;font-weight:600;`;
+    t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+</script>
+{% endblock %}
