@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Espace Gestionnaire - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    
+    <div style="background: linear-gradient(135deg, #0F1C2E, #1E3A5F); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+        <h1 style="color: white; margin: 0;"><i class="fas fa-user-cog"></i> Espace Gestionnaire</h1>
+        <p style="margin: 0.5rem 0 0;">Département : {{ departement|default:"Non défini"|title }}</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 12px; padding: 1.2rem; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <div style="font-size: 1.8rem; font-weight: 700; color: #0077B6;">{{ total_messages|default:"0" }}</div>
+            <div style="font-size: 0.75rem; color: #6C757D;">Messages reçus</div>
+        </div>
+        <div style="background: white; border-radius: 12px; padding: 1.2rem; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <div style="font-size: 1.8rem; font-weight: 700; color: {% if messages_non_lus > 0 %}#ef4444{% else %}#10b981{% endif %};">{{ messages_non_lus|default:"0" }}</div>
+            <div style="font-size: 0.75rem; color: #6C757D;">Non lus</div>
+        </div>
+        <div style="background: white; border-radius: 12px; padding: 1.2rem; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <div style="font-size: 1.8rem; font-weight: 700; color: #10b981;">{{ messages_traites|default:"0" }}</div>
+            <div style="font-size: 0.75rem; color: #6C757D;">Traités</div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <h2 style="font-family: 'Montserrat', sans-serif; margin-bottom: 1rem;">Messages du département</h2>
+    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+        {% for msg in messages_list %}
+        <div style="padding: 1rem; border-bottom: 1px solid #E9ECEF;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <strong>{{ msg.sujet }}</strong>
+                <span style="display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;
+                    {% if msg.statut == 'non_lu' %}background: #FEE2E2; color: #dc2626;
+                    {% elif msg.statut == 'repondu' %}background: #E0F7EC; color: #10b981;
+                    {% else %}background: #E9ECEF; color: #6C757D;{% endif %}">
+                    {{ msg.get_statut_display }}
+                </span>
+            </div>
+            <div style="font-size: 0.8rem; color: #6C757D;">{{ msg.nom }} — {{ msg.date_envoi|date:"d/m/Y H:i" }}</div>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">{{ msg.message|truncatechars:150 }}</p>
+        </div>
+        {% empty %}
+        <div style="padding: 3rem; text-align: center; color: #6C757D;">Aucun message pour le moment.</div>
+        {% endfor %}
+    </div>
+
+    <!-- Communication -->
+    <h2 style="font-family: 'Montserrat', sans-serif; margin-bottom: 1rem;">Communication</h2>
+    <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1rem;">
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}">
+            {% csrf_token %}
+            <input type="hidden" name="departement" value="{{ departement }}">
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem;">Message à la Direction</label>
+                <textarea name="message" rows="3" style="width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;" placeholder="Votre message..."></textarea>
+            </div>
+            <button type="submit" style="background: #0077B6; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 8px; cursor: pointer;">📨 Envoyer à la Direction</button>
+        </form>
+    </div>
+
+    <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <form method="post" action="{% url 'messaging:envoyer_coordinateur' %}">
+            {% csrf_token %}
+            <input type="hidden" name="departement" value="{{ departement }}">
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem;">Message au Coordinateur</label>
+                <textarea name="message" rows="3" style="width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;" placeholder="Votre message..."></textarea>
+            </div>
+            <button type="submit" style="background: #0077B6; color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 8px; cursor: pointer;">📨 Envoyer au Coordinateur</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
