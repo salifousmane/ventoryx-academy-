@@ -1,0 +1,946 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Politique de confidentialité - {{ site_name }}{% endblock %}
+
+{% block meta_description %}Politique de confidentialité de {{ site_name }} — Découvrez comment nous collectons, utilisons et protégeons vos données personnelles conformément au RGPD.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white;
+        padding: 4rem 0 3rem;
+        text-align: center;
+    }
+    .legal-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+        color: white;
+    }
+    .legal-hero .hero-subtitle {
+        font-size: 1rem;
+        opacity: 0.85;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+    .legal-hero .last-update {
+        display: inline-block;
+        background: rgba(255,255,255,0.1);
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .legal-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 2.5rem;
+        margin: 3rem 0;
+    }
+
+    .legal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem 3rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .legal-content .toc-box {
+        background: #F8FAFE;
+        border: 1px solid #E3E8F2;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+    .legal-content .toc-box h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+    }
+    .legal-content .toc-box ol {
+        columns: 2;
+        column-gap: 2rem;
+        font-size: 0.85rem;
+        color: #0077B6;
+        padding-left: 1.2rem;
+    }
+    .legal-content .toc-box ol li {
+        margin-bottom: 0.4rem;
+    }
+    .legal-content .toc-box ol li a {
+        text-decoration: none;
+        color: #0077B6;
+    }
+    .legal-content .toc-box ol li a:hover {
+        text-decoration: underline;
+    }
+
+    .legal-content h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        color: #0F1C2E;
+        margin: 2.5rem 0 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid #E9ECEF;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+    .legal-content h2 .article-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        background: #10b981;
+        color: white;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .legal-content h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.05rem;
+        color: #1E3A5F;
+        margin: 1.5rem 0 0.8rem;
+    }
+    .legal-content p {
+        margin-bottom: 1rem;
+        color: #495057;
+        line-height: 1.8;
+    }
+    .legal-content ul, .legal-content ol {
+        margin: 0 0 1.2rem 1.5rem;
+        color: #495057;
+    }
+    .legal-content li {
+        margin-bottom: 0.6rem;
+        line-height: 1.7;
+    }
+    .legal-content a {
+        color: #0077B6;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .legal-content a:hover {
+        text-decoration: underline;
+    }
+
+    .highlight-box {
+        padding: 1.2rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 1.5rem 0;
+    }
+    .highlight-box.commitment {
+        background: #ECFDF5;
+        border-left: 4px solid #10b981;
+    }
+    .highlight-box.warning {
+        background: #FFF2E5;
+        border-left: 4px solid #FF6B35;
+    }
+    .highlight-box.info {
+        background: #E8F4FD;
+        border-left: 4px solid #0077B6;
+    }
+    .highlight-box p {
+        margin-bottom: 0;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0 1.5rem;
+        font-size: 0.88rem;
+    }
+    .data-table th {
+        background: #F8F9FA;
+        padding: 0.8rem;
+        text-align: left;
+        font-weight: 600;
+        color: #0F1C2E;
+        border-bottom: 2px solid #E9ECEF;
+    }
+    .data-table td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #E9ECEF;
+        color: #495057;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+    .info-card {
+        background: #F8FAFE;
+        padding: 1.2rem;
+        border-radius: 10px;
+        text-align: center;
+        border: 1px solid #E3E8F2;
+    }
+    .info-card i {
+        font-size: 1.8rem;
+        color: #10b981;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .info-card h4 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        color: #0F1C2E;
+        margin-bottom: 0.3rem;
+    }
+    .info-card p {
+        font-size: 0.8rem;
+        color: #6C757D;
+        margin: 0;
+    }
+
+    .legal-sidebar {
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+    }
+    .sidebar-nav {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .sidebar-nav h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #E9ECEF;
+    }
+    .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0;
+        border-bottom: 1px solid #f5f5f5;
+        color: #6C757D;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+    }
+    .sidebar-nav a:hover {
+        color: #10b981;
+        padding-left: 4px;
+    }
+    .sidebar-nav a i {
+        font-size: 0.4rem;
+        color: #10b981;
+    }
+    .sidebar-nav a:last-child {
+        border-bottom: none;
+    }
+
+    .legal-footer-note {
+        text-align: center;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        color: #6C757D;
+        font-size: 0.85rem;
+    }
+    .legal-footer-note a {
+        color: #0077B6;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    #cookieBanner {
+        background: #0F1C2E;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 9999;
+        display: none;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+    }
+    #cookieBanner button {
+        margin-left: 1rem;
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 0.5rem 1.2rem;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    @media (max-width: 992px) {
+        .legal-layout { grid-template-columns: 1fr; }
+        .legal-sidebar { position: static; order: -1; }
+        .legal-content .toc-box ol { columns: 1; }
+    }
+    @media (max-width: 768px) {
+        .legal-hero h1 { font-size: 1.8rem; }
+        .legal-content { padding: 1.5rem; }
+        .legal-content h2 { font-size: 1.15rem; }
+        .info-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="legal-hero">
+    <div class="container">
+        <h1>Politique de confidentialité</h1>
+        <p class="hero-subtitle">
+            Découvrez comment <strong>{{ site_name }}</strong> collecte, utilise, 
+            protège et partage vos données personnelles, conformément au RGPD.
+        </p>
+        <span class="last-update">
+            <i class="fas fa-calendar-check"></i> 
+            Dernière mise à jour : {% now "d/m/Y" %}
+        </span>
+    </div>
+</section>
+
+<div class="container">
+    <div class="legal-layout">
+
+        <!-- COLONNE PRINCIPALE -->
+        <article class="legal-content">
+
+            <!-- TABLE DES MATIÈRES -->
+            <div class="toc-box">
+                <h3><i class="fas fa-list-ol"></i> Table des matières</h3>
+                <ol>
+                    <li><a href="#art1">Introduction et engagement</a></li>
+                    <li><a href="#art2">Identité du responsable de traitement</a></li>
+                    <li><a href="#art3">Données collectées</a></li>
+                    <li><a href="#art4">Finalités du traitement</a></li>
+                    <li><a href="#art5">Bases légales</a></li>
+                    <li><a href="#art6">Données de paiement</a></li>
+                    <li><a href="#art7">Données de navigation</a></li>
+                    <li><a href="#art8">Cookies et technologies similaires</a></li>
+                    <li><a href="#art9">Durée de conservation</a></li>
+                    <li><a href="#art10">Destinataires des données</a></li>
+                    <li><a href="#art11">Sous-traitants</a></li>
+                    <li><a href="#art12">Transferts hors UE</a></li>
+                    <li><a href="#art13">Sécurité des données</a></li>
+                    <li><a href="#art14">Notification des violations</a></li>
+                    <li><a href="#art15">Droits des utilisateurs (RGPD)</a></li>
+                    <li><a href="#art16">Exercice des droits</a></li>
+                    <li><a href="#art17">Décisions automatisées et profilage</a></li>
+                    <li><a href="#art18">Protection des mineurs</a></li>
+                    <li><a href="#art19">Données des candidats</a></li>
+                    <li><a href="#art20">Données des partenaires</a></li>
+                    <li><a href="#art21">Conservation des certificats</a></li>
+                    <li><a href="#art22">Liens externes</a></li>
+                    <li><a href="#art23">Modification de la politique</a></li>
+                    <li><a href="#art24">Autorité de contrôle</a></li>
+                    <li><a href="#art25">Contact et DPO</a></li>
+                </ol>
+            </div>
+
+            <!-- INTRODUCTION -->
+            <p>
+                Chez <strong>{{ site_name }}</strong>, la protection de vos données 
+                personnelles est une priorité absolue. La présente Politique de 
+                confidentialité vous informe de manière transparente sur la façon 
+                dont nous collectons, utilisons, conservons, partageons et protégeons 
+                vos informations personnelles lorsque vous utilisez notre Plateforme.
+            </p>
+            <p>
+                Cette Politique est conforme au <strong>Règlement Général sur la Protection 
+                des Données (RGPD — Règlement UE 2016/679)</strong> et à la 
+                <strong>loi n° 78-17 du 6 janvier 1978 modifiée</strong> dite 
+                « Informatique et Libertés ».
+            </p>
+
+            <div class="highlight-box commitment">
+                <strong><i class="fas fa-heart"></i> Notre engagement fondamental</strong>
+                <p>Nous ne vendons, ne louons et ne cédons jamais vos données personnelles 
+                à des tiers à des fins commerciales. Vos données sont utilisées 
+                exclusivement pour vous fournir nos services de formation.</p>
+            </div>
+
+            <!-- ARTICLE 1 -->
+            <h2 id="art1"><span class="article-num">1</span> Introduction et engagement</h2>
+            <p>
+                La présente Politique de confidentialité s'applique à l'ensemble 
+                des services proposés par <strong>{{ site_name }}</strong> (ci-après 
+                « la Plateforme »). Elle complète nos 
+                <a href="{% url 'core:page_legale' type_page='cgu' %}">Conditions Générales d'Utilisation</a> 
+                et nos 
+                <a href="{% url 'core:page_legale' type_page='mentions_legales' %}">Mentions légales</a>.
+            </p>
+            <p>
+                En utilisant la Plateforme, vous reconnaissez avoir pris connaissance 
+                de la présente Politique et acceptez les pratiques décrites ci-après. 
+                Si vous n'acceptez pas cette Politique, veuillez ne pas utiliser 
+                nos services.
+            </p>
+
+            <!-- ARTICLE 2 -->
+            <h2 id="art2"><span class="article-num">2</span> Identité du responsable de traitement</h2>
+            <p>Le responsable de traitement des données personnelles est :</p>
+            <table class="data-table">
+                <tbody>
+                    <tr><td><strong>Entité</strong></td><td>{{ site_name }}</td></tr>
+                    <tr><td><strong>Statut</strong></td><td>{{ statut_juridique|default:"Projet en phase de développement" }}</td></tr>
+                    <tr><td><strong>Email</strong></td><td><a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">{{ email_contact|default:"contact@ventoryx-academy.com" }}</a></td></tr>
+                    {% if adresse_siege %}
+                    <tr><td><strong>Adresse</strong></td><td>{{ adresse_siege }}</td></tr>
+                    {% endif %}
+                    {% if dpo_email %}
+                    <tr><td><strong>DPO</strong></td><td><a href="mailto:{{ dpo_email }}">{{ dpo_email }}</a></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <!-- ARTICLE 3 -->
+            <h2 id="art3"><span class="article-num">3</span> Données collectées</h2>
+            <p>
+                Nous collectons exclusivement les données strictement nécessaires 
+                au fonctionnement de nos services.
+            </p>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <i class="fas fa-user"></i>
+                    <h4>Identification</h4>
+                    <p>Nom, prénom, email, nationalité, date de naissance</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h4>Pédagogiques</h4>
+                    <p>Progression, résultats, certificats</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-laptop"></i>
+                    <h4>Connexion</h4>
+                    <p>Adresse IP, logs techniques</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-credit-card"></i>
+                    <h4>Paiement</h4>
+                    <p>Historique de facturation (pas de données bancaires)</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Communication</h4>
+                    <p>Messages au support, formulaire de contact</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-comments"></i>
+                    <h4>Forum</h4>
+                    <p>Messages et contenus publiés volontairement</p>
+                </div>
+            </div>
+
+            <h3>3.1 Données obligatoires</h3>
+            <p>
+                Les données marquées d'un astérisque (*) dans les formulaires sont 
+                obligatoires. Leur absence empêche la création du compte ou l'accès 
+                aux services correspondants.
+            </p>
+
+            <h3>3.2 Données que nous ne collectons pas</h3>
+            <p>
+                Nous ne collectons et ne stockons pas :
+            </p>
+            <ul>
+                <li>De données bancaires (numéros de carte, cryptogrammes) — elles sont traitées exclusivement par Stripe ;</li>
+                <li>De données de santé, biométriques ou génétiques ;</li>
+                <li>De données relatives aux infractions ou condamnations pénales ;</li>
+                <li>De données de géolocalisation précise.</li>
+            </ul>
+
+            <!-- ARTICLE 4 -->
+            <h2 id="art4"><span class="article-num">4</span> Finalités du traitement</h2>
+            <p>Vos données sont collectées pour les finalités suivantes :</p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Finalité</th><th>Données concernées</th><th>Exemples concrets</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Gestion du compte</td><td>Identification, email</td><td>Création, connexion, récupération de mot de passe</td></tr>
+                    <tr><td>Fourniture des services</td><td>Toutes</td><td>Accès aux cours, quiz, certificats, suivi de progression</td></tr>
+                    <tr><td>Amélioration continue</td><td>Pédagogiques, navigation</td><td>Analyse des taux de réussite, optimisation des parcours</td></tr>
+                    <tr><td>Sécurité</td><td>Connexion, logs</td><td>Détection des fraudes, prévention des attaques</td></tr>
+                    <tr><td>Support</td><td>Communication</td><td>Réponse aux demandes, assistance technique</td></tr>
+                    <tr><td>Obligations légales</td><td>Paiement, facturation</td><td>Comptabilité, déclarations fiscales</td></tr>
+                </tbody>
+            </table>
+
+            <!-- ARTICLE 5 -->
+            <h2 id="art5"><span class="article-num">5</span> Bases légales du traitement</h2>
+            <p>
+                Conformément à l'article 6 du RGPD, chaque traitement de données 
+                repose sur l'une des bases légales suivantes :
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Base légale</th><th>Traitement concerné</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Exécution du contrat</strong> (art. 6.1.b)</td><td>Gestion du compte, accès aux formations, délivrance des certificats</td></tr>
+                    <tr><td><strong>Consentement</strong> (art. 6.1.a)</td><td>Newsletter, communications marketing, certains cookies non essentiels</td></tr>
+                    <tr><td><strong>Obligation légale</strong> (art. 6.1.c)</td><td>Conservation des factures (7 ans), réponse aux autorités</td></tr>
+                    <tr><td><strong>Intérêt légitime</strong> (art. 6.1.f)</td><td>Sécurité de la Plateforme, analyse de progression, amélioration du service</td></tr>
+                </tbody>
+            </table>
+
+            <!-- ARTICLE 6 -->
+            <h2 id="art6"><span class="article-num">6</span> Données de paiement</h2>
+            <p>
+                Tous les paiements sont traités de manière entièrement sécurisée par 
+                <strong>Stripe</strong>, prestataire de services de paiement certifié 
+                PCI-DSS niveau 1.
+            </p>
+            <p>
+                <strong>{{ site_name }} ne collecte, ne traite et ne stocke 
+                aucune donnée bancaire</strong> (numéro de carte bancaire, cryptogramme 
+                visuel, date d'expiration). Ces informations sont transmises directement 
+                et de manière chiffrée à Stripe via une connexion TLS 1.3, sans 
+                transiter par nos serveurs.
+            </p>
+            <p>
+                Les données de facturation (nom, adresse, historique des paiements) 
+                sont conservées conformément aux obligations légales comptables.
+            </p>
+
+            <!-- ARTICLE 7 -->
+            <h2 id="art7"><span class="article-num">7</span> Données de navigation</h2>
+            <p>
+                Lorsque vous naviguez sur la Plateforme, nous collectons automatiquement 
+                certaines informations techniques :
+            </p>
+            <ul>
+                <li><strong>Adresse IP :</strong> nécessaire à l'établissement de la connexion et à la sécurité ;</li>
+                <li><strong>Type de navigateur et système d'exploitation :</strong> pour l'optimisation technique ;</li>
+                <li><strong>Horodatage des connexions :</strong> pour le journal d'audit de sécurité ;</li>
+                <li><strong>Pages consultées :</strong> pour l'amélioration des parcours pédagogiques.</li>
+            </ul>
+            <p>
+                Ces données sont conservées pendant une durée maximale de douze (12) mois 
+                dans notre journal d'audit immutable.
+            </p>
+
+            <!-- ARTICLE 8 -->
+            <h2 id="art8"><span class="article-num">8</span> Cookies et technologies similaires</h2>
+            <p>
+                La Plateforme utilise exclusivement des <strong>cookies strictement 
+                nécessaires</strong> à son fonctionnement technique. Aucun consentement 
+                n'est requis pour ces cookies conformément à l'article 82 de la loi 
+                Informatique et Libertés.
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Cookie</th><th>Fonction</th><th>Durée</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Session ID</td><td>Identification de l'utilisateur connecté</td><td>Durée de la session</td></tr>
+                    <tr><td>CSRF Token</td><td>Protection contre les attaques Cross-Site Request Forgery</td><td>Durée de la session</td></tr>
+                    <tr><td>Langue</td><td>Mémorisation de la préférence linguistique</td><td>30 jours</td></tr>
+                </tbody>
+            </table>
+            <p>
+                <strong>Aucun cookie publicitaire, de traçage tiers ou d'analyse 
+                d'audience</strong> n'est déposé. Vous pouvez configurer votre 
+                navigateur pour bloquer les cookies, mais cela peut affecter 
+                le fonctionnement de la Plateforme.
+            </p>
+
+            <div class="highlight-box info">
+                <strong><i class="fas fa-info-circle"></i> Information</strong>
+                <p>Nous n'utilisons ni Google Analytics, ni Facebook Pixel, ni aucun 
+                autre service de traçage tiers sur notre Plateforme.</p>
+            </div>
+
+            <!-- ARTICLE 9 -->
+            <h2 id="art9"><span class="article-num">9</span> Durée de conservation des données</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Catégorie de données</th><th>Durée de conservation</th><th>Justification</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Données du compte actif</td><td>Durée de vie du compte</td><td>Exécution du contrat</td></tr>
+                    <tr><td>Comptes inactifs</td><td>Suppression après 24 mois d'inactivité</td><td>Limitation du stockage</td></tr>
+                    <tr><td>Certificats</td><td>10 ans à compter de la délivrance</td><td>Vérification ultérieure</td></tr>
+                    <tr><td>Logs techniques</td><td>12 mois</td><td>Sécurité (ANSSI)</td></tr>
+                    <tr><td>Données comptables</td><td>7 ans</td><td>Obligation légale (art. L.123-22 Code du commerce)</td></tr>
+                    <tr><td>Messages de support</td><td>3 ans à compter du dernier échange</td><td>Historique d'assistance</td></tr>
+                    <tr><td>Candidatures</td><td>2 ans après le dernier contact</td><td>Recommandation CNIL</td></tr>
+                </tbody>
+            </table>
+            <p>
+                À l'issue de ces durées, les données sont soit supprimées de manière 
+                sécurisée, soit anonymisées à des fins statistiques.
+            </p>
+
+            <!-- ARTICLE 10 -->
+            <h2 id="art10"><span class="article-num">10</span> Destinataires des données</h2>
+            <p>
+                Vos données personnelles sont accessibles uniquement aux personnes 
+                dûment habilitées au sein de {{ site_name }} :
+            </p>
+            <ul>
+                <li><strong>Équipe pédagogique :</strong> accès à votre progression et vos résultats pour vous accompagner ;</li>
+                <li><strong>Support technique :</strong> accès limité pour résoudre vos demandes d'assistance ;</li>
+                <li><strong>Administration :</strong> accès aux données de facturation pour la comptabilité ;</li>
+                <li><strong>Direction :</strong> accès aux statistiques agrégées et anonymisées.</li>
+            </ul>
+            <p>
+                Chaque membre de l'équipe est soumis à une obligation stricte de 
+                confidentialité et suit une formation à la protection des données.
+            </p>
+
+            <div class="highlight-box commitment">
+                <strong><i class="fas fa-shield-alt"></i> Principe du moindre privilège</strong>
+                <p>L'accès à vos données est strictement limité aux personnes qui en ont 
+                besoin pour accomplir leurs missions. Tous les accès sont journalisés.</p>
+            </div>
+
+            <!-- ARTICLE 11 -->
+            <h2 id="art11"><span class="article-num">11</span> Sous-traitants</h2>
+            <p>
+                {{ site_name }} fait appel à des sous-traitants pour certaines 
+                fonctionnalités techniques. Chaque sous-traitant est sélectionné 
+                pour ses garanties de sécurité et de conformité au RGPD.
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Sous-traitant</th><th>Finalité</th><th>Localisation des données</th><th>Garanties</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Stripe</td><td>Paiement sécurisé</td><td>UE / États-Unis</td><td>PCI-DSS, clauses contractuelles types</td></tr>
+                    <tr><td>{{ hebergeur_nom|default:"À déterminer" }}</td><td>Hébergement</td><td>{{ hebergeur_localisation|default:"À déterminer" }}</td><td>TLS 1.3, sauvegardes chiffrées</td></tr>
+                </tbody>
+            </table>
+            <p>
+                La liste complète et à jour de nos sous-traitants est disponible 
+                sur simple demande.
+            </p>
+
+            <!-- ARTICLE 12 -->
+            <h2 id="art12"><span class="article-num">12</span> Transferts hors UE</h2>
+            <p>
+                Dans la mesure du possible, vos données sont hébergées sur des serveurs 
+                situés dans l'<strong>Union européenne</strong>.
+            </p>
+            <p>
+                En cas de transfert vers un pays tiers non reconnu comme offrant un 
+                niveau de protection adéquat par la Commission européenne, nous mettons 
+                en œuvre les garanties appropriées conformément à l'article 46 du RGPD :
+            </p>
+            <ul>
+                <li>Clauses contractuelles types (CCT) adoptées par la Commission européenne ;</li>
+                <li>Certifications (Privacy Shield, Data Privacy Framework pour les États-Unis) ;</li>
+                <li>Règles d'entreprise contraignantes (BCR) pour les transferts intragroupe.</li>
+            </ul>
+            <p>
+                Vous pouvez obtenir une copie de ces garanties en nous contactant.
+            </p>
+
+            <!-- ARTICLE 13 -->
+            <h2 id="art13"><span class="article-num">13</span> Sécurité des données</h2>
+            <p>
+                {{ site_name }} met en œuvre des mesures techniques et organisationnelles 
+                appropriées pour protéger vos données contre la destruction, la perte, 
+                l'altération, la divulgation ou l'accès non autorisé :
+            </p>
+            <ul>
+                <li><strong>Chiffrement TLS 1.3</strong> pour toutes les communications entre votre navigateur et nos serveurs ;</li>
+                <li><strong>Hashage Argon2id</strong> (paramètres : t=4, m=128 Mo, p=4) pour le stockage des mots de passe ;</li>
+                <li><strong>Protection CSRF</strong> sur l'ensemble des formulaires ;</li>
+                <li><strong>Rate limiting</strong> (limitation du nombre de requêtes) sur les endpoints sensibles (connexion, inscription, contact) ;</li>
+                <li><strong>Verrouillage temporaire</strong> du compte après 5 tentatives de connexion échouées (15 minutes) ;</li>
+                <li><strong>Honeypot anti-bot</strong> sur les formulaires publics ;</li>
+                <li><strong>Journal d'audit immutable</strong> enregistrant toute modification ou accès aux données ;</li>
+                <li><strong>Sauvegardes chiffrées</strong> quotidiennes avec rétention de 30 jours ;</li>
+                <li><strong>En-têtes de sécurité HTTP</strong> (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy).</li>
+            </ul>
+            <p>
+                Nous effectuons des audits de sécurité réguliers et maintenons une 
+                veille permanente sur les vulnérabilités.
+            </p>
+
+            <!-- ARTICLE 14 -->
+            <h2 id="art14"><span class="article-num">14</span> Notification en cas de violation de données</h2>
+            <p>
+                Conformément aux articles 33 et 34 du RGPD, en cas de violation 
+                de données personnelles susceptible d'engendrer un risque élevé 
+                pour vos droits et libertés :
+            </p>
+            <ol>
+                <li>Nous notifierons la violation à l'autorité de contrôle compétente 
+                    (CNIL) dans un délai maximal de <strong>72 heures</strong> après 
+                    en avoir pris connaissance ;</li>
+                <li>Nous vous informerons individuellement dans les meilleurs délais 
+                    si la violation présente un risque élevé pour vos données ;</li>
+                <li>Nous documenterons toute violation dans un registre interne.</li>
+            </ol>
+
+            <!-- ARTICLE 15 -->
+            <h2 id="art15"><span class="article-num">15</span> Droits des utilisateurs (RGPD)</h2>
+            <p>
+                Conformément aux articles 15 à 22 du RGPD, vous disposez des droits 
+                suivants sur vos données personnelles :
+            </p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Droit</th><th>Article RGPD</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Droit d'accès</strong></td><td>Art. 15</td><td>Obtenir la confirmation que vos données sont traitées et en obtenir une copie</td></tr>
+                    <tr><td><strong>Droit de rectification</strong></td><td>Art. 16</td><td>Faire corriger vos données inexactes ou incomplètes</td></tr>
+                    <tr><td><strong>Droit à l'effacement</strong></td><td>Art. 17</td><td>Demander la suppression de vos données (« droit à l'oubli »)</td></tr>
+                    <tr><td><strong>Droit à la limitation</strong></td><td>Art. 18</td><td>Restreindre temporairement le traitement de vos données</td></tr>
+                    <tr><td><strong>Droit à la portabilité</strong></td><td>Art. 20</td><td>Recevoir vos données dans un format structuré et lisible</td></tr>
+                    <tr><td><strong>Droit d'opposition</strong></td><td>Art. 21</td><td>Vous opposer au traitement pour des motifs légitimes</td></tr>
+                    <tr><td><strong>Retrait du consentement</strong></td><td>Art. 7.3</td><td>Retirer votre consentement à tout moment</td></tr>
+                </tbody>
+            </table>
+
+            <!-- ARTICLE 16 -->
+            <h2 id="art16"><span class="article-num">16</span> Exercice de vos droits</h2>
+            <p>Pour exercer l'un de ces droits :</p>
+            <ul>
+                <li>📧 Envoyez un email à : <a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">{{ email_contact|default:"contact@ventoryx-academy.com" }}</a></li>
+                <li>📬 Utilisez notre <a href="{% url 'core:contact' %}">formulaire de contact</a></li>
+            </ul>
+            <p>
+                Nous accuserons réception de votre demande dans un délai de 
+                <strong>48 heures</strong> et y répondrons dans un délai maximal 
+                de <strong>trente (30) jours</strong>, conformément à l'article 12.3 
+                du RGPD. Ce délai peut être prolongé de deux mois en cas de demande 
+                complexe, auquel cas vous en serez informé.
+            </p>
+            <p>
+                Aucun frais n'est facturé pour l'exercice de vos droits, sauf demande 
+                manifestement infondée ou excessive au sens de l'article 12.5 du RGPD.
+            </p>
+
+            <!-- ARTICLE 17 -->
+            <h2 id="art17"><span class="article-num">17</span> Décisions automatisées et profilage</h2>
+            <p>
+                {{ site_name }} utilise des algorithmes pour personnaliser votre 
+                parcours pédagogique et vous recommander des modules adaptés à votre 
+                progression. Ces traitements automatisés :
+            </p>
+            <ul>
+                <li>N'ont <strong>pas d'effet juridique significatif</strong> sur vous ;</li>
+                <li>Reposent sur votre progression objective (cours validés, scores) ;</li>
+                <li>Peuvent faire l'objet d'un <strong>examen humain</strong> sur simple demande.</li>
+            </ul>
+            <p>
+                Conformément à l'article 22 du RGPD, vous pouvez demander à ne pas 
+                être soumis à une décision fondée exclusivement sur un traitement 
+                automatisé.
+            </p>
+
+            <!-- ARTICLE 18 -->
+            <h2 id="art18"><span class="article-num">18</span> Protection des mineurs</h2>
+            <p>
+                La Plateforme n'est pas destinée aux enfants de moins de 
+                <strong>{{ age_minimum|default:"16" }} ans</strong>. 
+                Pour les mineurs âgés de {{ age_minimum|default:"16" }} à 18 ans :
+            </p>
+            <ul>
+                <li>L'inscription nécessite l'accord explicite d'un parent ou représentant légal ;</li>
+                <li>Nous nous réservons le droit de demander une preuve de cet accord ;</li>
+                <li>En cas de collecte accidentelle de données d'un mineur sans consentement parental, 
+                    nous supprimerons ces données dans les plus brefs délais.</li>
+            </ul>
+
+            <!-- ARTICLE 19 -->
+            <h2 id="art19"><span class="article-num">19</span> Données des candidats</h2>
+            <p>
+                Dans le cadre de nos recrutements, nous collectons les données 
+                communiquées volontairement par les candidats (CV, lettre de motivation, 
+                portfolio). Ces données sont :
+            </p>
+            <ul>
+                <li>Accessibles uniquement à l'équipe de recrutement ;</li>
+                <li>Conservées pendant une durée maximale de deux (2) ans après le dernier contact ;</li>
+                <li>Utilisées exclusivement pour l'évaluation des candidatures.</li>
+            </ul>
+            <p>
+                Les candidats disposent des mêmes droits que les utilisateurs 
+                (articles 15 à 22 du RGPD).
+            </p>
+
+            <!-- ARTICLE 20 -->
+            <h2 id="art20"><span class="article-num">20</span> Données des partenaires</h2>
+            <p>
+                Dans le cadre de nos relations avec les partenaires (écoles, compagnies 
+                aériennes, organismes de formation), nous collectons les données 
+                professionnelles de nos interlocuteurs (nom, fonction, email, téléphone). 
+                Ces données sont utilisées exclusivement pour la gestion de la relation 
+                partenariale et sont conservées pendant la durée de la relation 
+                contractuelle.
+            </p>
+
+            <!-- ARTICLE 21 -->
+            <h2 id="art21"><span class="article-num">21</span> Conservation des certificats</h2>
+            <p>
+                Les certificats délivrés sont conservés pendant <strong>dix (10) ans</strong> 
+                à compter de leur date de délivrance. Cette durée est justifiée par 
+                la nécessité de permettre la vérification ultérieure des certificats 
+                par les employeurs et organismes de formation.
+            </p>
+            <p>
+                Au-delà de cette durée, les certificats sont anonymisés et seules 
+                des données statistiques agrégées sont conservées.
+            </p>
+
+            <!-- ARTICLE 22 -->
+            <h2 id="art22"><span class="article-num">22</span> Liens externes</h2>
+            <p>
+                La Plateforme peut contenir des liens vers des sites internet tiers. 
+                {{ site_name }} n'exerce aucun contrôle sur les pratiques de 
+                confidentialité de ces sites. Nous vous invitons à consulter 
+                leurs politiques de confidentialité respectives avant de leur 
+                communiquer vos données personnelles.
+            </p>
+
+            <!-- ARTICLE 23 -->
+            <h2 id="art23"><span class="article-num">23</span> Modification de la politique</h2>
+            <p>
+                Nous pouvons modifier la présente Politique de confidentialité pour 
+                refléter les évolutions de nos services, les changements légaux ou 
+                réglementaires, ou les retours de nos utilisateurs.
+            </p>
+            <p>En cas de modification substantielle :</p>
+            <ul>
+                <li>Nous vous en informerons par <strong>email</strong> au moins 15 jours avant l'entrée en vigueur ;</li>
+                <li>Une <strong>notification</strong> sera affichée sur la Plateforme ;</li>
+                <li>La date de dernière mise à jour sera actualisée en haut de cette page.</li>
+            </ul>
+            <p>
+                L'utilisation continue de la Plateforme après l'entrée en vigueur 
+                des modifications vaut acceptation de la nouvelle Politique.
+            </p>
+
+            <!-- ARTICLE 24 -->
+            <h2 id="art24"><span class="article-num">24</span> Autorité de contrôle</h2>
+            <p>
+                Si vous estimez que vos droits n'ont pas été respectés, vous avez 
+                le droit d'introduire une réclamation auprès de l'autorité de 
+                contrôle compétente :
+            </p>
+            <table class="data-table">
+                <tbody>
+                    <tr><td><strong>Autorité</strong></td><td>Commission Nationale de l'Informatique et des Libertés (CNIL)</td></tr>
+                    <tr><td><strong>Site web</strong></td><td><a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a></td></tr>
+                    <tr><td><strong>Adresse</strong></td><td>3 Place de Fontenoy — TSA 80715 — 75334 PARIS CEDEX 07</td></tr>
+                    <tr><td><strong>Téléphone</strong></td><td>01 53 73 22 22</td></tr>
+                    <tr><td><strong>Formulaire</strong></td><td><a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">Déposer une plainte en ligne</a></td></tr>
+                </tbody>
+            </table>
+            <p>
+                Vous pouvez également introduire une réclamation auprès de l'autorité 
+                de contrôle du pays de l'Union européenne dans lequel vous résidez.
+            </p>
+
+            <!-- ARTICLE 25 -->
+            <h2 id="art25"><span class="article-num">25</span> Contact et Délégué à la Protection des Données</h2>
+            <p>Pour toute question relative à vos données personnelles ou à cette Politique :</p>
+            <ul>
+                <li>📧 <strong>Email :</strong> <a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">{{ email_contact|default:"contact@ventoryx-academy.com" }}</a></li>
+                <li>📬 <strong>Formulaire de contact :</strong> <a href="{% url 'core:contact' %}">Nous contacter</a></li>
+            </ul>
+
+            {% if dpo_email %}
+            <p>
+                Notre Délégué à la Protection des Données (DPO) est joignable à : 
+                <a href="mailto:{{ dpo_email }}">{{ dpo_email }}</a>.
+            </p>
+            {% else %}
+            <p>
+                Les coordonnées du Délégué à la Protection des Données seront 
+                communiquées dès que la Plateforme entrera en phase opérationnelle.
+            </p>
+            {% endif %}
+
+            <div class="highlight-box info">
+                <strong><i class="fas fa-calendar-check"></i> Dernière mise à jour</strong>
+                <p>{% now "d F Y" %} — Version 1.0</p>
+            </div>
+
+        </article>
+
+        <!-- SOMMAIRE LATÉRAL -->
+        <aside class="legal-sidebar">
+            <div class="sidebar-nav">
+                <h3><i class="fas fa-list"></i> Navigation</h3>
+                <a href="#art1"><i class="fas fa-circle"></i> 1. Introduction</a>
+                <a href="#art2"><i class="fas fa-circle"></i> 2. Responsable</a>
+                <a href="#art3"><i class="fas fa-circle"></i> 3. Données collectées</a>
+                <a href="#art4"><i class="fas fa-circle"></i> 4. Finalités</a>
+                <a href="#art5"><i class="fas fa-circle"></i> 5. Bases légales</a>
+                <a href="#art6"><i class="fas fa-circle"></i> 6. Paiement</a>
+                <a href="#art7"><i class="fas fa-circle"></i> 7. Navigation</a>
+                <a href="#art8"><i class="fas fa-circle"></i> 8. Cookies</a>
+                <a href="#art9"><i class="fas fa-circle"></i> 9. Conservation</a>
+                <a href="#art10"><i class="fas fa-circle"></i> 10. Destinataires</a>
+                <a href="#art11"><i class="fas fa-circle"></i> 11. Sous-traitants</a>
+                <a href="#art12"><i class="fas fa-circle"></i> 12. Transfers UE</a>
+                <a href="#art13"><i class="fas fa-circle"></i> 13. Sécurité</a>
+                <a href="#art14"><i class="fas fa-circle"></i> 14. Violations</a>
+                <a href="#art15"><i class="fas fa-circle"></i> 15. Droits RGPD</a>
+                <a href="#art16"><i class="fas fa-circle"></i> 16. Exercice</a>
+                <a href="#art17"><i class="fas fa-circle"></i> 17. Décisions auto</a>
+                <a href="#art18"><i class="fas fa-circle"></i> 18. Mineurs</a>
+                <a href="#art19"><i class="fas fa-circle"></i> 19. Candidats</a>
+                <a href="#art20"><i class="fas fa-circle"></i> 20. Partenaires</a>
+                <a href="#art21"><i class="fas fa-circle"></i> 21. Certificats</a>
+                <a href="#art22"><i class="fas fa-circle"></i> 22. Liens externes</a>
+                <a href="#art23"><i class="fas fa-circle"></i> 23. Modifications</a>
+                <a href="#art24"><i class="fas fa-circle"></i> 24. CNIL</a>
+                <a href="#art25"><i class="fas fa-circle"></i> 25. Contact</a>
+            </div>
+        </aside>
+
+    </div>
+
+    <div class="legal-footer-note">
+        <p>
+            <i class="fas fa-file-contract"></i>
+            <strong>Documents officiels</strong> — 
+            <a href="{% url 'core:page_legale' type_page='cgu' %}">CGU</a> &nbsp;|&nbsp;
+            <a href="{% url 'core:page_legale' type_page='mentions_legales' %}">Mentions légales</a> &nbsp;|&nbsp;
+            <a href="{% url 'core:contact' %}">Contact</a>
+        </p>
+    </div>
+</div>
+
+<!-- Cookie Banner -->
+<div id="cookieBanner">
+    <i class="fas fa-cookie-bite"></i> 
+    Ce site utilise uniquement des cookies fonctionnels strictement nécessaires.
+    <button onclick="acceptCookies()">J'ai compris</button>
+</div>
+
+<script>
+function acceptCookies() {
+    localStorage.setItem("cookiesAccepted", "true");
+    document.getElementById("cookieBanner").style.display = "none";
+}
+if (!localStorage.getItem("cookiesAccepted")) {
+    document.getElementById("cookieBanner").style.display = "block";
+}
+</script>
+{% endblock %}       
