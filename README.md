@@ -63,7 +63,7 @@ DEFAULT_FROM_EMAIL=noreply@ventoryx-academy.com
 REDIS_URL=redis://localhost:6379
 
 # OpenAI (Assistant IA)
-OPENAI_API_KEY=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
+OPENAI_API_KEY=
 ```
 
 Utilisateurs par défaut
