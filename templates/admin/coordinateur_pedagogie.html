@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Coordination Pédagogie — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root { --dept-primary: #10B981; --dept-dark: #059669; }
+
+    .coord-hero {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .coord-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; display: flex; align-items: center; gap: 0.8rem; }
+    .coord-hero .badge-role { background: #10B981; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; }
+
+    .security-alert {
+        background: #FFF8E6; border-left: 4px solid #f59e0b;
+        padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem;
+        display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: #92400e;
+    }
+
+    .stats-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative;
+    }
+    .stat-card.alert-orange { border-left: 4px solid #f59e0b; background: #FFFDF5; }
+    .stat-card.alert-red { border-left: 4px solid #ef4444; background: #FFF5F5; }
+    .stat-card.alert-green { border-left: 4px solid #10B981; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #0F1C2E; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; }
+    .stat-threshold {
+        font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600;
+    }
+    .stat-threshold.green { background: #ECFDF5; color: #059669; }
+    .stat-threshold.orange { background: #FFF8E6; color: #d97706; }
+    .stat-threshold.red { background: #FEF2F2; color: #dc2626; }
+    .stat-alert-msg { font-size: 0.7rem; color: #ef4444; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+
+    .charts-grid {
+        display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .chart-card {
+        background: white; border-radius: 12px; padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .chart-card h3 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .chart-card canvas { max-height: 200px; }
+
+    .section-title {
+        font-size: 1.1rem; color: #0F1C2E; margin: 1.5rem 0 1rem;
+        display: flex; align-items: center; gap: 0.7rem;
+        border-left: 4px solid #10B981; padding-left: 1rem;
+    }
+
+    .quick-actions {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.7rem; margin-bottom: 2rem;
+    }
+    .action-btn {
+        background: white; border: none; border-radius: 12px; padding: 0.8rem 0.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; text-align: center;
+        transition: all 0.3s; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.72rem;
+        position: relative;
+    }
+    .action-btn:hover { transform: translateY(-3px); background: #10B981; color: white; }
+    .action-btn:hover .action-icon { background: white; color: #10B981; }
+    .action-btn.critique { border: 1px solid #f59e0b; }
+    .action-btn.critique::after { content: '🔒'; position: absolute; top: 5px; right: 8px; font-size: 0.6rem; }
+    .action-btn.otp-required { border: 1px solid #ef4444; }
+    .action-btn.otp-required::after { content: '🔐'; position: absolute; top: 5px; right: 8px; font-size: 0.6rem; }
+    .action-icon {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, #10B981, #059669);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 0.5rem; color: white; font-size: 0.8rem; transition: all 0.3s;
+    }
+
+    .gestionnaires-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem; margin-bottom: 2rem;
+    }
+    .gestionnaire-card {
+        background: white; border-radius: 12px; padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .gestionnaire-card h4 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin-bottom: 0.8rem; }
+    .gestionnaire-stat { display: flex; justify-content: space-between; font-size: 0.8rem; color: #6C757D; margin-bottom: 0.3rem; }
+
+    .table-container {
+        background: white; border-radius: 12px; overflow-x: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #E9ECEF; font-size: 0.8rem; }
+    th { background: #F8F9FA; font-weight: 600; color: #0F1C2E; }
+    .status { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
+    .status-success { background: rgba(16,185,129,0.1); color: #10b981; }
+    .status-warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .progress-bar { background: #E9ECEF; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 0.3rem; }
+    .progress-fill { height: 100%; background: #10B981; border-radius: 3px; }
+
+    .dg-chat { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; }
+    .form-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 0.8rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #0F1C2E; margin-bottom: 0.3rem; }
+    .form-control { width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px; font-family: inherit; font-size: 0.85rem; }
+    .btn { display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; transition: all 0.3s; text-decoration: none; }
+    .btn-primary { background: #10B981; color: white; } .btn-primary:hover { background: #059669; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.7rem; }
+
+    @media (max-width: 992px) { .charts-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="padding: 2rem 0;">
+
+    <section class="coord-hero">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+            <div>
+                <h1><i class="fas fa-book-open"></i> Coordination Pédagogie</h1>
+                <p style="opacity:0.9;margin:0;">Supervision des modules, quiz, certifications et messages</p>
+            </div>
+            <span class="badge-role"><i class="fas fa-user-tie"></i> Coordinateur</span>
+        </div>
+    </section>
+
+    <div class="security-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>Rappel de sécurité — Ne partagez jamais vos identifiants</strong>
+            <p style="margin:0.3rem 0 0;">Article 7.3 des CGU. Toute connexion est tracée dans le journal d'audit immutable.</p>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+        <div class="stat-card {% if messages_non_repondus > 5 %}alert-red{% elif messages_non_repondus > 2 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header"><span class="stat-label">Messages en attente</span><span class="stat-threshold {% if messages_non_repondus > 5 %}red{% elif messages_non_repondus > 2 %}orange{% else %}green{% endif %}">Seuil: 5</span></div>
+            <div class="stat-value">{{ messages_non_repondus }}/{{ messages_total }}</div>
+        </div>
+        <div class="stat-card {% if taux_completion < 60 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header"><span class="stat-label">Taux complétion</span><span class="stat-threshold {% if taux_completion < 60 %}orange{% else %}green{% endif %}">Seuil: 60%</span></div>
+            <div class="stat-value">{{ taux_completion }}%</div>
+        </div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Gestionnaires</span></div><div class="stat-value">{{ gestionnaires|length }}/4</div></div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Certifications/mois</span></div><div class="stat-value">{{ certifications_mois }}</div></div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Délai réponse</span></div><div class="stat-value">{{ delai_reponse }}h</div></div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Taux réussite</span></div><div class="stat-value">{{ taux_reussite }}%</div></div>
+    </div>
+
+    <!-- 6 Graphiques -->
+    <div class="charts-grid">
+        <div class="chart-card"><h3><i class="fas fa-users" style="color:#10B981;"></i> Performance équipe</h3><canvas id="chartPerfEquipe"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-tasks" style="color:#10B981;"></i> Charge gestionnaires</h3><canvas id="chartCharge"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-chart-line" style="color:#10B981;"></i> Évolution messages</h3><canvas id="chartEvolution"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-chart-pie" style="color:#10B981;"></i> Répartition modules</h3><canvas id="chartRepartition"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-clock" style="color:#10B981;"></i> Temps de réponse</h3><canvas id="chartTempsReponse"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-bullseye" style="color:#10B981;"></i> Objectifs vs Réalisé</h3><canvas id="chartObjectifs"></canvas></div>
+    </div>
+
+    <!-- 15 Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="handleAction('creer_module')"><div class="action-icon"><i class="fas fa-plus-circle"></i></div><strong>Nouveau module</strong></button>
+        <button class="action-btn" onclick="handleAction('creer_quiz')"><div class="action-icon"><i class="fas fa-question-circle"></i></div><strong>Nouveau quiz</strong></button>
+        <button class="action-btn otp-required" onclick="handleActionCritique('valider_module')"><div class="action-icon"><i class="fas fa-check-double"></i></div><strong>Valider module</strong></button>
+        <button class="action-btn" onclick="handleAction('assigner_tache')"><div class="action-icon"><i class="fas fa-user-plus"></i></div><strong>Assigner tâche</strong></button>
+        <button class="action-btn" onclick="handleAction('voir_equipe')"><div class="action-icon"><i class="fas fa-users"></i></div><strong>Voir équipe</strong></button>
+        <button class="action-btn otp-required" onclick="handleActionCritique('rapport_global')"><div class="action-icon"><i class="fas fa-chart-line"></i></div><strong>Rapport global</strong></button>
+        <button class="action-btn critique" onclick="handleActionCritique('contacter_dg')"><div class="action-icon"><i class="fas fa-comments"></i></div><strong>Contacter DG</strong></button>
+        <button class="action-btn" onclick="handleAction('message_equipe')"><div class="action-icon"><i class="fas fa-envelope"></i></div><strong>Message équipe</strong></button>
+        <button class="action-btn" onclick="handleAction('importer')"><div class="action-icon"><i class="fas fa-upload"></i></div><strong>Importer</strong></button>
+        <button class="action-btn" onclick="handleAction('exporter')"><div class="action-icon"><i class="fas fa-download"></i></div><strong>Exporter</strong></button>
+        <button class="action-btn" onclick="handleAction('certifications')"><div class="action-icon"><i class="fas fa-certificate"></i></div><strong>Certifications</strong></button>
+        <button class="action-btn" onclick="handleAction('statistiques')"><div class="action-icon"><i class="fas fa-chart-simple"></i></div><strong>Statistiques</strong></button>
+        <button class="action-btn" onclick="handleAction('evaluations')"><div class="action-icon"><i class="fas fa-file-alt"></i></div><strong>Évaluations</strong></button>
+        <button class="action-btn" onclick="handleAction('archives')"><div class="action-icon"><i class="fas fa-archive"></i></div><strong>Archives</strong></button>
+        <button class="action-btn" onclick="handleAction('programme')"><div class="action-icon"><i class="fas fa-calendar"></i></div><strong>Programme</strong></button>
+    </div>
+
+    <!-- Gestionnaires -->
+    <h2 class="section-title"><i class="fas fa-user-check"></i> Gestionnaires ({{ gestionnaires|length }}/4)</h2>
+    <div class="gestionnaires-grid">
+        {% for g in gestionnaires %}
+        <div class="gestionnaire-card">
+            <h4><i class="fas fa-user-circle"></i> {{ g.nom }}</h4>
+            <div class="gestionnaire-stat"><span>Modules gérés</span><strong>{{ g.modules_count }}</strong></div>
+            <div class="gestionnaire-stat"><span>Quiz créés</span><strong>{{ g.quiz_count }}</strong></div>
+            <div class="gestionnaire-stat"><span>Messages traités</span><strong>{{ g.messages_traites }}</strong></div>
+            <div class="progress-bar" style="margin-top:0.5rem;"><div class="progress-fill" style="width:{{ g.activite }}%;"></div></div>
+            <small style="color:#6C757D;">Activité: {{ g.activite }}%</small>
+        </div>
+        {% empty %}<p style="color:#6C757D;">Aucun gestionnaire.</p>{% endfor %}
+    </div>
+
+    <!-- Messages en attente -->
+    <h2 class="section-title"><i class="fas fa-envelope"></i> Messages en attente</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>De</th><th>Sujet</th><th>Date</th><th>Assigné</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for msg in messages_attente %}
+                <tr><td>{{ msg.name }}</td><td>{{ msg.subject }}</td><td>{{ msg.date|date:"d/m/Y H:i" }}</td>
+                    <td><span class="status {% if msg.assigne %}status-success{% else %}status-warning{% endif %}">{% if msg.assigne %}{{ msg.assigne }}{% else %}Non assigné{% endif %}</span></td>
+                    <td><button class="btn btn-sm btn-primary" onclick="assignerMessage({{ msg.id }})">👤</button></td></tr>
+                {% empty %}<tr><td colspan="5" style="text-align:center;padding:2rem;color:#6C757D;">Aucun message.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Communication Direction -->
+    <h2 class="section-title"><i class="fas fa-comments"></i> Communication avec la Direction</h2>
+    <div class="dg-chat">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(16,185,129,0.3);">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#FF6B35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">DG</div>
+            <strong>Direction Générale</strong></div>
+        {% for msg in dg_messages %}
+        <div style="background:white;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border-left:3px solid #D4AF37;"><small style="color:#6C757D;">{{ msg.date|date:"d/m/Y H:i" }}</small><p style="margin-top:0.3rem;">{{ msg.contenu }}</p></div>
+        {% empty %}<p style="color:#6C757D;text-align:center;">Aucun message.</p>{% endfor %}
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-top:1rem;">
+            {% csrf_token %}<input type="hidden" name="departement" value="pedagogie">
+            <textarea name="message" rows="2" class="form-control" placeholder="Message à la Direction..." style="margin-bottom:0.5rem;"></textarea>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const chartData = {{ chart_data_json|safe }};
+const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+// Graphiques
+new Chart(document.getElementById('chartPerfEquipe'), { type: 'bar', data: { labels: chartData.g_labels, datasets: [{ label: '%', data: chartData.g_completion, backgroundColor: '#10B981', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } } });
+new Chart(document.getElementById('chartCharge'), { type: 'bar', data: { labels: chartData.g_labels, datasets: [{ label: 'Tâches', data: chartData.g_taches, backgroundColor: '#10B981', borderRadius: 8 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false } });
+new Chart(document.getElementById('chartEvolution'), { type: 'line', data: { labels: chartData.mois_labels, datasets: [{ label: 'Messages', data: chartData.messages_data, borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false } });
+new Chart(document.getElementById('chartRepartition'), { type: 'doughnut', data: { labels: ['Actifs','En cours','Planifiés'], datasets: [{ data: [chartData.m_actifs, chartData.m_encours, chartData.m_planifies], backgroundColor: ['#10B981','#f59e0b','#3b82f6'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+new Chart(document.getElementById('chartTempsReponse'), { type: 'bar', data: { labels: chartData.g_labels, datasets: [{ label: 'Heures', data: chartData.g_temps, backgroundColor: '#10B981', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false } });
+new Chart(document.getElementById('chartObjectifs'), { type: 'bar', data: { labels: ['Complétion','Réussite','Messages','Certifs'], datasets: [{ label: 'Objectif', data: [80,70,90,5], backgroundColor: 'rgba(16,185,129,0.2)', borderColor: '#10B981', borderWidth: 2, borderRadius: 8 }, { label: 'Réalisé', data: [chartData.o_comp, chartData.o_reus, chartData.o_msg, chartData.o_cert], backgroundColor: '#10B981', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false } });
+
+// Actions rapides
+function handleAction(action) {
+    fetch(`/pedagogie/api/${action}/`, { method: 'POST', headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' } })
+        .then(r => r.json()).then(d => showToast(d.message || 'Effectué', d.success ? 'success' : 'error'));
+}
+
+function handleActionCritique(action) {
+    fetch('/auth/check-validation/', { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+        .then(r => r.json())
+        .then(d => {
+            if (d.requires_otp) {
+                window.location.href = '/auth/otp-verify/?next=' + encodeURIComponent('/coordination/pedagogie/?action=' + action);
+            } else if (d.requires_validation) {
+                window.location.href = '/auth/validation-secondaire/?next=' + encodeURIComponent('/coordination/pedagogie/?action=' + action);
+            } else {
+                handleAction(action);
+            }
+        });
+}
+
+function assignerMessage(id) {
+    fetch(`/pedagogie/api/assigner-message/${id}/`, { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+        .then(r => r.json()).then(d => { if(d.ok) location.reload(); });
+}
+
+function showToast(msg, type) {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;bottom:2rem;right:2rem;background:${type==='success'?'#10B981':'#ef4444'};color:white;padding:0.8rem 1.5rem;border-radius:10px;z-index:9999;font-weight:600;`;
+    t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+</script>
+{% endblock %}
