@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Choisissez votre parcours — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Découvrez nos 8 parcours de formation aéronautique : pilote, PNC, ingénieur, contrôleur, technicien, mécanicien, agent d'escale. 2 parcours gratuits.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --success: #10b981;
+    }
+
+    .selection-hero {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .selection-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.03' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+    .selection-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        color: white;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .selection-hero p {
+        font-size: 1rem;
+        opacity: 0.85;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Compteur */
+    .stats-counter {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .counter-item {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+    }
+
+    /* Filtres */
+    .filters {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        padding: 1rem 0;
+    }
+    .filter-btn {
+        padding: 0.5rem 1.2rem;
+        background: var(--bg-light);
+        border: 1px solid var(--gray-light);
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.85rem;
+    }
+    .filter-btn.active, .filter-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .metiers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.8rem;
+        padding: 2rem 0 3rem;
+    }
+    .metier-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        text-align: center;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out forwards;
+        position: relative;
+        overflow: hidden;
+    }
+    .metier-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.5s;
+    }
+    .metier-card:hover::before {
+        left: 100%;
+    }
+    .metier-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .metier-card:nth-child(1) { animation-delay: 0.05s; }
+    .metier-card:nth-child(2) { animation-delay: 0.1s; }
+    .metier-card:nth-child(3) { animation-delay: 0.15s; }
+    .metier-card:nth-child(4) { animation-delay: 0.2s; }
+    .metier-card:nth-child(5) { animation-delay: 0.25s; }
+    .metier-card:nth-child(6) { animation-delay: 0.3s; }
+    .metier-card:nth-child(7) { animation-delay: 0.35s; }
+    .metier-card:nth-child(8) { animation-delay: 0.4s; }
+
+    .metier-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1.2rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+        transition: transform 0.3s;
+    }
+    .metier-card:hover .metier-icon {
+        transform: scale(1.05);
+    }
+    .metier-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.15rem;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    .metier-card p {
+        color: var(--gray);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .badge-gratuit, .badge-premium {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+    }
+    .badge-gratuit { background: var(--success); color: white; }
+    .badge-premium { background: #D4AF37; color: #0F1C2E; }
+
+    .metier-stats {
+        display: flex;
+        justify-content: center;
+        gap: 1.2rem;
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-bottom: 0.8rem;
+    }
+    .metier-stats span { display: flex; align-items: center; gap: 0.3rem; }
+    .metier-stats i { color: var(--primary); }
+
+    .progress-bar {
+        background: var(--gray-light);
+        border-radius: 10px;
+        height: 6px;
+        overflow: hidden;
+        margin-top: 0.8rem;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, var(--primary), var(--success));
+        transition: width 0.5s ease;
+    }
+    .progress-text {
+        font-size: 0.7rem;
+        color: var(--gray);
+        margin-top: 0.2rem;
+        display: block;
+    }
+
+    /* Dark mode */
+    body.dark-mode .metier-card {
+        background: #1E1E1E;
+    }
+    body.dark-mode .filter-btn {
+        background: #2C2C2C;
+        border-color: #3C3C3C;
+        color: #E0E0E0;
+    }
+    body.dark-mode .filter-btn.active,
+    body.dark-mode .filter-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+    body.dark-mode .progress-bar {
+        background: #2C2C2C;
+    }
+
+    @media (max-width: 768px) {
+        .selection-hero h1 { font-size: 1.8rem; }
+        .metiers-grid { grid-template-columns: 1fr; }
+        .stats-counter { flex-direction: column; align-items: center; gap: 0.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="selection-hero">
+    <div class="container">
+        <h1>Choisissez votre parcours</h1>
+        <p>8 métiers aéronautiques dont 2 gratuits — Certificats SHA-256 vérifiables</p>
+        
+        <!-- Compteur -->
+        <div class="stats-counter" id="statsCounter">
+            <div class="counter-item">📚 <span id="totalParcours">8</span> parcours</div>
+            <div class="counter-item">🎓 <span id="totalCours">650</span> cours</div>
+            <div class="counter-item">⭐ <span id="totalGratuits">2</span> gratuits</div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <!-- Filtres -->
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">Tous</button>
+        <button class="filter-btn" data-filter="free">Gratuits</button>
+        <button class="filter-btn" data-filter="premium">Premium</button>
+        <button class="filter-btn" data-filter="popular">Les plus suivis</button>
+    </div>
+
+    <!-- Grille des métiers -->
+    <div class="metiers-grid" id="metiersGrid">
+        {% for metier in metiers %}
+        <a href="{% url 'parcours:accueil_parcours' metier=metier.metier %}" class="metier-card" data-category="{% if metier.gratuit %}free{% elif metier.premium %}premium{% else %}paid{% endif %}">
+            {% if metier.gratuit %}
+            <span class="badge-gratuit">🎓 Gratuit</span>
+            {% elif metier.premium %}
+            <span class="badge-premium">👑 Premium</span>
+            {% endif %}
+            <div class="metier-icon">
+                <i class="fas {{ metier.icone }}"></i>
+            </div>
+            <h3>{{ metier.nom }}</h3>
+            <p>{{ metier.description|truncatechars:100 }}</p>
+            <div class="metier-stats">
+                <span><i class="fas fa-layer-group"></i> {{ metier.total_modules }} modules</span>
+                <span><i class="fas fa-book"></i> {{ metier.total_cours }} cours</span>
+            </div>
+            {% if metier.progression > 0 %}
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:{{ metier.progression }}%;"></div>
+            </div>
+            <span class="progress-text">{{ metier.progression }}% complété</span>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // ============ FILTRAGE ============
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.metier-card');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.dataset.filter;
+            
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const category = card.dataset.category;
+                if (filter === 'all' || category === filter) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                    // Réanimer la carte
+                    card.style.animation = 'none';
+                    setTimeout(() => {
+                        card.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    }, 10);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Mettre à jour le compteur affiché
+            const totalParcours = document.getElementById('totalParcours');
+            if (totalParcours) {
+                if (filter === 'all') {
+                    totalParcours.innerText = '8';
+                } else if (filter === 'free') {
+                    totalParcours.innerText = '2';
+                } else if (filter === 'premium') {
+                    totalParcours.innerText = '1';
+                } else {
+                    totalParcours.innerText = visibleCount;
+                }
+            }
+        });
+    });
+
+    // ============ ANIMATION DES CHIFFRES AU SCROLL ============
+    function animateNumber(element, target, duration = 1500) {
+        let start = 0;
+        const increment = target / (duration / 16);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= target) {
+                element.innerText = target;
+                clearInterval(timer);
+            } else {
+                element.innerText = Math.floor(start);
+            }
+        }, 16);
+    }
+
+    const observerOptions = { threshold: 0.5 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const totalCours = document.getElementById('totalCours');
+                const totalGratuits = document.getElementById('totalGratuits');
+                if (totalCours && totalCours.innerText !== '650') {
+                    animateNumber(totalCours, 650);
+                    animateNumber(totalGratuits, 2);
+                }
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const statsCounter = document.getElementById('statsCounter');
+    if (statsCounter) observer.observe(statsCounter);
+</script>
+
+{% endblock %}
