@@ -1,0 +1,749 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mentions légales - {{ site_name }}{% endblock %}
+
+{% block meta_description %}Mentions légales de {{ site_name }} — Informations légales et conditions d'utilisation de la plateforme.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white;
+        padding: 4rem 0 3rem;
+        text-align: center;
+    }
+    .legal-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+        color: white;
+    }
+    .legal-hero .hero-subtitle {
+        font-size: 1rem;
+        opacity: 0.85;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+    .legal-hero .last-update {
+        display: inline-block;
+        background: rgba(255,255,255,0.1);
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .legal-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 2.5rem;
+        margin: 3rem 0;
+    }
+
+    .legal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem 3rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .legal-content .toc-box {
+        background: #F8FAFE;
+        border: 1px solid #E3E8F2;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+    .legal-content .toc-box h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+    }
+    .legal-content .toc-box ol {
+        columns: 2;
+        column-gap: 2rem;
+        font-size: 0.85rem;
+        color: #0077B6;
+        padding-left: 1.2rem;
+    }
+    .legal-content .toc-box ol li {
+        margin-bottom: 0.4rem;
+    }
+    .legal-content .toc-box ol li a {
+        text-decoration: none;
+        color: #0077B6;
+    }
+    .legal-content .toc-box ol li a:hover {
+        text-decoration: underline;
+    }
+
+    .legal-content h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        color: #0F1C2E;
+        margin: 2.5rem 0 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid #E9ECEF;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+    .legal-content h2 .article-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        background: #0077B6;
+        color: white;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .legal-content h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.05rem;
+        color: #1E3A5F;
+        margin: 1.5rem 0 0.8rem;
+    }
+    .legal-content p {
+        margin-bottom: 1rem;
+        color: #495057;
+        line-height: 1.8;
+    }
+    .legal-content ul, .legal-content ol {
+        margin: 0 0 1.2rem 1.5rem;
+        color: #495057;
+    }
+    .legal-content li {
+        margin-bottom: 0.6rem;
+        line-height: 1.7;
+    }
+    .legal-content a {
+        color: #0077B6;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .legal-content a:hover {
+        text-decoration: underline;
+    }
+
+    .highlight-box {
+        background: #FFF8E6;
+        border-left: 4px solid #D4AF37;
+        padding: 1.2rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 1.5rem 0;
+    }
+    .highlight-box.warning {
+        background: #FFF2E5;
+        border-left-color: #FF6B35;
+    }
+    .highlight-box.info {
+        background: #E8F4FD;
+        border-left-color: #0077B6;
+    }
+    .highlight-box p {
+        margin-bottom: 0;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0 1.5rem;
+        font-size: 0.88rem;
+    }
+    .data-table th {
+        background: #F8F9FA;
+        padding: 0.8rem;
+        text-align: left;
+        font-weight: 600;
+        color: #0F1C2E;
+        border-bottom: 2px solid #E9ECEF;
+    }
+    .data-table td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #E9ECEF;
+        color: #495057;
+    }
+
+    .contact-card {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+    .contact-card h3 {
+        color: white;
+        font-family: 'Montserrat', sans-serif;
+        margin-bottom: 0.5rem;
+    }
+    .contact-card a {
+        color: #D4AF37;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .contact-card a:hover {
+        text-decoration: underline;
+    }
+
+    .legal-sidebar {
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+    }
+    .sidebar-nav {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .sidebar-nav h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #E9ECEF;
+    }
+    .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0;
+        border-bottom: 1px solid #f5f5f5;
+        color: #6C757D;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+    }
+    .sidebar-nav a:hover {
+        color: #0077B6;
+        padding-left: 4px;
+    }
+    .sidebar-nav a i {
+        font-size: 0.4rem;
+        color: #0077B6;
+    }
+    .sidebar-nav a:last-child {
+        border-bottom: none;
+    }
+
+    .legal-footer-note {
+        text-align: center;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        color: #6C757D;
+        font-size: 0.85rem;
+    }
+    .legal-footer-note a {
+        color: #0077B6;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    @media (max-width: 992px) {
+        .legal-layout { grid-template-columns: 1fr; }
+        .legal-sidebar { position: static; order: -1; }
+        .legal-content .toc-box ol { columns: 1; }
+    }
+    @media (max-width: 768px) {
+        .legal-hero h1 { font-size: 1.8rem; }
+        .legal-content { padding: 1.5rem; }
+        .legal-content h2 { font-size: 1.15rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="legal-hero">
+    <div class="container">
+        <h1>Mentions légales</h1>
+        <p class="hero-subtitle">
+            Informations légales et conditions d'utilisation de la plateforme <strong>{{ site_name }}</strong>.
+        </p>
+        <span class="last-update">
+            <i class="fas fa-calendar-check"></i> 
+            Dernière mise à jour : {% now "d/m/Y" %}
+        </span>
+    </div>
+</section>
+
+<div class="container">
+    <div class="legal-layout">
+
+        <!-- COLONNE PRINCIPALE -->
+        <article class="legal-content">
+
+            <!-- TABLE DES MATIÈRES -->
+            <div class="toc-box">
+                <h3><i class="fas fa-list-ol"></i> Table des matières</h3>
+                <ol>
+                    <li><a href="#art1">Éditeur du site</a></li>
+                    <li><a href="#art2">Nom officiel et slogan</a></li>
+                    <li><a href="#art3">Directeur de la publication</a></li>
+                    <li><a href="#art4">Hébergement</a></li>
+                    <li><a href="#art5">Propriété intellectuelle</a></li>
+                    <li><a href="#art6">Marques et logos</a></li>
+                    <li><a href="#art7">Contenu pédagogique</a></li>
+                    <li><a href="#art8">Certificats numériques</a></li>
+                    <li><a href="#art9">Protection des données personnelles</a></li>
+                    <li><a href="#art10">Cookies</a></li>
+                    <li><a href="#art11">Droits des utilisateurs (RGPD)</a></li>
+                    <li><a href="#art12">Sécurité</a></li>
+                    <li><a href="#art13">Conditions d'utilisation</a></li>
+                    <li><a href="#art14">Personnages et images</a></li>
+                    <li><a href="#art15">Crédits images</a></li>
+                    <li><a href="#art16">Liens externes</a></li>
+                    <li><a href="#art17">Disponibilité du service</a></li>
+                    <li><a href="#art18">Droit applicable et litiges</a></li>
+                    <li><a href="#art19">Modification des mentions légales</a></li>
+                    <li><a href="#art20">Contact</a></li>
+                </ol>
+            </div>
+
+            <!-- INTRODUCTION -->
+            <p>
+                Les présentes mentions légales ont pour objet d'informer tout utilisateur 
+                de la Plateforme <strong>{{ site_name }}</strong> (ci-après « la Plateforme ») 
+                des informations légales relatives à son édition, son hébergement, 
+                la protection des données personnelles et les droits des utilisateurs.
+            </p>
+            <p>
+                Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 
+                pour la confiance dans l'économie numérique (LCEN), les informations 
+                suivantes sont portées à la connaissance des utilisateurs.
+            </p>
+
+            <!-- ARTICLE 1 -->
+            <h2 id="art1"><span class="article-num">1</span> Éditeur du site</h2>
+            <p>
+                <strong>{{ site_name }}</strong> est une plateforme éducative spécialisée 
+                dans la formation théorique aéronautique.
+            </p>
+            <table class="data-table">
+                <tbody>
+                    <tr><td><strong>Nom de la Plateforme</strong></td><td>{{ site_name }}</td></tr>
+                    <tr><td><strong>Statut juridique</strong></td><td>{{ statut_juridique|default:"Projet en phase de développement" }}</td></tr>
+                    <tr><td><strong>Email de contact</strong></td><td><a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">{{ email_contact|default:"contact@ventoryx-academy.com" }}</a></td></tr>
+                    {% if adresse_siege %}
+                    <tr><td><strong>Adresse</strong></td><td>{{ adresse_siege }}</td></tr>
+                    {% endif %}
+                    {% if siret %}
+                    <tr><td><strong>SIRET</strong></td><td>{{ siret }}</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <!-- ARTICLE 2 -->
+            <h2 id="art2"><span class="article-num">2</span> Nom officiel et slogan</h2>
+            <p>
+                <strong>Nom officiel :</strong> {{ site_name }}<br>
+                <strong>Slogan :</strong> « {{ slogan|default:"Protocole d'excellence aéronautique" }} »
+            </p>
+            <p>
+                Ces dénominations sont protégées au titre du droit des marques et du droit 
+                d'auteur. Toute utilisation non autorisée est interdite.
+            </p>
+
+            <!-- ARTICLE 3 -->
+            <h2 id="art3"><span class="article-num">3</span> Directeur de la publication</h2>
+            {% if directeur_publication %}
+            <p>
+                <strong>Nom :</strong> {{ directeur_publication }}<br>
+                <strong>Rôle :</strong> Fondateur et Directeur Général<br>
+                <strong>Email :</strong> <a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">{{ email_contact|default:"contact@ventoryx-academy.com" }}</a>
+            </p>
+            <p>
+                Le Directeur de la publication est responsable du contenu éditorial 
+                publié sur la Plateforme, conformément à l'article 93-2 de la loi 
+                du 29 juillet 1982 sur la communication audiovisuelle.
+            </p>
+            {% else %}
+            <p>
+                Les informations relatives au Directeur de la publication seront 
+                communiquées dès que la Plateforme entrera en phase opérationnelle.
+            </p>
+            {% endif %}
+
+            <!-- ARTICLE 4 -->
+            <h2 id="art4"><span class="article-num">4</span> Hébergement</h2>
+            {% if hebergeur_nom %}
+            <table class="data-table">
+                <tbody>
+                    <tr><td><strong>Prestataire</strong></td><td>{{ hebergeur_nom }}</td></tr>
+                    {% if hebergeur_adresse %}
+                    <tr><td><strong>Adresse</strong></td><td>{{ hebergeur_adresse }}</td></tr>
+                    {% endif %}
+                    {% if hebergeur_site %}
+                    <tr><td><strong>Site web</strong></td><td><a href="{{ hebergeur_site }}" target="_blank" rel="noopener noreferrer">{{ hebergeur_site }}</a></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <p>
+                Les mesures de sécurité mises en œuvre incluent : chiffrement TLS 1.3, 
+                sauvegardes quotidiennes chiffrées, contrôles d'accès stricts, 
+                isolation des environnements d'exécution, et surveillance continue.
+            </p>
+            {% else %}
+            <p>
+                Les informations d'hébergement seront communiquées dès que la Plateforme 
+                sera déployée en environnement de production.
+            </p>
+            {% endif %}
+
+            <!-- ARTICLE 5 -->
+            <h2 id="art5"><span class="article-num">5</span> Propriété intellectuelle</h2>
+            <p>
+                L'ensemble des éléments publiés sur la Plateforme (textes, images, 
+                photographies, vidéos, sons, schémas, supports pédagogiques, code source, 
+                interfaces graphiques, bases de données, logos, certificats) est protégé 
+                par les dispositions du Code de la propriété intellectuelle et appartient 
+                à {{ site_name }} ou à ses partenaires.
+            </p>
+            <ul>
+                <li>Toute reproduction, représentation, modification, adaptation, publication, 
+                    diffusion, traduction, totale ou partielle, quel que soit le support, 
+                    sans autorisation écrite préalable de {{ site_name }} est strictement interdite ;</li>
+                <li>L'extraction ou la réutilisation d'une partie substantielle du contenu 
+                    des bases de données est interdite ;</li>
+                <li>Les certificats délivrés sont authentifiés par hash cryptographique 
+                    SHA-256 et ne peuvent être falsifiés, imités ou modifiés.</li>
+            </ul>
+
+            <div class="highlight-box warning">
+                <strong><i class="fas fa-exclamation-triangle"></i> Protection renforcée</strong>
+                <p>Toute infraction aux droits de propriété intellectuelle expose le contrevenant 
+                à des poursuites civiles (dommages et intérêts) et pénales (contrefaçon : 
+                article L.335-2 du Code de la propriété intellectuelle — 3 ans d'emprisonnement 
+                et 300 000 € d'amende).</p>
+            </div>
+
+            <!-- ARTICLE 6 -->
+            <h2 id="art6"><span class="article-num">6</span> Marques et logos</h2>
+            <p>
+                Les marques, logos, noms de domaine, slogans et signes distinctifs 
+                de {{ site_name }} sont protégés par le droit des marques et le droit 
+                d'auteur. Aucune reproduction, imitation ou utilisation, même partielle, 
+                n'est autorisée sans autorisation écrite préalable et expresse 
+                de {{ site_name }}.
+            </p>
+
+            <!-- ARTICLE 7 -->
+            <h2 id="art7"><span class="article-num">7</span> Contenu pédagogique</h2>
+            <h3>7.1 Nature du contenu</h3>
+            <p>
+                Le contenu pédagogique proposé sur la Plateforme est élaboré par 
+                des professionnels du secteur aéronautique. Il est fourni à titre 
+                éducatif et informatif uniquement.
+            </p>
+
+            <h3>7.2 Limitation</h3>
+            <p>
+                Les formations dispensées sont exclusivement théoriques. Elles ne 
+                remplacent pas les formations pratiques obligatoires pour l'obtention 
+                des licences aéronautiques officielles (DGAC, EASA, FAA).
+            </p>
+
+            <h3>7.3 Mise à jour</h3>
+            <p>
+                {{ site_name }} s'efforce de maintenir le contenu à jour mais ne 
+                peut garantir l'exactitude absolue de toutes les informations 
+                à tout instant. Les utilisateurs sont invités à signaler toute 
+                erreur constatée.
+            </p>
+
+            <!-- ARTICLE 8 -->
+            <h2 id="art8"><span class="article-num">8</span> Certificats numériques</h2>
+            <p>
+                Chaque certificat délivré par {{ site_name }} possède :
+            </p>
+            <ul>
+                <li>Un <strong>numéro de série unique</strong> au format VTX-AAAA-XXXX ;</li>
+                <li>Un <strong>hash SHA-256</strong> permettant une vérification publique 
+                    et infalsifiable via la page dédiée ;</li>
+                <li>Une <strong>date de délivrance</strong> et le <strong>nom du parcours</strong> validé.</li>
+            </ul>
+            <p>
+                Les certificats attestent de la réussite d'une formation théorique 
+                et n'ont pas valeur de licence ou qualification professionnelle 
+                officielle.
+            </p>
+
+            <!-- ARTICLE 9 -->
+            <h2 id="art9"><span class="article-num">9</span> Protection des données personnelles</h2>
+            <p>
+                Conformément au Règlement Général sur la Protection des Données 
+                (RGPD — Règlement UE 2016/679) et à la loi n° 78-17 du 6 janvier 1978 
+                modifiée dite « Informatique et Libertés », {{ site_name }} collecte 
+                et traite les données personnelles des utilisateurs dans le cadre 
+                strict du fonctionnement de la Plateforme.
+            </p>
+
+            <table class="data-table">
+                <thead>
+                    <tr><th>Catégorie</th><th>Finalité</th><th>Base légale</th><th>Durée</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Données d'identification</td><td>Gestion du compte</td><td>Exécution du contrat</td><td>Durée du compte + 3 ans</td></tr>
+                    <tr><td>Données pédagogiques</td><td>Suivi de formation</td><td>Intérêt légitime</td><td>10 ans (certificats)</td></tr>
+                    <tr><td>Données de connexion</td><td>Sécurité</td><td>Obligation légale</td><td>12 mois</td></tr>
+                    <tr><td>Données de facturation</td><td>Comptabilité</td><td>Obligation légale</td><td>7 ans</td></tr>
+                    <tr><td>Messages de support</td><td>Assistance</td><td>Intérêt légitime</td><td>3 ans</td></tr>
+                </tbody>
+            </table>
+
+            <p>
+                Pour plus de détails, consultez notre 
+                <a href="{% url 'core:page_legale' type_page='confidentialite' %}">Politique de confidentialité</a>.
+            </p>
+
+            <div class="highlight-box">
+                <strong><i class="fas fa-shield-alt"></i> Engagement</strong>
+                <p>🔒 Aucune donnée personnelle n'est vendue, louée ou cédée à des tiers 
+                à des fins commerciales.</p>
+            </div>
+
+            <!-- ARTICLE 10 -->
+            <h2 id="art10"><span class="article-num">10</span> Cookies</h2>
+            <p>
+                La Plateforme utilise exclusivement des cookies strictement nécessaires 
+                à son fonctionnement technique :
+            </p>
+            <ul>
+                <li><strong>Cookie de session :</strong> authentification et navigation ;</li>
+                <li><strong>Cookie CSRF :</strong> protection contre les attaques ;</li>
+                <li><strong>Cookie de préférence :</strong> langue et affichage.</li>
+            </ul>
+            <p>
+                Aucun cookie publicitaire, de traçage tiers ou d'analyse d'audience 
+                n'est déposé. Conformément à la réglementation, ces cookies fonctionnels 
+                ne nécessitent pas de consentement préalable.
+            </p>
+
+            <!-- ARTICLE 11 -->
+            <h2 id="art11"><span class="article-num">11</span> Droits des utilisateurs (RGPD)</h2>
+            <p>
+                Conformément aux articles 15 à 22 du RGPD, tout utilisateur dispose 
+                des droits suivants sur ses données personnelles :
+            </p>
+            <ul>
+                <li><strong>Droit d'accès :</strong> obtenir la confirmation que ses données sont traitées et en obtenir une copie ;</li>
+                <li><strong>Droit de rectification :</strong> faire corriger ses données inexactes ou incomplètes ;</li>
+                <li><strong>Droit à l'effacement :</strong> demander la suppression de ses données (« droit à l'oubli ») ;</li>
+                <li><strong>Droit à la limitation :</strong> restreindre temporairement le traitement de ses données ;</li>
+                <li><strong>Droit à la portabilité :</strong> recevoir ses données dans un format structuré et lisible ;</li>
+                <li><strong>Droit d'opposition :</strong> s'opposer au traitement de ses données pour des motifs légitimes ;</li>
+                <li><strong>Droit de retirer le consentement :</strong> à tout moment, sans compromettre la licéité du traitement antérieur.</li>
+            </ul>
+            <p>
+                Pour exercer vos droits, contactez-nous à : 
+                <a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">{{ email_contact|default:"contact@ventoryx-academy.com" }}</a>.
+                Nous répondrons dans un délai maximal de trente (30) jours.
+            </p>
+            <p>
+                En l'absence de réponse satisfaisante, vous pouvez introduire une 
+                réclamation auprès de la <strong>CNIL</strong> (www.cnil.fr).
+            </p>
+
+            <!-- ARTICLE 12 -->
+            <h2 id="art12"><span class="article-num">12</span> Sécurité</h2>
+            <p>
+                {{ site_name }} met en œuvre des mesures techniques et organisationnelles 
+                appropriées pour protéger les données personnelles contre la destruction, 
+                la perte, l'altération, la divulgation non autorisée ou l'accès non autorisé :
+            </p>
+            <ul>
+                <li>Chiffrement TLS 1.3 pour toutes les communications ;</li>
+                <li>Hashage Argon2id pour les mots de passe ;</li>
+                <li>Protection CSRF sur tous les formulaires ;</li>
+                <li>Rate limiting et verrouillage après tentatives multiples ;</li>
+                <li>Honeypot anti-bot ;</li>
+                <li>Journal d'audit immutable ;</li>
+                <li>Sauvegardes chiffrées quotidiennes.</li>
+            </ul>
+
+            <!-- ARTICLE 13 -->
+            <h2 id="art13"><span class="article-num">13</span> Conditions d'utilisation</h2>
+            <p>
+                L'utilisation de la Plateforme est soumise aux 
+                <a href="{% url 'core:page_legale' type_page='cgu' %}">Conditions Générales d'Utilisation (CGU)</a> 
+                que tout utilisateur doit accepter lors de son inscription.
+            </p>
+            <ul>
+                <li>Chaque compte est strictement personnel et incessible ;</li>
+                <li>Les informations fournies doivent être exactes et tenues à jour ;</li>
+                <li>Toute activité frauduleuse (piratage, falsification de certificats) 
+                    est interdite et sanctionnée ;</li>
+                <li>L'utilisateur est responsable de la confidentialité de ses identifiants.</li>
+            </ul>
+
+            <!-- ARTICLE 14 -->
+            <h2 id="art14"><span class="article-num">14</span> Personnages et images</h2>
+            <p>
+                Tous les personnages, instructeurs, pilotes et professionnels 
+                présentés sur la Plateforme sont <strong>fictifs</strong>. 
+                Toute ressemblance avec une personne réelle, vivante ou décédée, 
+                serait purement fortuite et involontaire.
+            </p>
+            <p>
+                Les photographies et illustrations utilisées sont sélectionnées 
+                avec soin pour leur cohérence avec l'univers aéronautique.
+            </p>
+
+            <!-- ARTICLE 15 -->
+            <h2 id="art15"><span class="article-num">15</span> Crédits images</h2>
+            <p>
+                Les images utilisées sur la Plateforme proviennent des sources suivantes :
+            </p>
+            <ul>
+                <li><strong>Unsplash</strong> (unsplash.com) — photographies libres de droits ;</li>
+                <li><strong>Pexels</strong> (pexels.com) — photographies et vidéos libres de droits ;</li>
+                <li><strong>Créations originales</strong> — illustrations et visuels créés par {{ site_name }}.</li>
+            </ul>
+            <p>
+                Toutes les images sont utilisées conformément aux licences accordées 
+                par leurs auteurs ou plateformes respectives.
+            </p>
+
+            <!-- ARTICLE 16 -->
+            <h2 id="art16"><span class="article-num">16</span> Liens externes</h2>
+            <p>
+                La Plateforme peut contenir des liens hypertextes redirigeant vers 
+                des sites internet tiers. {{ site_name }} n'exerce aucun contrôle 
+                sur ces sites externes et ne saurait être tenue responsable :
+            </p>
+            <ul>
+                <li>De leur contenu, exactitude ou légalité ;</li>
+                <li>De leurs pratiques en matière de collecte de données ;</li>
+                <li>Des dommages éventuels causés par leur consultation.</li>
+            </ul>
+            <p>
+                L'utilisateur accède à ces sites sous sa propre et entière responsabilité.
+            </p>
+
+            <!-- ARTICLE 17 -->
+            <h2 id="art17"><span class="article-num">17</span> Disponibilité du service</h2>
+            <p>
+                La Plateforme est accessible 24 heures sur 24, sept (7) jours sur sept, 
+                sous réserve des opérations de maintenance programmées, des mises à jour 
+                techniques ou des incidents indépendants de la volonté 
+                de {{ site_name }}.
+            </p>
+            <p>
+                {{ site_name }} s'engage à rétablir le service dans les meilleurs 
+                délais en cas d'interruption et à informer les utilisateurs des 
+                interruptions planifiées avec un préavis raisonnable.
+            </p>
+
+            <!-- ARTICLE 18 -->
+            <h2 id="art18"><span class="article-num">18</span> Droit applicable et règlement des litiges</h2>
+            <p>
+                Les présentes mentions légales sont régies par le <strong>droit français</strong>.
+            </p>
+            <p>En cas de litige :</p>
+            <ol>
+                <li>L'utilisateur est invité à contacter {{ site_name }} pour une 
+                    résolution amiable ;</li>
+                <li>À défaut d'accord dans un délai de soixante (60) jours, une 
+                    procédure de médiation pourra être engagée ;</li>
+                <li>En dernier recours, les tribunaux compétents seront ceux du 
+                    ressort de la Cour d'appel de Paris.</li>
+            </ol>
+            <p>
+                Conformément à l'article 14 du Règlement (UE) n° 524/2013, la Commission 
+                européenne met à disposition une plateforme de règlement en ligne des 
+                litiges accessible à l'adresse : 
+                <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr</a>.
+            </p>
+
+            <!-- ARTICLE 19 -->
+            <h2 id="art19"><span class="article-num">19</span> Modification des mentions légales</h2>
+            <p>
+                {{ site_name }} se réserve le droit de modifier les présentes 
+                mentions légales à tout moment, notamment pour les adapter aux 
+                évolutions légales, réglementaires ou techniques.
+            </p>
+            <p>
+                Les modifications entrent en vigueur dès leur publication sur 
+                la Plateforme. Les utilisateurs sont invités à consulter 
+                régulièrement cette page. La date de dernière mise à jour est 
+                indiquée en haut de page.
+            </p>
+
+            <!-- ARTICLE 20 -->
+            <h2 id="art20"><span class="article-num">20</span> Contact</h2>
+            <p>Pour toute question relative aux présentes mentions légales :</p>
+            <ul>
+                <li>📧 <strong>Email :</strong> 
+                    <a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">
+                        {{ email_contact|default:"contact@ventoryx-academy.com" }}
+                    </a>
+                </li>
+                <li>📬 <strong>Formulaire de contact :</strong> 
+                    <a href="{% url 'core:contact' %}">Nous contacter</a>
+                </li>
+            </ul>
+            <p>Délai de réponse : quarante-huit (48) heures ouvrées.</p>
+
+            <div class="contact-card">
+                <h3><i class="fas fa-gavel"></i> Référence légale</h3>
+                <p style="opacity: 0.9;">
+                    Conformité : Loi n° 2004-575 du 21 juin 2004 (LCEN) · 
+                    RGPD (UE 2016/679) · Loi Informatique et Libertés (1978 modifiée) · 
+                    Code de la propriété intellectuelle
+                </p>
+            </div>
+
+        </article>
+
+        <!-- SOMMAIRE LATÉRAL -->
+        <aside class="legal-sidebar">
+            <div class="sidebar-nav">
+                <h3><i class="fas fa-list"></i> Navigation</h3>
+                <a href="#art1"><i class="fas fa-circle"></i> 1. Éditeur du site</a>
+                <a href="#art2"><i class="fas fa-circle"></i> 2. Nom et slogan</a>
+                <a href="#art3"><i class="fas fa-circle"></i> 3. Publication</a>
+                <a href="#art4"><i class="fas fa-circle"></i> 4. Hébergement</a>
+                <a href="#art5"><i class="fas fa-circle"></i> 5. Propriété intell.</a>
+                <a href="#art6"><i class="fas fa-circle"></i> 6. Marques</a>
+                <a href="#art7"><i class="fas fa-circle"></i> 7. Contenu</a>
+                <a href="#art8"><i class="fas fa-circle"></i> 8. Certificats</a>
+                <a href="#art9"><i class="fas fa-circle"></i> 9. Données</a>
+                <a href="#art10"><i class="fas fa-circle"></i> 10. Cookies</a>
+                <a href="#art11"><i class="fas fa-circle"></i> 11. Droits RGPD</a>
+                <a href="#art12"><i class="fas fa-circle"></i> 12. Sécurité</a>
+                <a href="#art13"><i class="fas fa-circle"></i> 13. CGU</a>
+                <a href="#art14"><i class="fas fa-circle"></i> 14. Personnages</a>
+                <a href="#art15"><i class="fas fa-circle"></i> 15. Crédits images</a>
+                <a href="#art16"><i class="fas fa-circle"></i> 16. Liens externes</a>
+                <a href="#art17"><i class="fas fa-circle"></i> 17. Disponibilité</a>
+                <a href="#art18"><i class="fas fa-circle"></i> 18. Droit applicable</a>
+                <a href="#art19"><i class="fas fa-circle"></i> 19. Modifications</a>
+                <a href="#art20"><i class="fas fa-circle"></i> 20. Contact</a>
+            </div>
+        </aside>
+
+    </div>
+
+    <div class="legal-footer-note">
+        <p>
+            <i class="fas fa-file-contract"></i>
+            <strong>Documents officiels</strong> — 
+            <a href="{% url 'core:page_legale' type_page='cgu' %}">CGU</a> &nbsp;|&nbsp;
+            <a href="{% url 'core:page_legale' type_page='confidentialite' %}">Politique de confidentialité</a> &nbsp;|&nbsp;
+            <a href="{% url 'core:contact' %}">Contact</a>
+        </p>
+    </div>
+</div>
+
+{% endblock %}
