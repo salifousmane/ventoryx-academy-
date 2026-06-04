@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ingénieur Aéronautique - {{ site_name }}{% endblock %}
+
+{% block meta_description %}Formation théorique Ingénieur Aéronautique — {{ site_name }}. Aérodynamique, conception, structures, certification.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .program-hero {
+        background: linear-gradient(rgba(15,28,46,0.82), rgba(30,58,95,0.88)), url('{% static "images/program-ingenieur.jpg" %}');
+        background-size: cover; background-position: center;
+        color: white; padding: 4rem 0; text-align: center;
+    }
+    .program-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; color: white; margin-bottom: 1rem; }
+    .program-hero p { font-size: 1.1rem; max-width: 700px; margin: 0 auto; opacity: 0.9; }
+    .section-header { text-align: center; max-width: 750px; margin: 0 auto 3rem; }
+    .section-header h2 { font-family: 'Montserrat', sans-serif; font-size: 2.2rem; color: #0F1C2E; position: relative; display: inline-block; }
+    .section-header h2::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: #0077B6; border-radius: 2px; }
+    .section-header p { color: #6C757D; margin-top: 1.5rem; }
+    .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .overview-card { background: white; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06); transition: transform 0.3s; }
+    .overview-card:hover { transform: translateY(-5px); }
+    .overview-icon { width: 70px; height: 70px; margin: 0 auto 1rem; background: linear-gradient(135deg, #0077B6, #0F1C2E); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; }
+    .overview-card h3 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; }
+    .module-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border-left: 4px solid #8B5CF6; margin-bottom: 1.5rem; }
+    .module-card h3 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; display: flex; align-items: center; gap: 0.7rem; }
+    .module-card .module-meta { font-size: 0.8rem; color: #6C757D; margin-bottom: 1rem; }
+    .module-card ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 2rem; list-style: none; }
+    .module-card ul li { padding: 0.3rem 0; color: #495057; font-size: 0.9rem; }
+    .module-card ul li::before { content: '✓'; color: #10b981; margin-right: 0.5rem; font-weight: bold; }
+    .detail-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .detail-card { background: white; border-radius: 16px; padding: 1.8rem; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+    .detail-card h3 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; display: flex; align-items: center; gap: 0.5rem; }
+    .detail-card h3 i { color: #0077B6; }
+    .detail-card ul { list-style: none; margin-top: 1rem; }
+    .detail-card ul li { padding: 0.3rem 0; color: #495057; font-size: 0.9rem; }
+    .detail-card ul li::before { content: '✓'; color: #10b981; margin-right: 0.5rem; }
+    .disclaimer-box { background: #FFF8E6; border-left: 4px solid #D4AF37; padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 2rem 0; font-size: 0.85rem; color: #6C757D; }
+    .cta-section { background: linear-gradient(135deg, #1E3A5F, #0F1C2E); color: white; text-align: center; padding: 4rem 0; }
+    .cta-section h2 { color: white; font-family: 'Montserrat', sans-serif; }
+    @media (max-width: 768px) { .program-hero h1 { font-size: 1.8rem; } .module-card ul { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="program-hero">
+    <div class="container">
+        <h1>Ingénieur Aéronautique</h1>
+        <p>Formation théorique à la conception aéronautique : aérodynamique, structures, propulsion et certification.</p>
+    </div>
+</section>
+
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <div class="overview-grid">
+            <div class="overview-card">
+                <div class="overview-icon"><i class="fas fa-flask"></i></div>
+                <h3>Conception avancée</h3>
+                <p>Principes de conception et d'optimisation des aéronefs modernes.</p>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon"><i class="fas fa-calculator"></i></div>
+                <h3>Calculs & essais</h3>
+                <p>Méthodes de calcul, simulation et essais en soufflerie.</p>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon"><i class="fas fa-certificate"></i></div>
+                <h3>Certification</h3>
+                <p>Processus de certification des aéronefs selon les normes EASA/FAA.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section style="background: #F8F9FA; padding: 4rem 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Programme de formation</h2>
+            <p>4 modules, 80 cours, 16 quiz — Un parcours complet</p>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-wind" style="color:#8B5CF6;"></i> Module 1 — Aérodynamique & Mécanique du vol</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Équations fondamentales de l'aérodynamique</li>
+                <li>Couche limite et turbulence</li>
+                <li>Profils d'aile et polaires</li>
+                <li>Ailes finies et tourbillons marginaux</li>
+                <li>Compressibilité et régime transsonique</li>
+                <li>Stabilité statique et dynamique</li>
+                <li>Performances avion</li>
+                <li>Essais en vol</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-cubes" style="color:#8B5CF6;"></i> Module 2 — Structures & Matériaux</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Résistance des matériaux appliquée</li>
+                <li>Structures en aluminium et titane</li>
+                <li>Matériaux composites (carbone, verre)</li>
+                <li>Assemblage et rivetage</li>
+                <li>Fatigue et tolérance aux dommages</li>
+                <li>Analyse par éléments finis (FEA)</li>
+                <li>Essais structurels</li>
+                <li>Vieillissement et maintenance</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-rocket" style="color:#8B5CF6;"></i> Module 3 — Propulsion & Systèmes</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Turboréacteurs et turbopropulseurs</li>
+                <li>Cycle thermodynamique</li>
+                <li>Entrée d'air et tuyère</li>
+                <li>Systèmes carburant</li>
+                <li>Commandes de vol électriques</li>
+                <li>Systèmes hydrauliques</li>
+                <li>Conditionnement d'air et pressurisation</li>
+                <li>Gestion de l'énergie à bord</li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <h3><i class="fas fa-trophy" style="color:#8B5CF6;"></i> Module 4 — Certification & Test global</h3>
+            <p class="module-meta">20 cours · 4 quiz · Durée estimée : 10h</p>
+            <ul>
+                <li>Processus de certification (EASA Part 21)</li>
+                <li>Navigabilité et maintenance</li>
+                <li>Essais de certification</li>
+                <li>Révisions complètes</li>
+                <li>Test global final (40 questions)</li>
+                <li>Obtention du certificat</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <div class="section-header"><h2>Équipement & qualités</h2></div>
+        <div class="detail-box">
+            <div class="detail-card">
+                <h3><i class="fas fa-laptop"></i> Équipement requis</h3>
+                <ul><li>Ordinateur, tablette ou smartphone</li><li>Connexion internet stable</li><li>Navigateur à jour</li></ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-language"></i> Langues</h3>
+                <ul><li>Français courant</li><li>Anglais technique recommandé</li></ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-brain"></i> Qualités utiles</h3>
+                <ul><li>Esprit d'analyse et logique</li><li>Rigueur et précision</li><li>Curiosité technique</li></ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-chart-bar"></i> Chiffres clés</h3>
+                <ul><li><strong>4</strong> modules</li><li><strong>80</strong> cours</li><li><strong>16</strong> quiz</li><li><strong>1</strong> test global</li></ul>
+            </div>
+        </div>
+        <div class="disclaimer-box">
+            <strong>À noter :</strong> Cette formation est exclusivement théorique. Le titre d'ingénieur est protégé et nécessite un diplôme d'école d'ingénieurs accréditée pour être utilisé légalement.
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Prêt à explorer l'ingénierie aéronautique ?</h2>
+        <p style="max-width:600px;margin:1rem auto 2rem;opacity:0.9;">Créez votre compte et accédez à ce parcours.</p>
+        <a href="{% url 'users:register' %}" style="display:inline-block;padding:0.9rem 2.5rem;background:#8B5CF6;color:white;border-radius:50px;text-decoration:none;font-weight:700;font-family:'Montserrat',sans-serif;">
+            <i class="fas fa-user-plus"></i> Créer un compte
+        </a>
+    </div>
+</section>
+
+{% endblock %}
