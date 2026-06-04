@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nouveau sujet — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container { max-width: 700px; margin: 0 auto; padding: 2rem; }
+
+    .form-card {
+        background: white; border-radius: 16px; padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .form-card h1 {
+        font-family: 'Montserrat', sans-serif; font-size: 1.5rem;
+        color: #0F1C2E; margin-bottom: 0.5rem;
+    }
+    .form-card p { color: #6C757D; margin-bottom: 1.5rem; }
+
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label {
+        display: block; font-weight: 600; font-size: 0.85rem;
+        color: #0F1C2E; margin-bottom: 0.3rem;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%; padding: 0.8rem; border: 1px solid #E9ECEF;
+        border-radius: 10px; font-family: 'Open Sans', sans-serif; font-size: 0.95rem;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none; border-color: #0077B6; box-shadow: 0 0 0 3px rgba(0,119,182,0.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 150px; }
+
+    .btn-submit {
+        width: 100%; padding: 0.9rem; background: #0077B6; color: white;
+        border: none; border-radius: 50px; font-weight: 700; font-size: 1rem;
+        cursor: pointer; font-family: 'Montserrat', sans-serif;
+    }
+    .btn-submit:hover { background: #0F1C2E; }
+
+    @media (max-width: 768px) {
+        .form-container { padding: 1rem; }
+        .form-card { padding: 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+    <a href="{% url 'forum:metier' metier=forum.metier %}" style="color:#0077B6;text-decoration:none;font-size:0.85rem;display:block;margin-bottom:1rem;">
+        <i class="fas fa-arrow-left"></i> {{ forum.nom }}
+    </a>
+
+    <div class="form-card">
+        <h1>Nouveau sujet</h1>
+        <p>Dans <strong>{{ forum.nom }}</strong>{% if sous_forum %} — {{ sous_forum.nom }}{% endif %}</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Titre du sujet *</label>
+                <input type="text" name="titre" required placeholder="Titre de votre discussion...">
+            </div>
+            {% if forum.sous_forums.exists %}
+            <div class="form-group">
+                <label>Sous-forum</label>
+                <select name="sous_forum_id">
+                    <option value="">Aucun (forum général)</option>
+                    {% for sous in forum.sous_forums.all %}
+                    <option value="{{ sous.id }}" {% if sous_forum and sous.id == sous_forum.id %}selected{% endif %}>{{ sous.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label>Message *</label>
+                <textarea name="contenu" required placeholder="Contenu de votre message..."></textarea>
+            </div>
+            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Publier le sujet</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
