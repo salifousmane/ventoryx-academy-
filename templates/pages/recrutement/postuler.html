@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Postuler — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white; padding: 2.5rem 0; text-align: center;
+    }
+    .form-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 2rem; color: white; margin: 0; }
+
+    .form-layout {
+        display: grid; grid-template-columns: 1fr 340px;
+        gap: 2.5rem; max-width: 1100px; margin: 3rem auto; padding: 0 2rem;
+    }
+    .form-card {
+        background: white; border-radius: 16px; padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .form-card .badge {
+        display: inline-block; background: #E8F4FD; color: #1E3A5F;
+        padding: 0.3rem 1rem; border-radius: 30px; font-size: 0.75rem;
+        font-weight: 700; margin-bottom: 1rem;
+    }
+    .form-card h2 { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: #0F1C2E; margin-bottom: 0.5rem; }
+
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.85rem; color: #0F1C2E; margin-bottom: 0.3rem; }
+    .required:after { content: "*"; color: #FF6B35; margin-left: 4px; }
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%; padding: 0.8rem; border: 1px solid #E9ECEF; border-radius: 10px;
+        font-family: 'Open Sans', sans-serif; font-size: 0.95rem; transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none; border-color: #0077B6; box-shadow: 0 0 0 3px rgba(0,119,182,0.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .btn-submit {
+        width: 100%; padding: 0.9rem; background: #0077B6; color: white;
+        border: none; border-radius: 50px; font-weight: 700; font-size: 1rem;
+        cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all 0.3s ease;
+    }
+    .btn-submit:hover { background: #0F1C2E; transform: translateY(-2px); }
+
+    .sidebar-card {
+        background: white; border-radius: 16px; padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06); position: sticky; top: 100px;
+    }
+    .sidebar-card h3 {
+        font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #0F1C2E;
+        border-left: 4px solid #D4AF37; padding-left: 1rem; margin-bottom: 1.2rem;
+    }
+    .sidebar-card ul { list-style: none; }
+    .sidebar-card ul li {
+        margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.7rem;
+        font-size: 0.9rem; color: #495057;
+    }
+    .sidebar-card ul li i { color: #0077B6; width: 20px; }
+    .info-box {
+        background: #FFF2E5; padding: 1rem; border-radius: 10px;
+        border-left: 4px solid #FF6B35; margin: 1.5rem 0; font-size: 0.85rem;
+    }
+    .pioneer-card {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white; padding: 1.5rem; border-radius: 12px; text-align: center;
+    }
+
+    @media (max-width: 992px) {
+        .form-layout { grid-template-columns: 1fr; }
+        .sidebar-card { position: static; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div style="background:white;padding:1rem 0;border-bottom:1px solid #E9ECEF;">
+    <div class="container">
+        <a href="{% url 'core:index' %}" style="color:#0077B6;text-decoration:none;">Accueil</a>
+        <span style="color:#6C757D;margin:0 0.5rem;">/</span>
+        <a href="{% url 'core:carriere' %}" style="color:#0077B6;text-decoration:none;">Carrières</a>
+        <span style="color:#6C757D;margin:0 0.5rem;">/</span>
+        <strong>Postuler</strong>
+    </div>
+</div>
+
+<section class="form-hero">
+    <div class="container"><h1>Postuler</h1></div>
+</section>
+
+<div class="form-layout">
+    <div class="form-card">
+        <span class="badge"><i class="fas fa-handshake"></i> Collaboration volontaire · Évolution rémunérée</span>
+        <h2>{{ offre.titre|default:"Candidature spontanée" }}</h2>
+        <p style="color:#6C757D;margin-bottom:1.5rem;">Rejoignez l'équipe fondatrice</p>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div style="padding:1rem;border-radius:8px;margin-bottom:1rem;{% if message.tags == 'success' %}background:#d4edda;color:#155724;{% else %}background:#f8d7da;color:#721c24;{% endif %}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if offre %}
+        <form method="post" action="{% url 'core:postuler_offre' offre.id %}">
+        {% else %}
+        <form method="post" action="{% url 'core:postuler' %}">
+        {% endif %}
+            {% csrf_token %}
+            <div style="position:absolute;left:-9999px;"><input type="text" name="website" tabindex="-1"></div>
+            {% if offre %}<input type="hidden" name="poste" value="{{ offre.titre }}">{% endif %}
+
+            <div class="form-group"><label class="required">Nom</label><input type="text" name="nom" required placeholder="Dupont"></div>
+            <div class="form-group"><label class="required">Prénom</label><input type="text" name="prenom" required placeholder="Jean"></div>
+            <div class="form-group"><label class="required">Email</label><input type="email" name="email" required placeholder="jean.dupont@example.com"></div>
+            <div class="form-group"><label>Téléphone</label><input type="text" name="telephone" placeholder="+33 6 12 34 56 78"></div>
+            <div class="form-group">
+                <label class="required">Disponibilité</label>
+                <select name="disponibilite" required>
+                    <option value="">Sélectionnez</option>
+                    <option>Moins de 5h</option><option>5-10h</option><option>10-20h</option><option>20h+</option>
+                </select>
+            </div>
+            <div class="form-group"><label class="required">Pourquoi {{ site_name }} ?</label><textarea name="message" rows="4" required placeholder="Partagez votre vision..."></textarea></div>
+            <div class="form-group"><label>LinkedIn / Portfolio</label><input type="text" name="portfolio" placeholder="https://linkedin.com/in/..."></div>
+            <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.5rem;">
+                <input type="checkbox" name="consent" required style="width:auto;">
+                <label style="margin:0;font-weight:normal;font-size:0.85rem;">J'accepte le cadre de collaboration volontaire *</label>
+            </div>
+            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Envoyer ma candidature</button>
+        </form>
+    </div>
+
+    <aside class="sidebar-card">
+        <h3>Ce qu'il faut savoir</h3>
+        <ul>
+            <li><i class="fas fa-seedling"></i> <strong>Phase de développement</strong> — collaboration bénévole</li>
+            <li><i class="fas fa-chart-line"></i> <strong>Évolution garantie</strong> — priorité d'embauche</li>
+            <li><i class="fas fa-rocket"></i> <strong>Impact fondateur</strong> — décisions clés</li>
+            <li><i class="fas fa-clock"></i> <strong>100% remote</strong> — horaires flexibles</li>
+        </ul>
+        <div class="info-box"><i class="fas fa-bullhorn" style="color:#FF6B35;"></i> <strong>Transparence :</strong> Aucune rémunération immédiate.</div>
+        <div class="pioneer-card"><i class="fas fa-star" style="color:#D4AF37;font-size:2rem;"></i><p style="margin-top:0.5rem;"><strong>Devenez un pionnier</strong></p></div>
+    </aside>
+</div>
+
+{% endblock %}
