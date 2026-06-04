@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Opérations & Logistique — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dept-primary: #059669;
+        --dept-dark: #047857;
+        --dept-light: #ecfdf5;
+        --dept-border: #d1fae5;
+    }
+
+    .welcome-banner {
+        background: linear-gradient(135deg, #059669, #047857);
+        color: white; padding: 1.5rem 2rem; border-radius: 16px; margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(5,150,105,0.2);
+    }
+    .welcome-banner h1 { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem; }
+    .welcome-banner p { opacity: 0.9; font-size: 0.9rem; }
+
+    .security-alert {
+        background: #FFF8E6; border-left: 4px solid #f59e0b;
+        padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem;
+        display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: #92400e;
+    }
+    .security-alert i { color: #f59e0b; font-size: 1.2rem; margin-top: 0.1rem; }
+
+    .stats-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative;
+    }
+    .stat-card.alert-orange { border-left: 4px solid #f59e0b; background: #FFFDF5; }
+    .stat-card.alert-red { border-left: 4px solid #ef4444; background: #FFF5F5; }
+    .stat-card.alert-green { border-left: 4px solid #059669; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #0F1C2E; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; }
+    .stat-threshold {
+        font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600;
+    }
+    .stat-threshold.green { background: #ECFDF5; color: #059669; }
+    .stat-threshold.orange { background: #FFF8E6; color: #d97706; }
+    .stat-threshold.red { background: #FEF2F2; color: #dc2626; }
+    .stat-alert-msg { font-size: 0.7rem; color: #ef4444; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+
+    .charts-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .chart-card {
+        background: white; border-radius: 12px; padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .chart-card h3 {
+        font-family: 'Montserrat', sans-serif; font-size: 0.95rem; color: #0F1C2E; margin-bottom: 1rem;
+        display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chart-card canvas { max-height: 220px; }
+
+    .section-title {
+        font-size: 1.1rem; color: #0F1C2E; margin: 1.5rem 0 1rem;
+        display: flex; align-items: center; gap: 0.7rem;
+        border-left: 4px solid #059669; padding-left: 1rem;
+    }
+
+    .quick-actions {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.7rem; margin-bottom: 2rem;
+    }
+    .action-btn {
+        background: white; border: none; border-radius: 12px; padding: 0.7rem 0.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; text-align: center;
+        transition: all 0.3s; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.72rem;
+    }
+    .action-btn:hover { transform: translateY(-3px); background: #059669; color: white; }
+    .action-btn:hover .action-icon { background: white; color: #059669; }
+    .action-icon {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: linear-gradient(135deg, #059669, #047857);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 0.5rem; color: white; font-size: 0.8rem;
+        transition: all 0.3s;
+    }
+
+    .table-container {
+        background: white; border-radius: 12px; overflow-x: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #E9ECEF; font-size: 0.8rem; }
+    th { background: #F8F9FA; font-weight: 600; color: #0F1C2E; }
+    .status {
+        display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;
+    }
+    .status-success { background: rgba(16,185,129,0.1); color: #10b981; }
+    .status-warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .status-danger { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .status-info { background: rgba(59,130,246,0.1); color: #3b82f6; }
+
+    .progress-bar {
+        background: #E9ECEF; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 0.3rem;
+    }
+    .progress-fill { height: 100%; background: #059669; border-radius: 3px; }
+
+    .dg-chat {
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem;
+    }
+
+    .form-card {
+        background: white; border-radius: 12px; padding: 1.2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 0.8rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #0F1C2E; margin-bottom: 0.3rem; }
+    .form-control {
+        width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px;
+        font-family: inherit; font-size: 0.85rem;
+    }
+    .btn {
+        display: inline-block; padding: 0.5rem 1rem; border-radius: 8px;
+        font-weight: 600; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif;
+        font-size: 0.8rem; transition: all 0.3s; text-decoration: none;
+    }
+    .btn-primary { background: #059669; color: white; }
+    .btn-primary:hover { background: #047857; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.7rem; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-danger:hover { background: #dc2626; }
+
+    @media (max-width: 768px) {
+        .charts-grid { grid-template-columns: 1fr; }
+        .quick-actions { grid-template-columns: repeat(3, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="padding: 2rem 0;">
+
+    <section class="welcome-banner">
+        <h1><i class="fas fa-truck"></i> Opérations & Logistique</h1>
+        <p>Gérez les ressources, la planification des formations et la coordination des équipes.</p>
+    </section>
+
+    <div class="security-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>Rappel de sécurité — Ne partagez jamais vos identifiants</strong>
+            <p style="margin:0.3rem 0 0;">Article 7.3 des CGU. Toute connexion est tracée dans le journal d'audit immutable.</p>
+        </div>
+    </div>
+
+    <!-- Statistiques avec seuils -->
+    <div class="stats-grid">
+        <div class="stat-card {% if taux_occupation > 90 %}alert-red{% elif taux_occupation > 75 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header">
+                <span class="stat-label">Taux d'occupation</span>
+                <span class="stat-threshold {% if taux_occupation > 90 %}red{% elif taux_occupation > 75 %}orange{% else %}green{% endif %}">Seuil: 75%</span>
+            </div>
+            <div class="stat-value">{{ taux_occupation }}%</div>
+            {% if taux_occupation > 90 %}<div class="stat-alert-msg"><i class="fas fa-exclamation-circle"></i> Surcharge — redistribuer les ressources</div>{% endif %}
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Formations planifiées</span></div>
+            <div class="stat-value">{{ formations_planifiees }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Formateurs actifs</span></div>
+            <div class="stat-value">{{ formateurs_actifs }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Partenaires</span></div>
+            <div class="stat-value">{{ partenaires_count }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header"><span class="stat-label">Heures formation/mois</span></div>
+            <div class="stat-value">{{ heures_formation }}</div>
+        </div>
+    </div>
+
+    <!-- 4 Graphiques -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-bar" style="color:#059669;"></i> Charge par équipe</h3>
+            <canvas id="chartChargeEquipes"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-calendar" style="color:#059669;"></i> Formations par mois</h3>
+            <canvas id="chartFormations"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-users" style="color:#059669;"></i> Apprenants par formation</h3>
+            <canvas id="chartApprenants"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-handshake" style="color:#059669;"></i> Partenaires par type</h3>
+            <canvas id="chartPartenaires"></canvas>
+        </div>
+    </div>
+
+    <!-- 15 Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="handleAction('planifier_formation')"><div class="action-icon"><i class="fas fa-calendar-plus"></i></div><strong>Planifier</strong></button>
+        <button class="action-btn" onclick="handleAction('ajouter_formateur')"><div class="action-icon"><i class="fas fa-chalkboard-user"></i></div><strong>Ajouter formateur</strong></button>
+        <button class="action-btn" onclick="handleAction('ajouter_partenaire')"><div class="action-icon"><i class="fas fa-handshake"></i></div><strong>Ajouter partenaire</strong></button>
+        <button class="action-btn" onclick="handleAction('rapport_ressources')"><div class="action-icon"><i class="fas fa-chart-line"></i></div><strong>Rapport</strong></button>
+        <button class="action-btn" onclick="handleAction('calendrier')"><div class="action-icon"><i class="fas fa-calendar"></i></div><strong>Calendrier</strong></button>
+        <button class="action-btn" onclick="handleAction('planning_hebdo')"><div class="action-icon"><i class="fas fa-clipboard-list"></i></div><strong>Planning</strong></button>
+        <button class="action-btn" onclick="handleAction('reunion_equipe')"><div class="action-icon"><i class="fas fa-users"></i></div><strong>Réunion</strong></button>
+        <button class="action-btn" onclick="handleAction('demande_materiel')"><div class="action-icon"><i class="fas fa-box"></i></div><strong>Matériel</strong></button>
+        <button class="action-btn" onclick="handleAction('gestion_stock')"><div class="action-icon"><i class="fas fa-warehouse"></i></div><strong>Stock</strong></button>
+        <button class="action-btn" onclick="handleAction('organiser_evenement')"><div class="action-icon"><i class="fas fa-party-horn"></i></div><strong>Événement</strong></button>
+        <button class="action-btn" onclick="handleAction('logistique')"><div class="action-icon"><i class="fas fa-truck"></i></div><strong>Logistique</strong></button>
+        <button class="action-btn" onclick="handleAction('suivi_apprenants')"><div class="action-icon"><i class="fas fa-user-graduate"></i></div><strong>Suivi</strong></button>
+        <button class="action-btn" onclick="handleAction('export_planning')"><div class="action-icon"><i class="fas fa-download"></i></div><strong>Exporter</strong></button>
+        <button class="action-btn" onclick="handleAction('audit_ressources')"><div class="action-icon"><i class="fas fa-search"></i></div><strong>Audit</strong></button>
+        <button class="action-btn" onclick="handleAction('optimiser_plannings')"><div class="action-icon"><i class="fas fa-bolt"></i></div><strong>Optimiser</strong></button>
+    </div>
+
+    <!-- Planification des formations -->
+    <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Planification des formations</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Formation</th><th>Formateur</th><th>Date début</th><th>Date fin</th><th>Apprenants</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for formation in formations %}
+                <tr>
+                    <td><strong>{{ formation.nom }}</strong></td><td>{{ formation.formateur }}</td>
+                    <td>{{ formation.date_debut|date:"d/m/Y" }}</td><td>{{ formation.date_fin|date:"d/m/Y" }}</td>
+                    <td>{{ formation.apprenants_count }}</td>
+                    <td>{% if formation.en_cours %}<span class="status status-success">En cours</span>{% elif formation.a_venir %}<span class="status status-info">À venir</span>{% else %}<span class="status status-warning">Terminé</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-primary">✏️</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="7" style="text-align:center;padding:2rem;color:#6C757D;">Aucune formation planifiée.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- État des ressources -->
+    <h2 class="section-title"><i class="fas fa-chart-simple"></i> État des ressources</h2>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Équipe</th><th>Membres</th><th>Charge</th><th>Disponibilité</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for equipe in equipes %}
+                <tr>
+                    <td><strong>{{ equipe.nom }}</strong></td><td>{{ equipe.membres }}</td>
+                    <td><div class="progress-bar"><div class="progress-fill" style="width:{{ equipe.charge }}%;{% if equipe.charge > 80 %}background:#ef4444{% elif equipe.charge > 60 %}background:#f59e0b{% endif %}"></div></div><small>{{ equipe.charge }}%</small></td>
+                    <td>{% if equipe.disponible %}<span class="status status-success">Disponible</span>{% elif equipe.charge > 80 %}<span class="status status-danger">Surcharge</span>{% else %}<span class="status status-warning">Occupé</span>{% endif %}</td>
+                    <td><button class="btn btn-sm btn-primary">🔄</button></td>
+                </tr>
+                {% empty %}<tr><td colspan="5" style="text-align:center;padding:2rem;color:#6C757D;">Aucune donnée.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Communication Direction -->
+    <h2 class="section-title"><i class="fas fa-comments"></i> Communication avec la Direction</h2>
+    <div class="dg-chat">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(5,150,105,0.3);">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#FF6B35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">DG</div>
+            <strong>Direction Générale</strong>
+        </div>
+        {% for msg in dg_messages %}
+        <div style="background:white;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border-left:3px solid #D4AF37;">
+            <small style="color:#6C757D;">{{ msg.date|date:"d/m/Y H:i" }}</small><p style="margin-top:0.3rem;">{{ msg.contenu }}</p>
+        </div>
+        {% empty %}<p style="color:#6C757D;text-align:center;">Aucun message.</p>{% endfor %}
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-top:1rem;">
+            {% csrf_token %}<input type="hidden" name="departement" value="operations">
+            <textarea name="message" rows="2" class="form-control" placeholder="Message à la Direction..." style="margin-bottom:0.5rem;"></textarea>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Communication équipe -->
+    <h2 class="section-title"><i class="fas fa-users"></i> Communication interne</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'messaging:envoyer_equipe' %}">
+            {% csrf_token %}<input type="hidden" name="departement" value="operations">
+            <div class="form-group">
+                <label>Destinataires</label>
+                <select name="destinataire" class="form-control">
+                    <option value="equipe">Toute l'équipe Opérations</option>
+                    <option value="coordinateur">Coordinateur uniquement</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Message</label><textarea name="message" rows="2" class="form-control" placeholder="Votre message..."></textarea></div>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Planifier une formation -->
+    <h2 class="section-title"><i class="fas fa-plus-circle"></i> Planifier une formation</h2>
+    <div class="form-card">
+        <form method="post" action="{% url 'gestion: operations_planifier_formation' %}">
+            {% csrf_token %}
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+                <div class="form-group"><label>Formation</label><input type="text" name="nom" class="form-control" placeholder="Nom de la formation" required></div>
+                <div class="form-group"><label>Formateur</label><input type="text" name="formateur" class="form-control" placeholder="Nom du formateur"></div>
+                <div class="form-group"><label>Date de début</label><input type="date" name="date_debut" class="form-control" required></div>
+            </div>
+            <button type="submit" class="btn btn-primary">➕ Planifier</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const chartData = {{ chart_data_json|safe }};
+
+new Chart(document.getElementById('chartChargeEquipes'), {
+    type: 'bar', data: { labels: chartData.equipes_labels, datasets: [{ label: 'Charge %', data: chartData.equipes_charge, backgroundColor: chartData.equipes_charge.map(v => v > 80 ? '#ef4444' : v > 60 ? '#f59e0b' : '#059669'), borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
+});
+new Chart(document.getElementById('chartFormations'), {
+    type: 'line', data: { labels: chartData.mois_labels, datasets: [{ label: 'Formations', data: chartData.formations_data, borderColor: '#059669', backgroundColor: 'rgba(5,150,105,0.1)', fill: true, tension: 0.3 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartApprenants'), {
+    type: 'bar', data: { labels: chartData.formations_labels, datasets: [{ label: 'Apprenants', data: chartData.formations_apprenants, backgroundColor: '#059669', borderRadius: 8 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+new Chart(document.getElementById('chartPartenaires'), {
+    type: 'doughnut', data: { labels: ['Académiques', 'Entreprises', 'Pédagogiques'], datasets: [{ data: [chartData.partenaires_acad, chartData.partenaires_entr, chartData.partenaires_pedago], backgroundColor: ['#059669', '#3b82f6', '#f59e0b'] }] },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+function handleAction(action) {
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(`/operations/api/${action}/`, { method: 'POST', headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' } })
+        .then(r => r.json()).then(d => showToast(d.message || 'Action effectuée', d.success ? 'success' : 'error'));
+}
+function showToast(msg, type) {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;bottom:2rem;right:2rem;background:${type==='success'?'#10B981':'#ef4444'};color:white;padding:0.8rem 1.5rem;border-radius:10px;z-index:9999;font-weight:600;`;
+    t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+</script>
+{% endblock %}
