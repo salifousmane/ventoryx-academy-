@@ -1,0 +1,483 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ parcours.nom }} — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+{{ parcours.description|truncatewords:30 }} — {{ modules|length }} modules, {{ total_cours }} cours. Certificat SHA-256 à la clé.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gold: #D4AF37;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --success: #10b981;
+    }
+
+    .parcours-hero {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        padding: 2.5rem 0;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease-out;
+    }
+    .parcours-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.03' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+    .parcours-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        color: white;
+        margin-bottom: 0.3rem;
+        position: relative;
+        z-index: 2;
+    }
+    .parcours-hero p {
+        opacity: 0.85;
+        margin: 0;
+        position: relative;
+        z-index: 2;
+    }
+    .btn-retour {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        transition: color 0.3s;
+        position: relative;
+        z-index: 2;
+    }
+    .btn-retour:hover { color: white; }
+    .badge-gratuit, .badge-premium {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .badge-gratuit { background: var(--success); color: white; }
+    .badge-premium { background: var(--gold); color: var(--secondary); }
+
+    /* Stats rapides */
+    .stats-rapides {
+        display: flex;
+        justify-content: space-around;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 2;
+    }
+    .stat-item {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .container-main {
+        padding: 2rem 0;
+        animation: fadeIn 0.5s ease-out 0.1s both;
+    }
+
+    .progression-globale {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        transition: transform 0.3s;
+    }
+    .progression-globale:hover {
+        transform: translateY(-2px);
+    }
+    .progression-bar {
+        background: var(--gray-light);
+        border-radius: 10px;
+        height: 10px;
+        overflow: hidden;
+    }
+    .progression-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, var(--primary), var(--success));
+        transition: width 0.5s ease;
+    }
+    .progression-label {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Dernier cours consulté */
+    .last-course {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .last-course-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .last-course-btn {
+        background: white;
+        color: var(--primary);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.3s;
+    }
+    .last-course-btn:hover {
+        transform: translateX(3px);
+    }
+
+    .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .module-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        position: relative;
+        overflow: hidden;
+    }
+    .module-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.5s;
+    }
+    .module-card:hover::before {
+        left: 100%;
+    }
+    .module-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .module-card.completed {
+        border: 2px solid var(--success);
+    }
+    .module-card.locked {
+        opacity: 0.6;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    .module-numero {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s;
+    }
+    .module-card:hover .module-numero {
+        transform: scale(1.05);
+    }
+    .module-card.completed .module-numero {
+        background: linear-gradient(135deg, var(--success), #059669);
+    }
+    .module-card.locked .module-numero {
+        background: var(--gray);
+    }
+    .module-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    .module-card p {
+        color: var(--gray);
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+    .module-mini-bar {
+        background: var(--gray-light);
+        border-radius: 8px;
+        height: 6px;
+        overflow: hidden;
+    }
+    .module-mini-fill {
+        height: 100%;
+        border-radius: 8px;
+        background: var(--primary);
+        transition: width 0.5s ease;
+    }
+    .module-card.completed .module-mini-fill {
+        background: var(--success);
+    }
+    .module-progress-text {
+        font-size: 0.7rem;
+        color: var(--gray);
+        margin-top: 0.3rem;
+        display: block;
+    }
+    .lock-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        color: var(--gray);
+        font-size: 1.2rem;
+    }
+
+    .test-global-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        border: 2px solid var(--gold);
+    }
+    .test-global-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .test-global-card.locked {
+        opacity: 0.6;
+        pointer-events: none;
+        border-color: var(--gray-light);
+    }
+    .test-global-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .test-global-card h3 i {
+        color: var(--gold);
+    }
+    .btn-start {
+        display: inline-block;
+        padding: 0.7rem 2rem;
+        background: var(--gold);
+        color: var(--secondary);
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-family: 'Montserrat', sans-serif;
+        margin-top: 0.5rem;
+        transition: transform 0.3s;
+    }
+    .btn-start:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Dark mode */
+    body.dark-mode .progression-globale,
+    body.dark-mode .module-card,
+    body.dark-mode .test-global-card {
+        background: #1E1E1E;
+    }
+    body.dark-mode .module-card h3,
+    body.dark-mode .test-global-card h3 {
+        color: #E0E0E0;
+    }
+    body.dark-mode .stats-rapides .stat-item {
+        background: rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+        .parcours-hero h1 { font-size: 1.5rem; }
+        .modules-grid { grid-template-columns: 1fr; }
+        .last-course { flex-direction: column; text-align: center; }
+        .stats-rapides { flex-direction: column; align-items: center; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="parcours-hero">
+    <div class="container">
+        <a href="{% url 'parcours:selection_metier' %}" class="btn-retour">
+            <i class="fas fa-arrow-left"></i> Changer de parcours
+        </a>
+        <h1>{{ parcours.nom }}</h1>
+        <p>{{ parcours.description|truncatewords:20 }}</p>
+        {% if parcours.gratuit %}
+        <span class="badge-gratuit">🎓 Gratuit</span>
+        {% elif parcours.premium %}
+        <span class="badge-premium">👑 Premium</span>
+        {% endif %}
+        
+        <!-- Stats rapides -->
+        <div class="stats-rapides">
+            <span class="stat-item"><i class="fas fa-layer-group"></i> {{ modules|length }} modules</span>
+            <span class="stat-item"><i class="fas fa-book"></i> {{ total_cours }} cours</span>
+            <span class="stat-item"><i class="fas fa-clock"></i> ~{{ duree_totale|default:"40" }}h</span>
+            <span class="stat-item"><i class="fas fa-certificate"></i> Certificat SHA-256</span>
+        </div>
+    </div>
+</section>
+
+<div class="container container-main">
+    {% if modules %}
+    <!-- Progression globale -->
+    <div class="progression-globale">
+        <div class="progression-bar">
+            <div class="progression-fill" id="globalProgressFill" style="width: {{ pourcentage_global|default:0 }}%;"></div>
+        </div>
+        <div class="progression-label">
+            <span>Progression globale</span>
+            <span><strong id="globalProgressPercent">{{ pourcentage_global|default:0 }}%</strong></span>
+        </div>
+    </div>
+
+    <!-- Dernier cours consulté (persistance) -->
+    {% if dernier_cours %}
+    <div class="last-course">
+        <div class="last-course-content">
+            <i class="fas fa-history" style="font-size: 1.2rem;"></i>
+            <span>Dernier cours consulté : <strong>{{ dernier_cours.titre }}</strong></span>
+        </div>
+        <a href="{% url 'parcours:cours' metier=metier module_num=dernier_cours.module_numero cours_num=dernier_cours.numero %}" class="last-course-btn">
+            Reprendre <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Grille des modules -->
+    <div class="modules-grid">
+        {% for module in modules %}
+        {% if module.debloque %}
+        <a href="{% url 'parcours:cours' metier=metier module_num=module.numero cours_num=1 %}" 
+           class="module-card {% if module.progression >= 100 %}completed{% endif %}">
+        {% else %}
+        <div class="module-card locked">
+            <span class="lock-icon"><i class="fas fa-lock"></i></span>
+        {% endif %}
+            <div class="module-numero">
+                {% if module.progression >= 100 %}<i class="fas fa-check"></i>{% else %}{{ module.numero }}{% endif %}
+            </div>
+            <h3>{{ module.titre }}</h3>
+            <p>{{ module.description|truncatewords:12|default:"Module de formation" }}</p>
+            <div class="module-mini-bar">
+                <div class="module-mini-fill" style="width: {{ module.progression }}%;"></div>
+            </div>
+            <span class="module-progress-text">{{ module.progression }}% complété</span>
+        {% if module.debloque %}</a>{% else %}</div>{% endif %}
+        {% empty %}
+        <p style="text-align:center;color:var(--gray);">Aucun module disponible pour ce parcours.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Test global -->
+    <a href="{% url 'parcours:test_global' metier=metier %}" 
+       class="test-global-card {% if not test_global_debloque %}locked{% endif %}">
+        <h3><i class="fas fa-trophy"></i> Test Global Final</h3>
+        <p>Validez l'ensemble de vos compétences pour ce parcours</p>
+        {% if test_global_debloque %}
+        <span class="btn-start">Commencer le test global</span>
+        {% else %}
+        <span style="color:var(--gray);font-size:0.85rem;">
+            <i class="fas fa-lock"></i> Terminez tous les modules pour débloquer
+        </span>
+        {% endif %}
+    </a>
+    {% else %}
+    <div style="text-align: center; padding: 3rem; background: var(--white); border-radius: 20px;">
+        <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--gray);"></i>
+        <h3>Aucun module disponible</h3>
+        <p style="color: var(--gray);">Ce parcours sera bientôt disponible.</p>
+        <a href="{% url 'parcours:selection_metier' %}" class="btn-start" style="background: var(--primary); color: white;">
+            Retour aux parcours
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Animation de la barre de progression au scroll
+    const observerOptions = { threshold: 0.3 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const fill = document.getElementById('globalProgressFill');
+                const percent = document.getElementById('globalProgressPercent');
+                if (fill && fill.style.width === '0%') {
+                    const target = {{ pourcentage_global|default:0 }};
+                    fill.style.width = target + '%';
+                    let current = 0;
+                    const increment = target / 30;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            percent.innerText = target + '%';
+                            clearInterval(timer);
+                        } else {
+                            percent.innerText = Math.floor(current) + '%';
+                        }
+                    }, 30);
+                }
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const progressSection = document.querySelector('.progression-globale');
+    if (progressSection) observer.observe(progressSection);
+</script>
+
+{% endblock %}
