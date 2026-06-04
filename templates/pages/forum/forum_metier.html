@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Forum {{ forum.nom }} — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .forum-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white; padding: 2.5rem 0;
+    }
+    .forum-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 2rem; color: white; }
+    .forum-hero p { opacity: 0.85; margin: 0; font-size: 0.9rem; }
+
+    .forum-layout {
+        display: grid; grid-template-columns: 1fr 300px; gap: 2rem; padding: 2rem 0;
+    }
+
+    .sujets-section { }
+    .section-title {
+        font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: #0F1C2E;
+        margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;
+    }
+    .btn-nouveau {
+        padding: 0.5rem 1.2rem; background: #0077B6; color: white;
+        border-radius: 50px; text-decoration: none; font-size: 0.85rem;
+        font-weight: 600; font-family: 'Montserrat', sans-serif;
+    }
+    .btn-nouveau:hover { background: #0F1C2E; }
+
+    .sujet-card {
+        background: white; border-radius: 12px; padding: 1.2rem 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 0.8rem;
+        display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit;
+        transition: transform 0.2s ease;
+    }
+    .sujet-card:hover { transform: translateX(5px); }
+    .sujet-card.epingle { border-left: 4px solid #D4AF37; background: #FFFDF5; }
+    .sujet-avatar {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: linear-gradient(135deg, #0077B6, #0F1C2E);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+    }
+    .sujet-content { flex: 1; min-width: 0; }
+    .sujet-titre { font-weight: 600; color: #0F1C2E; font-size: 0.95rem; }
+    .sujet-meta { font-size: 0.75rem; color: #ADB5BD; margin-top: 0.2rem; }
+    .sujet-stats {
+        text-align: center; font-size: 0.8rem; color: #6C757D; flex-shrink: 0;
+    }
+    .sujet-stats strong { display: block; font-size: 1.1rem; color: #0077B6; }
+
+    .sidebar-card {
+        background: white; border-radius: 16px; padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06); margin-bottom: 1.5rem;
+    }
+    .sidebar-card h3 {
+        font-family: 'Montserrat', sans-serif; font-size: 1rem; color: #0F1C2E;
+        margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #E9ECEF;
+    }
+    .sidebar-card a {
+        display: block; padding: 0.4rem 0; color: #6C757D;
+        text-decoration: none; font-size: 0.85rem; border-bottom: 1px solid #f5f5f5;
+    }
+    .sidebar-card a:hover { color: #0077B6; }
+
+    .empty-state {
+        text-align: center; padding: 3rem; background: white;
+        border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    @media (max-width: 768px) {
+        .forum-layout { grid-template-columns: 1fr; }
+        .forum-hero h1 { font-size: 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="forum-hero">
+    <div class="container">
+        <a href="{% url 'forum:index' %}" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.85rem;">
+            <i class="fas fa-arrow-left"></i> Tous les forums
+        </a>
+        <h1>{{ forum.nom }}</h1>
+        <p>{{ forum.description|truncatewords:30 }}</p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="forum-layout">
+        <div class="sujets-section">
+            <div class="section-title">
+                Sujets récents
+                <a href="{% url 'forum:nouveau_sujet' metier=forum.metier %}" class="btn-nouveau">
+                    <i class="fas fa-plus"></i> Nouveau sujet
+                </a>
+            </div>
+
+            {% for sujet in sujets %}
+            <a href="{% url 'forum:sujet' metier=forum.metier sujet_id=sujet.id %}" 
+               class="sujet-card {% if sujet.est_epingle %}epingle{% endif %}">
+                <div class="sujet-avatar">{{ sujet.auteur.first_name|first|upper }}{{ sujet.auteur.last_name|first|upper }}</div>
+                <div class="sujet-content">
+                    <div class="sujet-titre">
+                        {% if sujet.est_epingle %}<i class="fas fa-thumbtack" style="color:#D4AF37;margin-right:0.3rem;"></i>{% endif %}
+                        {{ sujet.titre }}
+                    </div>
+                    <div class="sujet-meta">
+                        Par {{ sujet.auteur.get_full_name }} · {{ sujet.date_creation|date:"d/m/Y" }}
+                    </div>
+                </div>
+                <div class="sujet-stats">
+                    <strong>{{ sujet.total_reponses }}</strong> réponses
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-comment-dots" style="font-size:2.5rem;color:#ADB5BD;margin-bottom:1rem;"></i>
+                <p style="color:#6C757D;">Aucun sujet pour le moment.</p>
+                <a href="{% url 'forum:nouveau_sujet' metier=forum.metier %}" class="btn-nouveau" style="display:inline-block;margin-top:1rem;">
+                    Créer le premier sujet
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <aside>
+            <div class="sidebar-card">
+                <h3>Sous-forums</h3>
+                {% for sous in forum.sous_forums.all %}
+                <a href="{% url 'forum:sous_forum' metier=forum.metier slug=sous.slug %}">
+                    <i class="fas fa-folder"></i> {{ sous.nom }}
+                </a>
+                {% empty %}
+                <p style="color:#ADB5BD;font-size:0.85rem;">Aucun sous-forum.</p>
+                {% endfor %}
+            </div>
+            <div class="sidebar-card">
+                <h3>Statistiques</h3>
+                <p style="font-size:0.85rem;color:#6C757D;">
+                    <i class="fas fa-comments"></i> {{ forum.total_sujets }} sujets<br>
+                    <i class="fas fa-reply"></i> {{ forum.total_messages }} messages
+                </p>
+            </div>
+        </aside>
+    </div>
+</div>
+
+{% endblock %}
