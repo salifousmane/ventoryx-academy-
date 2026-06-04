@@ -1,0 +1,639 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Conditions Générales d'Utilisation - {{ site_name }}{% endblock %}
+
+{% block meta_description %}Conditions Générales d'Utilisation de {{ site_name }} — 35 articles régissant l'usage de la plateforme de formation aéronautique.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white;
+        padding: 4rem 0 3rem;
+        text-align: center;
+    }
+    .legal-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+        color: white;
+    }
+    .legal-hero .hero-subtitle {
+        font-size: 1rem;
+        opacity: 0.85;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+    .legal-hero .last-update {
+        display: inline-block;
+        background: rgba(255,255,255,0.1);
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .legal-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 2.5rem;
+        margin: 3rem 0;
+    }
+
+    .legal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem 3rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .legal-content .toc-box {
+        background: #F8FAFE;
+        border: 1px solid #E3E8F2;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+    .legal-content .toc-box h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+    }
+    .legal-content .toc-box ol {
+        columns: 2;
+        column-gap: 2rem;
+        font-size: 0.85rem;
+        color: #0077B6;
+        padding-left: 1.2rem;
+    }
+    .legal-content .toc-box ol li {
+        margin-bottom: 0.4rem;
+    }
+    .legal-content .toc-box ol li a {
+        text-decoration: none;
+        color: #0077B6;
+    }
+    .legal-content .toc-box ol li a:hover {
+        text-decoration: underline;
+    }
+
+    .legal-content h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        color: #0F1C2E;
+        margin: 2.5rem 0 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid #E9ECEF;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+    .legal-content h2 .article-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        background: #0077B6;
+        color: white;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .legal-content h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.05rem;
+        color: #1E3A5F;
+        margin: 1.5rem 0 0.8rem;
+    }
+    .legal-content p {
+        margin-bottom: 1rem;
+        color: #495057;
+        line-height: 1.8;
+    }
+    .legal-content ul, .legal-content ol {
+        margin: 0 0 1.2rem 1.5rem;
+        color: #495057;
+    }
+    .legal-content li {
+        margin-bottom: 0.6rem;
+        line-height: 1.7;
+    }
+    .legal-content a {
+        color: #0077B6;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .legal-content a:hover {
+        text-decoration: underline;
+    }
+
+    .highlight-box {
+        background: #FFF8E6;
+        border-left: 4px solid #D4AF37;
+        padding: 1.2rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 1.5rem 0;
+    }
+    .highlight-box.warning {
+        background: #FFF2E5;
+        border-left-color: #FF6B35;
+    }
+    .highlight-box.info {
+        background: #E8F4FD;
+        border-left-color: #0077B6;
+    }
+    .highlight-box p {
+        margin-bottom: 0;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0 1.5rem;
+        font-size: 0.88rem;
+    }
+    .data-table th {
+        background: #F8F9FA;
+        padding: 0.8rem;
+        text-align: left;
+        font-weight: 600;
+        color: #0F1C2E;
+        border-bottom: 2px solid #E9ECEF;
+    }
+    .data-table td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #E9ECEF;
+        color: #495057;
+    }
+
+    .legal-sidebar {
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+    }
+    .sidebar-nav {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .sidebar-nav h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #E9ECEF;
+    }
+    .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0;
+        border-bottom: 1px solid #f5f5f5;
+        color: #6C757D;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+    }
+    .sidebar-nav a:hover {
+        color: #0077B6;
+        padding-left: 4px;
+    }
+    .sidebar-nav a i {
+        font-size: 0.4rem;
+        color: #0077B6;
+    }
+    .sidebar-nav a:last-child {
+        border-bottom: none;
+    }
+
+    .legal-footer-note {
+        text-align: center;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        color: #6C757D;
+        font-size: 0.85rem;
+    }
+    .legal-footer-note a {
+        color: #0077B6;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    @media (max-width: 992px) {
+        .legal-layout { grid-template-columns: 1fr; }
+        .legal-sidebar { position: static; order: -1; }
+        .legal-content .toc-box ol { columns: 1; }
+    }
+    @media (max-width: 768px) {
+        .legal-hero h1 { font-size: 1.8rem; }
+        .legal-content { padding: 1.5rem; }
+        .legal-content h2 { font-size: 1.15rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="legal-hero">
+    <div class="container">
+        <h1>Conditions Générales d'Utilisation</h1>
+        <p class="hero-subtitle">
+            Les présentes CGU définissent les règles applicables à l'utilisation 
+            de la plateforme <strong>{{ site_name }}</strong>.
+        </p>
+        <span class="last-update">
+            <i class="fas fa-calendar-check"></i> 
+            Version 1.0 — En vigueur depuis le {% now "d/m/Y" %}
+        </span>
+    </div>
+</section>
+
+<div class="container">
+    <div class="legal-layout">
+
+        <!-- COLONNE PRINCIPALE -->
+        <article class="legal-content">
+
+            <!-- TABLE DES MATIÈRES -->
+            <div class="toc-box">
+                <h3><i class="fas fa-list-ol"></i> Table des matières</h3>
+                <ol>
+                    <li><a href="#art1">Objet et finalité</a></li>
+                    <li><a href="#art2">Définitions</a></li>
+                    <li><a href="#art3">Acceptation des CGU</a></li>
+                    <li><a href="#art4">Conditions d'inscription</a></li>
+                    <li><a href="#art5">Création et gestion du compte</a></li>
+                    <li><a href="#art6">Âge minimum et capacité juridique</a></li>
+                    <li><a href="#art7">Obligations de l'utilisateur</a></li>
+                    <li><a href="#art8">Services proposés</a></li>
+                    <li><a href="#art9">Contenu pédagogique</a></li>
+                    <li><a href="#art10">Parcours et certifications</a></li>
+                    <li><a href="#art11">Abonnements et tarifs</a></li>
+                    <li><a href="#art12">Paiement et facturation</a></li>
+                    <li><a href="#art13">Droit de rétractation</a></li>
+                    <li><a href="#art14">Renouvellement et résiliation</a></li>
+                    <li><a href="#art15">Propriété intellectuelle</a></li>
+                    <li><a href="#art16">Licence d'utilisation du contenu</a></li>
+                    <li><a href="#art17">Marques et logos</a></li>
+                    <li><a href="#art18">Protection des données</a></li>
+                    <li><a href="#art19">Cookies et traceurs</a></li>
+                    <li><a href="#art20">Sécurité de la plateforme</a></li>
+                    <li><a href="#art21">Utilisation éthique</a></li>
+                    <li><a href="#art22">Contenus utilisateurs</a></li>
+                    <li><a href="#art23">Modération</a></li>
+                    <li><a href="#art24">Sanctions</a></li>
+                    <li><a href="#art25">Disponibilité du service</a></li>
+                    <li><a href="#art26">Maintenance</a></li>
+                    <li><a href="#art27">Limitation de responsabilité</a></li>
+                    <li><a href="#art28">Force majeure</a></li>
+                    <li><a href="#art29">Liens externes</a></li>
+                    <li><a href="#art30">Modification des CGU</a></li>
+                    <li><a href="#art31">Cession et transfert</a></li>
+                    <li><a href="#art32">Non-renonciation</a></li>
+                    <li><a href="#art33">Nullité partielle</a></li>
+                    <li><a href="#art34">Droit applicable</a></li>
+                    <li><a href="#art35">Contact et réclamations</a></li>
+                </ol>
+            </div>
+
+            <!-- INTRODUCTION -->
+            <p>
+                Les présentes Conditions Générales d'Utilisation (ci-après « <strong>CGU</strong> ») 
+                régissent l'accès et l'usage de la plateforme <strong>{{ site_name }}</strong> 
+                (ci-après « <strong>la Plateforme</strong> »), éditée par son propriétaire, 
+                accessible via son site internet et ses applications associées.
+            </p>
+            <p>
+                L'utilisation de la Plateforme implique l'acceptation pleine, entière et sans 
+                réserve des présentes CGU par tout utilisateur (ci-après « <strong>l'Utilisateur</strong> »). 
+                Tout Utilisateur qui n'accepte pas ces conditions doit s'abstenir d'utiliser 
+                les services proposés.
+            </p>
+
+            <!-- ARTICLE 1 -->
+            <h2 id="art1"><span class="article-num">1</span> Objet et finalité de la plateforme</h2>
+            <p>{{ site_name }} est une plateforme de formation théorique dans le domaine aéronautique. Elle permet aux utilisateurs de :</p>
+            <ul>
+                <li>Suivre des cours théoriques adaptés aux différents métiers de l'aviation : pilote de ligne, personnel navigant commercial (PNC), ingénieur aéronautique, contrôleur aérien,Mécanicien avion, Agent d'escale, technicien aéronautique ;</li>
+                <li>Passer des tests d'évaluation certifiants et obtenir des certificats numériques vérifiables en ligne via un système de hash cryptographique SHA-256 ;</li>
+                <li>Analyser leur progression pédagogique et accéder à un historique d'apprentissage complet via un tableau de bord personnalisé ;</li>
+                <li>Bénéficier d'outils interactifs de formation, de quiz, de suivi personnalisé et de recommandations pédagogiques ;</li>
+                <li>Participer à des forums communautaires dédiés à chaque métier pour échanger avec d'autres apprenants et des professionnels du secteur.</li>
+            </ul>
+            <p>
+                L'usage de la Plateforme implique un engagement à respecter les règles éthiques, 
+                pédagogiques et techniques définies par {{ site_name }}. La Plateforme est un 
+                outil de formation théorique et ne délivre pas de licences professionnelles 
+                aéronautiques, lesquelles relèvent exclusivement des autorités compétentes 
+                (DGAC, EASA, FAA selon les juridictions).
+            </p>
+
+            <!-- ARTICLE 2 -->
+            <h2 id="art2"><span class="article-num">2</span> Définitions</h2>
+            <p>Dans les présentes CGU, les termes commençant par une majuscule ont la signification suivante :</p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Terme</th><th>Définition</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Plateforme</strong></td><td>Ensemble des services en ligne accessibles via le site internet de {{ site_name }} et ses applications associées, incluant les espaces de formation, le forum, le tableau de bord et le système de certificats.</td></tr>
+                    <tr><td><strong>Utilisateur</strong></td><td>Toute personne physique majeure ou mineure dûment autorisée, ayant créé un compte sur la Plateforme et accepté les présentes CGU.</td></tr>
+                    <tr><td><strong>Compte</strong></td><td>Espace personnel et sécurisé créé par l'Utilisateur lors de son inscription, accessible via un couple identifiant (email) et mot de passe.</td></tr>
+                    <tr><td><strong>Parcours</strong></td><td>Ensemble cohérent et structuré de modules de formation correspondant à un métier aéronautique spécifique, aboutissant à un certificat.</td></tr>
+                    <tr><td><strong>Module</strong></td><td>Unité pédagogique composée de plusieurs cours et d'un ou plusieurs quiz d'évaluation.</td></tr>
+                    <tr><td><strong>Cours</strong></td><td>Unité élémentaire de contenu pédagogique, pouvant inclure du texte, des images, des vidéos et des exercices.</td></tr>
+                    <tr><td><strong>Certificat</strong></td><td>Document numérique personnalisé attestant de la réussite d'un parcours de formation, doté d'un numéro de série unique et d'un hash SHA-256 permettant sa vérification publique.</td></tr>
+                    <tr><td><strong>Contenu</strong></td><td>Ensemble des éléments pédagogiques, graphiques, textuels, audiovisuels et logiciels mis à disposition sur la Plateforme.</td></tr>
+                    <tr><td><strong>Abonnement</strong></td><td>Souscription payante donnant accès aux parcours de formation pour une durée déterminée.</td></tr>
+                    <tr><td><strong>Forum</strong></td><td>Espace communautaire permettant aux Utilisateurs d'échanger des messages, organisé par métier et par thématique.</td></tr>
+                </tbody>
+            </table>
+
+            <!-- ARTICLE 3 -->
+            <h2 id="art3"><span class="article-num">3</span> Acceptation des CGU</h2>
+            <h3>3.1 Modalités d'acceptation</h3>
+            <p>L'acceptation des présentes CGU est matérialisée par trois actions cumulatives :</p>
+            <ol>
+                <li>Le cochage d'une case à cocher obligatoire lors du formulaire de création de compte, par laquelle l'Utilisateur déclare avoir lu et accepté les présentes CGU ;</li>
+                <li>La validation du formulaire d'inscription, qui vaut consentement plein et entier ;</li>
+                <li>L'utilisation continue de la Plateforme après toute modification des CGU, qui vaut acceptation tacite des nouvelles conditions.</li>
+            </ol>
+
+            <h3>3.2 Opposabilité</h3>
+            <p>Les présentes CGU sont opposables à l'Utilisateur dès leur acceptation. Elles sont accessibles à tout moment via un lien permanent situé dans le pied de page de chaque page de la Plateforme. L'Utilisateur est invité à les consulter régulièrement.</p>
+
+            <h3>3.3 Preuve d'acceptation</h3>
+            <p>{{ site_name }} conserve dans son journal d'audit immutable la date, l'heure et l'adresse IP associées à l'acceptation des CGU par chaque Utilisateur, conformément aux exigences légales en matière de preuve électronique.</p>
+
+            <!-- ARTICLE 4 -->
+            <h2 id="art4"><span class="article-num">4</span> Conditions d'inscription</h2>
+            <h3>4.1 Procédure d'inscription</h3>
+            <p>L'inscription à la Plateforme s'effectue via un formulaire en ligne. L'Utilisateur doit :</p>
+            <ul>
+                <li>Renseigner son prénom et son nom de famille ;</li>
+                <li>Fournir une adresse email valide, personnelle et dont il est le propriétaire légitime ;</li>
+                <li>Indiquer sa nationalité et sa date de naissance ;</li>
+                <li>Choisir un mot de passe robuste répondant aux critères de sécurité ;</li>
+                <li>Accepter expressément les présentes CGU et la Politique de confidentialité.</li>
+            </ul>
+
+            <h3>4.2 Exactitude des informations</h3>
+            <p>L'Utilisateur s'engage à fournir des informations exactes, complètes et à jour. Toute falsification, usurpation d'identité ou déclaration mensongère pourra entraîner la suspension immédiate du compte, sans préjudice des poursuites judiciaires que {{ site_name }} se réserve le droit d'engager.</p>
+
+            <h3>4.3 Vérification</h3>
+            <p>{{ site_name }} se réserve le droit de vérifier les informations fournies et de demander des justificatifs complémentaires à tout moment. En l'absence de réponse dans un délai de quinze (15) jours à compter de la demande, le compte pourra être suspendu.</p>
+
+            <!-- ARTICLE 5 -->
+            <h2 id="art5"><span class="article-num">5</span> Création et gestion du compte</h2>
+            <h3>5.1 Caractère strictement personnel</h3>
+            <p>Chaque compte est strictement personnel, individuel et incessible. L'Utilisateur s'interdit formellement de céder, prêter, louer, partager, vendre ou mettre à disposition de quelque manière que ce soit ses identifiants de connexion à un tiers, y compris à un membre de sa famille, un collègue ou un ami. Toute action effectuée via un compte est réputée avoir été accomplie par le titulaire dudit compte.</p>
+
+            <h3>5.2 Responsabilité des identifiants</h3>
+            <p>L'Utilisateur est seul et entièrement responsable de la confidentialité et de la sécurité de ses identifiants de connexion. Il s'engage à :</p>
+            <ul>
+                <li>Ne pas communiquer son mot de passe à quiconque, y compris à des personnes se présentant comme employés ou représentants de {{ site_name }} (aucun membre de l'équipe ne demandera jamais votre mot de passe) ;</li>
+                <li>Informer immédiatement {{ site_name }} via le formulaire de contact en cas de suspicion d'utilisation non autorisée de son compte ou de compromission de ses identifiants ;</li>
+                <li>Se déconnecter systématiquement après chaque session, particulièrement lorsqu'il utilise un appareil partagé ou public ;</li>
+                <li>Utiliser un mot de passe unique, non réutilisé sur d'autres services en ligne.</li>
+            </ul>
+
+            <h3>5.3 Conséquences en cas de manquement</h3>
+            <p>Toute utilisation frauduleuse ou non autorisée du compte, que l'Utilisateur en soit ou non à l'origine, engage sa responsabilité. {{ site_name }} ne pourra être tenue responsable des dommages résultant d'un manquement de l'Utilisateur à ses obligations de sécurité.</p>
+
+            <!-- ARTICLE 6 -->
+            <h2 id="art6"><span class="article-num">6</span> Âge minimum et capacité juridique</h2>
+            <h3>6.1 Âge minimum</h3>
+            <p>L'inscription à la Plateforme est ouverte aux personnes âgées d'au moins <strong>{{ age_minimum|default:"16" }} ans</strong>. En dessous de cet âge, aucun compte ne peut être créé, même avec l'accord d'un représentant légal.</p>
+
+            <h3>6.2 Mineurs de {{ age_minimum|default:"16" }} à 18 ans</h3>
+            <p>Pour les Utilisateurs mineurs âgés de {{ age_minimum|default:"16" }} à 18 ans :</p>
+            <ul>
+                <li>L'inscription nécessite l'accord préalable, exprès et explicite d'un parent ou représentant légal ;</li>
+                <li>Le parent ou représentant légal accepte les présentes CGU au nom et pour le compte du mineur et en garantit le respect ;</li>
+                <li>{{ site_name }} se réserve le droit de demander à tout moment une preuve écrite de cet accord parental ;</li>
+                <li>En l'absence de justification dans un délai de sept (7) jours, le compte sera suspendu.</li>
+            </ul>
+
+            <h3>6.3 Majeurs protégés</h3>
+            <p>Les majeurs sous tutelle ou curatelle ne peuvent s'inscrire qu'avec l'assistance de leur représentant légal, qui accepte les présentes CGU en leur nom.</p>
+
+            <!-- ARTICLE 7 -->
+            <h2 id="art7"><span class="article-num">7</span> Obligations de l'utilisateur</h2>
+            <p>L'Utilisateur s'engage à :</p>
+            <ol>
+                <li><strong>Fournir des informations exactes :</strong> les données communiquées lors de l'inscription et tout au long de l'utilisation de la Plateforme doivent être véridiques, complètes et tenues à jour. Toute déclaration frauduleuse expose l'Utilisateur à la suspension de son compte et aux sanctions prévues à l'article 24.</li>
+                <li><strong>Respecter la confidentialité de ses identifiants :</strong> conformément à l'article 5, l'Utilisateur est responsable de la sécurité de son compte.</li>
+                <li><strong>Respecter les lois et règlements :</strong> l'Utilisateur s'engage à ne pas utiliser la Plateforme à des fins illicites ou contraires aux lois et règlements en vigueur, notamment en matière de propriété intellectuelle, de protection des données personnelles, de fraude informatique et de contrefaçon.</li>
+                <li><strong>Utiliser la Plateforme de manière loyale :</strong> l'Utilisateur s'interdit de tenter de contourner les dispositifs de sécurité, de falsifier des certificats, d'extraire des données de manière automatisée (scraping), ou de perturber le bon fonctionnement du service.</li>
+                <li><strong>Signaler les anomalies :</strong> l'Utilisateur doit signaler sans délai toute faille de sécurité, anomalie technique ou contenu manifestement illicite via le formulaire de contact.</li>
+                <li><strong>Respecter l'éthique aéronautique :</strong> l'Utilisateur s'engage à adopter un comportement professionnel et respectueux dans toutes ses interactions sur la Plateforme.</li>
+            </ol>
+
+            <!-- ARTICLE 8 -->
+            <h2 id="art8"><span class="article-num">8</span> Services proposés</h2>
+            <p>La Plateforme propose les services suivants, dont la disponibilité peut varier selon la formule d'abonnement choisie :</p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Service</th><th>Description détaillée</th><th>Disponibilité</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Modules de formation</strong></td><td>Cours théoriques interactifs organisés par métier, incluant textes, illustrations, schémas, vidéos et exercices pratiques.</td><td>24h/24, 7j/7</td></tr>
+                    <tr><td><strong>Quiz d'évaluation</strong></td><td>Tests de connaissances à correction automatique, avec score, temps de réponse et historique des tentatives.</td><td>24h/24, 7j/7</td></tr>
+                    <tr><td><strong>Test global</strong></td><td>Examen final de parcours, chronométré, avec tirage aléatoire des questions parmi une base validée.</td><td>Après complétion du parcours</td></tr>
+                    <tr><td><strong>Certificats numériques</strong></td><td>Documents personnalisés avec numéro de série unique et hash SHA-256 vérifiable publiquement.</td><td>Après réussite au test global</td></tr>
+                    <tr><td><strong>Tableau de bord</strong></td><td>Espace personnel affichant la progression, les résultats, les recommandations et le classement.</td><td>24h/24, 7j/7</td></tr>
+                    <tr><td><strong>Forum communautaire</strong></td><td>Espace d'échange organisé par métier, avec sous-forums thématiques et messagerie.</td><td>24h/24, 7j/7</td></tr>
+                    <tr><td><strong>Support technique</strong></td><td>Assistance par email et formulaire de contact pour les problèmes techniques.</td><td>Jours ouvrés, 9h-18h</td></tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box info">
+                <strong><i class="fas fa-sync-alt"></i> Évolution des services</strong>
+                <p>{{ site_name }} se réserve le droit de faire évoluer, améliorer, modifier ou supprimer certains services à tout moment, sans que sa responsabilité ne puisse être engagée. Les Utilisateurs seront informés des changements significatifs par email ou notification sur la Plateforme avec un préavis raisonnable.</p>
+            </div>
+
+            <!-- ARTICLE 9 -->
+            <h2 id="art9"><span class="article-num">9</span> Contenu pédagogique</h2>
+            <h3>9.1 Nature du contenu</h3>
+            <p>Le contenu pédagogique proposé sur la Plateforme est élaboré par des professionnels du secteur aéronautique. Il est fourni à titre éducatif et informatif. {{ site_name }} s'efforce d'en garantir l'exactitude, la pertinence et la mise à jour régulière.</p>
+
+            <h3>9.2 Limites de la formation théorique</h3>
+            <p>Les formations dispensées sur la Plateforme sont exclusivement théoriques. Elles ne remplacent pas et ne sauraient se substituer aux formations pratiques obligatoires requises pour l'obtention des licences, qualifications et certifications aéronautiques officielles délivrées par les autorités compétentes (DGAC en France, EASA en Europe, FAA aux États-Unis, etc.).</p>
+
+            <h3>9.3 Absence de garantie</h3>
+            <p>{{ site_name }} ne garantit pas que le contenu pédagogique soit exempt d'erreurs ou d'omissions. L'Utilisateur est encouragé à croiser les informations avec d'autres sources et à signaler toute erreur constatée.</p>
+
+            <!-- ARTICLE 10 -->
+            <h2 id="art10"><span class="article-num">10</span> Parcours et certifications</h2>
+            <h3>10.1 Structure des parcours</h3>
+            <p>Chaque parcours de formation est composé de plusieurs modules, eux-mêmes composés de cours et de quiz. La progression est linéaire : chaque module doit être validé pour accéder au suivant.</p>
+
+            <h3>10.2 Test global et certificat</h3>
+            <p>À l'issue d'un parcours, l'Utilisateur doit réussir un test global pour obtenir son certificat. Le test global est :</p>
+            <ul>
+                <li>Chronométré ;</li>
+                <li>Composé de questions tirées aléatoirement ;</li>
+                <li>Soumis à un score minimum de réussite ;</li>
+                <li>Limité à trois tentatives par période de trente (30) jours.</li>
+            </ul>
+
+            <h3>10.3 Validité des certificats</h3>
+            <p>Chaque certificat possède un numéro de série unique et un hash SHA-256 permettant sa vérification en ligne via la page dédiée. Les certificats attestent de la réussite d'une formation théorique et n'ont pas valeur de licence, qualification ou autorisation professionnelle.</p>
+
+            <!-- ARTICLE 11 -->
+            <h2 id="art11"><span class="article-num">11</span> Abonnements et tarifs</h2>
+            <h3>11.1 Formules disponibles</h3>
+            <p>{{ site_name }} propose les formules d'abonnement suivantes :</p>
+            <ul>
+                <li><strong>Formule Mensuelle :</strong> accès à tous les parcours de formation, sans engagement de durée, résiliable à tout moment. Facturation mensuelle.</li>
+                <li><strong>Formule Annuelle :</strong> accès à tous les parcours de formation incluant les contenus Premium, engagement de douze (12) mois. Facturation annuelle avec une réduction par rapport au tarif mensuel.</li>
+            </ul>
+
+            <h3>11.2 Offre de bienvenue</h3>
+            <p>Les trois (3) premiers Utilisateurs inscrits sur la Plateforme bénéficient d'une offre de bienvenue gratuite : 365 jours pour le premier inscrit, 30 jours pour le deuxième et le troisième. À l'issue de cette période gratuite, l'abonnement se poursuit selon la formule choisie par l'Utilisateur lors de son inscription, sauf résiliation préalable.</p>
+
+            <h3>11.3 Modification des tarifs</h3>
+            <p>{{ site_name }} se réserve le droit de modifier ses tarifs à tout moment. Les modifications tarifaires :</p>
+            <ul>
+                <li>Sont communiquées aux Utilisateurs avec un préavis minimum de trente (30) jours ;</li>
+                <li>Ne s'appliquent pas aux abonnements en cours avant leur renouvellement ;</li>
+                <li>Entrent en vigueur à la première échéance suivant le préavis.</li>
+            </ul>
+
+            <!-- ARTICLE 12 -->
+            <h2 id="art12"><span class="article-num">12</span> Paiement et facturation</h2>
+            <h3>12.1 Prestataire de paiement</h3>
+            <p>Tous les paiements sont traités de manière entièrement sécurisée via <strong>Stripe</strong>, prestataire de services de paiement certifié PCI-DSS niveau 1. {{ site_name }} ne collecte, ne traite et ne stocke aucune donnée bancaire (numéro de carte, cryptogramme, date d'expiration).</p>
+
+            <h3>12.2 Facturation</h3>
+            <p>Une facture électronique est émise pour chaque paiement et mise à disposition de l'Utilisateur dans son espace personnel. L'Utilisateur est responsable de la fourniture d'informations de facturation exactes.</p>
+
+            <h3>12.3 Incidents de paiement</h3>
+            <p>En cas d'échec de paiement, l'accès aux parcours de formation est suspendu jusqu'à régularisation. Trois tentatives de paiement infructueuses sur une période de trente (30) jours entraînent la résiliation automatique de l'abonnement.</p>
+
+            <!-- ARTICLE 13 -->
+            <h2 id="art13"><span class="article-num">13</span> Droit de rétractation</h2>
+            <h3>13.1 Cadre légal</h3>
+            <p>Conformément aux articles L.221-18 et suivants du Code de la consommation, l'Utilisateur consommateur dispose d'un délai de quatorze (14) jours calendaires à compter de la souscription pour exercer son droit de rétractation, sans avoir à justifier de motifs ni à payer de pénalités.</p>
+
+            <h3>13.2 Exercice du droit</h3>
+            <p>Pour exercer son droit de rétractation, l'Utilisateur doit notifier sa décision par email ou via le formulaire de contact. {{ site_name }} accusera réception dans un délai de quarante-huit (48) heures et procédera au remboursement dans un délai de quatorze (14) jours.</p>
+
+            <h3>13.3 Exception</h3>
+            <p>Le droit de rétractation ne s'applique pas si l'Utilisateur a commencé à consommer le service (suivi de cours) et a expressément renoncé à son droit de rétractation lors de la souscription.</p>
+
+            <!-- ARTICLE 14 -->
+            <h2 id="art14"><span class="article-num">14</span> Renouvellement et résiliation</h2>
+            <h3>14.1 Renouvellement automatique</h3>
+            <p>Sauf résiliation expresse de l'Utilisateur, les abonnements sont renouvelés automatiquement à l'échéance, pour une durée identique à la période initialement souscrite.</p>
+
+            <h3>14.2 Résiliation par l'Utilisateur</h3>
+            <p>La résiliation peut être effectuée à tout moment depuis l'espace personnel de l'Utilisateur, rubrique « Mon abonnement ». La résiliation prend effet à la fin de la période d'abonnement en cours. Aucun remboursement au prorata n'est dû pour la période restante, sauf disposition légale contraire.</p>
+
+            <h3>14.3 Résiliation par {{ site_name }}</h3>
+            <p>{{ site_name }} peut résilier un abonnement en cas de violation des présentes CGU, conformément à la procédure décrite aux articles 23 et 24.</p>
+
+            <!-- ARTICLE 15 -->
+            <h2 id="art15"><span class="article-num">15</span> Propriété intellectuelle</h2>
+            <h3>15.1 Titularité des droits</h3>
+            <p>L'ensemble des éléments constituant la Plateforme et le Contenu (textes, images, photographies, vidéos, sons, schémas, logos, marques, interfaces graphiques, code source, bases de données, quiz, certificats) est protégé par les dispositions du Code de la propriété intellectuelle et appartient à {{ site_name }} ou à ses partenaires.</p>
+
+            <h3>15.2 Interdictions</h3>
+            <p>Sont strictement interdits :</p>
+            <ul>
+                <li>La reproduction, représentation, modification, adaptation, diffusion, traduction de tout ou partie du Contenu, par quelque moyen que ce soit ;</li>
+                <li>L'extraction ou la réutilisation d'une partie substantielle des bases de données de la Plateforme ;</li>
+                <li>La falsification, modification, imitation ou contrefaçon des certificats délivrés ;</li>
+                <li>L'utilisation du Contenu à des fins commerciales sans licence écrite préalable.</li>
+            </ul>
+
+            <div class="highlight-box warning">
+                <strong><i class="fas fa-exclamation-triangle"></i> Sanctions</strong>
+                <p>Toute violation des droits de propriété intellectuelle expose le contrevenant aux sanctions civiles (dommages et intérêts) et pénales (contrefaçon : 3 ans d'emprisonnement et 300 000 € d'amende selon l'article L.335-2 du Code de la propriété intellectuelle).</p>
+            </div>
+
+            <!-- ARTICLE 16 -->
+            <h2 id="art16"><span class="article-num">16</span> Licence d'utilisation du contenu</h2>
+            <h3>16.1 Étendue de la licence</h3>
+            <p>{{ site_name }} concède à l'Utilisateur, pour la durée de son abonnement, une licence personnelle, non exclusive, non cessible et révocable d'accès et d'utilisation du Contenu, exclusivement pour un usage privé dans le cadre de sa formation personnelle.</p>
+
+            <h3>16.2 Restrictions</h3>
+            <p>Cette licence ne confère aucun droit de propriété. L'Utilisateur ne peut pas :</p>
+            <ul>
+                <li>Télécharger massivement ou systématiquement le Contenu ;</li>
+                <li>Partager, diffuser ou redistribuer le Contenu à des tiers ;</li>
+                <li>Utiliser le Contenu pour former d'autres personnes à titre onéreux.</li>
+            </ul>
+
+            <!-- ARTICLE 17 -->
+            <h2 id="art17"><span class="article-num">17</span> Marques et logos</h2>
+            <p>Les marques, logos, noms de domaine, slogans et signes distinctifs de {{ site_name }} sont protégés par le droit des marques. Aucune utilisation, reproduction ou imitation n'est autorisée sans autorisation écrite préalable et expresse de {{ site_name }}. Toute utilisation non autorisée constitue une contrefaçon susceptible de poursuites.</p>
+
+            <!-- ARTICLE 18 -->
+            <h2 id="art18"><span class="article-num">18</span> Protection des données personnelles</h2>
+            <p>La collecte et le traitement des données personnelles des Utilisateurs sont régis par notre <a href="{% url 'core:page_legale' type_page='confidentialite' %}">Politique de confidentialité</a>, conforme au Règlement Général sur la Protection des Données (RGPD - Règlement UE 2016/679) et à la loi n° 78-17 du 6 janvier 1978 modifiée dite « Informatique et Libertés ».</p>
+
+            <p>En synthèse :</p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Catégorie</th><th>Données</th><th>Finalité</th><th>Durée</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Identification</td><td>Nom, prénom, email, nationalité, date de naissance</td><td>Gestion du compte</td><td>Durée du compte + 3 ans</td></tr>
+                    <tr><td>Pédagogiques</td><td>Progression, résultats, certificats</td><td>Suivi de formation</td><td>10 ans (certificats)</td></tr>
+                    <tr><td>Connexion</td><td>Adresse IP, logs techniques</td><td>Sécurité</td><td>12 mois</td></tr>
+                    <tr><td>Paiement</td><td>Historique de facturation</td><td>Comptabilité</td><td>7 ans (obligation légale)</td></tr>
+                </tbody>
+            </table>
+
+            <p>L'Utilisateur dispose des droits d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition. Pour toute question : <a href="mailto:{{ email_contact|default:'contact@ventoryx-academy.com' }}">{{ email_contact|default:"contact@ventoryx-academy.com" }}</a>.</p>
+
+            <!-- ARTICLE 19 -->
+            <h2 id="art19"><span class="article-num">19</span> Cookies et traceurs</h2>
+            <p>La Plateforme utilise exclusivement des cookies strictement nécessaires à son fonctionnement, conformément à l'article 82 de la loi Informatique et Libertés :</p>
+            <ul>
+                <li><strong>Cookie de session :</strong> nécessaire à l'authentification et à la navigation sécurisée ;</li>
+                <li><strong>Cookie CSRF :</strong> protection contre les attaques Cross-Site Request Forgery ;</li>
+                <li><strong>Cookie de préférence :</strong> mémorisation de la langue et des préférences d'affichage.</li>
+            </ul>
+            <p>Aucun cookie publicitaire, de traçage tiers, ou d'analyse d'audience n'est déposé. Aucun consentement préalable n'est requis pour ces cookies fonctionnels.</p>
+
+            <!-- ARTICLE 20 -->
+            <h2 id="art20"><span class="article-num">20</span> Sécurité de la plateforme</h2>
+            <p>{{ site_name }} met en œuvre des mesures techniques et organisationnelles conformes à l'état de l'art :</p>
+            <ul>
+                <li><strong>Chiffrement TLS 1.3</strong> pour toutes les communications entre l'Utilisateur et la Plateforme ;</li>
+                <li><strong>Hashage Argon2id</strong> pour le stockage des mots de passe ;</li>
+                <li><strong>Protection CSRF</strong> sur l'ensemble des formulaires ;</li>
+                <li><strong>Rate limiting</strong> sur les endpoints sensibles (connexion, inscription, contact) ;</li>
+                <li><strong>Verrouillage temporaire</strong> du compte après cinq (5) tentatives de connexion infructueuses (15 minutes) ;</li>
+                <li><strong>Honeypot anti-bot</strong> sur les formulaires publics ;</li>
+                <li><strong>Journal d'audit immutable</strong> enregistrant toutes les actions significatives ;</li>
+                <li><strong>Sauvegardes chiffrées</strong> quotidiennes avec rétention de 30 jours.</li>
+            </ul>
+            <p>L'Utilisateur est invité à signaler toute vulnérabilité découverte via le formulaire de contact.</p>
+
+            <!-- ARTICLE 21 -->
+            <h2 id="art21"><span class="article-num">21</span> Utilisation éthique et comportement</h2>
+            <p>L'Utilisateur s'engage à :</p>
+            <ul>
+                <li>Ne pas publier, partager ou diffuser des contenus illégaux, diffamatoires, injurieux, obscènes, pornographiques, violents, discriminatoires, racistes, xénophobes, homophobes, sexistes ou portant atteinte à la dignité humaine ;</li>
+                <li>Ne pas usurper l'identité d'un tiers, d'un membre de l'équipe {{ site_name }} ou d'une autorité publique ;</li>
+                <li>Ne pas harceler, intimider ou menacer d'autres Utilisateurs ;</li>
+                <li>Ne pas tenter de contourner les parcours pédagogiques ou de falsifier ses résultats et certificats ;</li>
+                <li>Respecter l'éthique professionnelle aéronautique dans toutes ses interactions, notamment sur le forum.</li>
+            </ul>
+
+            <!-- ARTICLE 22 -->
+            <h2 id="art22"><span class="article-num">22</span> Contenus utilisateurs</h2>
+            <h3>22.1 Responsabilité</h3>
+            <p>Les contenus publiés par les Utilisateurs sur le forum (messages, commentaires, images) sont publiés sous leur seule et entiè
