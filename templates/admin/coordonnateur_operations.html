@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Coordination Opérations — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root { --dept-primary: #059669; --dept-dark: #047857; }
+
+    .coord-hero { background: linear-gradient(135deg, #0F1C2E, #1E3A5F); color: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .coord-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; display: flex; align-items: center; gap: 0.8rem; }
+    .coord-hero .badge-role { background: #059669; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; }
+    .coord-hero .departments-badges { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .coord-hero .dept-badge { background: rgba(255,255,255,0.15); padding: 0.2rem 0.7rem; border-radius: 12px; font-size: 0.7rem; }
+
+    .security-alert { background: #FFF8E6; border-left: 4px solid #f59e0b; padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: #92400e; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .stat-card.alert-orange { border-left: 4px solid #f59e0b; background: #FFFDF5; }
+    .stat-card.alert-red { border-left: 4px solid #ef4444; background: #FFF5F5; }
+    .stat-card.alert-green { border-left: 4px solid #059669; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #0F1C2E; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; }
+    .stat-threshold { font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 10px; font-weight: 600; }
+    .stat-threshold.green { background: #ECFDF5; color: #059669; }
+    .stat-threshold.orange { background: #FFF8E6; color: #d97706; }
+    .stat-threshold.red { background: #FEF2F2; color: #dc2626; }
+    .stat-alert-msg { font-size: 0.7rem; color: #ef4444; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.3rem; }
+
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .chart-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .chart-card h3 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .chart-card canvas { max-height: 200px; }
+
+    .section-title { font-size: 1.1rem; color: #0F1C2E; margin: 1.5rem 0 1rem; display: flex; align-items: center; gap: 0.7rem; border-left: 4px solid #059669; padding-left: 1rem; }
+
+    .quick-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.7rem; margin-bottom: 2rem; }
+    .action-btn { background: white; border: none; border-radius: 12px; padding: 0.8rem 0.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; text-align: center; transition: all 0.3s; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.72rem; position: relative; }
+    .action-btn:hover { transform: translateY(-3px); background: #059669; color: white; }
+    .action-btn:hover .action-icon { background: white; color: #059669; }
+    .action-btn.critique { border: 1px solid #f59e0b; }
+    .action-btn.critique::after { content: '🔒'; position: absolute; top: 5px; right: 8px; font-size: 0.6rem; }
+    .action-btn.otp-required { border: 1px solid #ef4444; }
+    .action-btn.otp-required::after { content: '🔐'; position: absolute; top: 5px; right: 8px; font-size: 0.6rem; }
+    .action-icon { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #059669, #047857); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; color: white; font-size: 0.8rem; transition: all 0.3s; }
+
+    .gestionnaires-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .gestionnaire-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .gestionnaire-card h4 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin-bottom: 0.8rem; }
+    .gestionnaire-stat { display: flex; justify-content: space-between; font-size: 0.8rem; color: #6C757D; margin-bottom: 0.3rem; }
+
+    .table-container { background: white; border-radius: 12px; overflow-x: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; } th, td { padding: 0.7rem; text-align: left; border-bottom: 1px solid #E9ECEF; font-size: 0.8rem; }
+    th { background: #F8F9FA; font-weight: 600; color: #0F1C2E; }
+    .status { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
+    .status-success { background: rgba(16,185,129,0.1); color: #10b981; } .status-warning { background: rgba(245,158,11,0.1); color: #f59e0b; } .status-danger { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .progress-bar { background: #E9ECEF; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 0.3rem; }
+    .progress-fill { height: 100%; background: #059669; border-radius: 3px; }
+
+    .dg-chat { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; }
+    .form-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 0.8rem; } .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #0F1C2E; margin-bottom: 0.3rem; }
+    .form-control { width: 100%; padding: 0.6rem; border: 1px solid #E9ECEF; border-radius: 8px; font-family: inherit; font-size: 0.85rem; }
+    .btn { display: inline-block; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; }
+    .btn-primary { background: #059669; color: white; } .btn-primary:hover { background: #047857; } .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.7rem; }
+
+    @media (max-width: 992px) { .charts-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="padding: 2rem 0;">
+
+    <section class="coord-hero">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+            <div>
+                <h1><i class="fas fa-truck"></i> Coordination Opérations & Qualité</h1>
+                <p style="opacity:0.9;margin:0;">Supervision des formations, ressources, planning, audits et innovation</p>
+                <div class="departments-badges"><span class="dept-badge">Opérations</span><span class="dept-badge">Qualité</span></div>
+            </div>
+            <span class="badge-role"><i class="fas fa-user-tie"></i> Coordinateur</span>
+        </div>
+    </section>
+
+    <div class="security-alert"><i class="fas fa-exclamation-triangle"></i><div><strong>Rappel de sécurité</strong></div></div>
+
+    <div class="stats-grid">
+        <div class="stat-card {% if taux_occupation > 90 %}alert-red{% elif taux_occupation > 75 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header"><span class="stat-label">Taux occupation</span><span class="stat-threshold {% if taux_occupation > 90 %}red{% elif taux_occupation > 75 %}orange{% else %}green{% endif %}">Seuil: 75%</span></div>
+            <div class="stat-value">{{ taux_occupation }}%</div></div>
+        <div class="stat-card {% if non_conformites > 5 %}alert-red{% elif non_conformites > 2 %}alert-orange{% else %}alert-green{% endif %}">
+            <div class="stat-header"><span class="stat-label">Non-conformités</span><span class="stat-threshold {% if non_conformites > 5 %}red{% elif non_conformites > 2 %}orange{% else %}green{% endif %}">Seuil: 5</span></div>
+            <div class="stat-value">{{ non_conformites }}</div></div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Gestionnaires</span></div><div class="stat-value">{{ gestionnaires|length }}/4</div></div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Formations/mois</span></div><div class="stat-value">{{ formations_mois }}</div></div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Satisfaction</span></div><div class="stat-value">{{ satisfaction }}/5</div></div>
+        <div class="stat-card"><div class="stat-header"><span class="stat-label">Projets innovation</span></div><div class="stat-value">{{ projets_innovation }}</div></div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card"><h3><i class="fas fa-calendar" style="color:#059669;"></i> Formations/mois</h3><canvas id="chart1"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-exclamation-triangle" style="color:#059669;"></i> NC par département</h3><canvas id="chart2"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-users" style="color:#059669;"></i> Charge équipes</h3><canvas id="chart3"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-star" style="color:#059669;"></i> Évolution satisfaction</h3><canvas id="chart4"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-lightbulb" style="color:#059669;"></i> Projets par phase</h3><canvas id="chart5"></canvas></div>
+        <div class="chart-card"><h3><i class="fas fa-bullseye" style="color:#059669;"></i> Objectifs vs Réalisé</h3><canvas id="chart6"></canvas></div>
+    </div>
+
+    <h2 class="section-title"><i class="fas fa-bolt"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="handleAction('planifier_formation')"><div class="action-icon"><i class="fas fa-calendar-plus"></i></div><strong>Planifier</strong></button>
+        <button class="action-btn" onclick="handleAction('lancer_audit')"><div class="action-icon"><i class="fas fa-clipboard-list"></i></div><strong>Lancer audit</strong></button>
+        <button class="action-btn otp-required" onclick="handleActionCritique('valider_planning')"><div class="action-icon"><i class="fas fa-check-double"></i></div><strong>Valider planning</strong></button>
+        <button class="action-btn" onclick="handleAction('allouer_ressources')"><div class="action-icon"><i class="fas fa-user-plus"></i></div><strong>Allouer ressources</strong></button>
+        <button class="action-btn" onclick="handleAction('voir_equipe')"><div class="action-icon"><i class="fas fa-users"></i></div><strong>Voir équipe</strong></button>
+        <button class="action-btn otp-required" onclick="handleActionCritique('rapport_global')"><div class="action-icon"><i class="fas fa-chart-line"></i></div><strong>Rapport global</strong></button>
+        <button class="action-btn critique" onclick="handleActionCritique('contacter_dg')"><div class="action-icon"><i class="fas fa-comments"></i></div><strong>Contacter DG</strong></button>
+        <button class="action-btn" onclick="handleAction('message_equipe')"><div class="action-icon"><i class="fas fa-envelope"></i></div><strong>Message équipe</strong></button>
+        <button class="action-btn" onclick="handleAction('gestion_stock')"><div class="action-icon"><i class="fas fa-warehouse"></i></div><strong>Gestion stock</strong></button>
+        <button class="action-btn" onclick="handleAction('ajouter_partenaire')"><div class="action-icon"><i class="fas fa-handshake"></i></div><strong>Ajouter partenaire</strong></button>
+        <button class="action-btn" onclick="handleAction('signaler_nc')"><div class="action-icon"><i class="fas fa-exclamation-triangle"></i></div><strong>Signaler NC</strong></button>
+        <button class="action-btn" onclick="handleAction('proposer_innovation')"><div class="action-icon"><i class="fas fa-lightbulb"></i></div><strong>Innovation</strong></button>
+        <button class="action-btn" onclick="handleAction('veille_techno')"><div class="action-icon"><i class="fas fa-search"></i></div><strong>Veille techno</strong></button>
+        <button class="action-btn" onclick="handleAction('export_planning')"><div class="action-icon"><i class="fas fa-download"></i></div><strong>Exporter</strong></button>
+        <button class="action-btn" onclick="handleAction('reunion_equipe')"><div class="action-icon"><i class="fas fa-calendar"></i></div><strong>Réunion</strong></button>
+    </div>
+
+    <h2 class="section-title"><i class="fas fa-user-check"></i> Gestionnaires ({{ gestionnaires|length }}/4)</h2>
+    <div class="gestionnaires-grid">
+        {% for g in gestionnaires %}
+        <div class="gestionnaire-card">
+            <h4><i class="fas fa-user-circle"></i> {{ g.nom }} <span style="font-size:0.7rem;color:#6C757D;">({{ g.departement }})</span></h4>
+            <div class="gestionnaire-stat"><span>Formations</span><strong>{{ g.formations }}</strong></div>
+            <div class="gestionnaire-stat"><span>Audits</span><strong>{{ g.audits }}</strong></div>
+            <div class="gestionnaire-stat"><span>NC traitées</span><strong>{{ g.nc_traitees }}</strong></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:{{ g.activite }}%;"></div></div>
+            <small style="color:#6C757D;">Activité: {{ g.activite }}%</small>
+        </div>{% endfor %}
+    </div>
+
+    <h2 class="section-title"><i class="fas fa-comments"></i> Communication Direction</h2>
+    <div class="dg-chat">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(5,150,105,0.3);">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#FF6B35);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">DG</div>
+            <strong>Direction Générale</strong></div>
+        {% for msg in dg_messages %}
+        <div style="background:white;border-radius:8px;padding:0.8rem;margin-bottom:0.5rem;border-left:3px solid #D4AF37;"><small>{{ msg.date|date:"d/m/Y H:i" }}</small><p style="margin-top:0.3rem;">{{ msg.contenu }}</p></div>
+        {% empty %}<p style="color:#6C757D;">Aucun message.</p>{% endfor %}
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-top:1rem;">
+            {% csrf_token %}<input type="hidden" name="departement" value="operations">
+            <textarea name="message" rows="2" class="form-control" placeholder="Message à la Direction..." style="margin-bottom:0.5rem;"></textarea>
+            <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const d={{ chart_data_json|safe }};const c=document.querySelector('[name=csrfmiddlewaretoken]').value;
+new Chart(document.getElementById('chart1'),{type:'line',data:{labels:d.mois_labels,datasets:[{label:'Formations',data:d.formations_data,borderColor:'#059669',backgroundColor:'rgba(5,150,105,0.1)',fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false}});
+new Chart(document.getElementById('chart2'),{type:'doughnut',data:{labels:['Opérations','Qualité'],datasets:[{data:[d.nc_ops,d.nc_qual],backgroundColor:['#059669','#8B5CF6']}]},options:{responsive:true,maintainAspectRatio:false}});
+new Chart(document.getElementById('chart3'),{type:'bar',data:{labels:d.e_labels,datasets:[{label:'Charge %',data:d.e_charge,backgroundColor:d.e_charge.map(v=>v>80?'#ef4444':v>60?'#f59e0b':'#059669'),borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100}}});
+new Chart(document.getElementById('chart4'),{type:'line',data:{labels:d.mois_labels,datasets:[{label:'/5',data:d.satisf_data,borderColor:'#059669',backgroundColor:'rgba(5,150,105,0.1)',fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:5}}});
+new Chart(document.getElementById('chart5'),{type:'bar',data:{labels:d.p_labels,datasets:[{label:'Avancement %',data:d.p_avancement,backgroundColor:'#059669',borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100}}});
+new Chart(document.getElementById('chart6'),{type:'bar',data:{labels:['Formations','Satisfaction','Audits','NC résolues'],datasets:[{label:'Objectif',data:[5,4,10,5],backgroundColor:'rgba(5,150,105,0.2)',borderColor:'#059669',borderWidth:2,borderRadius:8},{label:'Réalisé',data:[d.o_form,d.o_satis,d.o_audit,d.o_nc],backgroundColor:'#059669',borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false}});
+function handleAction(a){fetch(`/operations/api/${a}/`,{method:'POST',headers:{'X-CSRFToken':c,'Content-Type':'application/json'}}).then(r=>r.json()).then(d=>showToast(d.message||'Effectué',d.success?'success':'error'));}
+function handleActionCritique(a){fetch('/auth/check-validation/',{method:'POST',headers:{'X-CSRFToken':c}}).then(r=>r.json()).then(d=>{if(d.requires_otp)window.location.href='/auth/otp-verify/?next='+encodeURIComponent('/coordination/operations/?action='+a);else if(d.requires_validation)window.location.href='/auth/validation-secondaire/?next='+encodeURIComponent('/coordination/operations/?action='+a);else handleAction(a);});}
+function showToast(m,t){const e=document.createElement('div');e.style.cssText=`position:fixed;bottom:2rem;right:2rem;background:${t==='success'?'#10B981':'#ef4444'};color:white;padding:0.8rem 1.5rem;border-radius:10px;z-index:9999;font-weight:600;`;e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),3000);}
+</script>
+{% endblock %}
