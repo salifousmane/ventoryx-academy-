@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Centre d'aide — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Centre d'aide Ventoryx Academy — FAQ, support technique, guides et tutoriels pour vous accompagner dans votre formation aéronautique.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --gold: #D4AF37;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .help-hero {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .help-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.03' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+    .help-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .help-hero p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 2;
+    }
+
+    .search-box {
+        max-width: 550px;
+        margin: 2rem auto 0;
+        display: flex;
+        gap: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    .search-box input {
+        flex: 1;
+        padding: 0.9rem 1.2rem;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        background: var(--white);
+        color: var(--secondary);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .search-box input:focus {
+        outline: none;
+    }
+    .search-box button {
+        padding: 0.9rem 1.8rem;
+        background: var(--gold);
+        color: var(--secondary);
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+    .search-box button:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Stats rapides */
+    .stats-rapides {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 2;
+    }
+    .stat-item {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+    }
+
+    .help-main {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 3rem 0;
+    }
+    .cat-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        position: relative;
+        overflow: hidden;
+    }
+    .cat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.5s;
+    }
+    .cat-card:hover::before {
+        left: 100%;
+    }
+    .cat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .cat-icon {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+    .cat-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    .cat-card p {
+        color: var(--gray);
+        font-size: 0.85rem;
+        margin-bottom: 0;
+    }
+
+    /* Articles populaires */
+    .popular-articles {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .popular-articles h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .articles-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .article-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid var(--gray-light);
+        text-decoration: none;
+        color: var(--secondary);
+        transition: color 0.3s;
+    }
+    .article-link:hover {
+        color: var(--primary);
+    }
+    .article-link span:first-child {
+        font-weight: 500;
+    }
+    .article-link span:last-child {
+        font-size: 0.75rem;
+        color: var(--gray);
+    }
+
+    .contact-cta {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        text-align: center;
+        padding: 3rem;
+        border-radius: 20px;
+        margin: 2rem 0;
+    }
+    .contact-cta h3 {
+        color: white;
+    }
+    .btn-contact {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.8rem 2rem;
+        background: var(--gold);
+        color: var(--secondary);
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: transform 0.3s;
+    }
+    .btn-contact:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Dark mode */
+    body.dark-mode .cat-card,
+    body.dark-mode .popular-articles {
+        background: #1E1E1E;
+    }
+    body.dark-mode .cat-card h3 {
+        color: #E0E0E0;
+    }
+    body.dark-mode .article-link {
+        border-bottom-color: #2C2C2C;
+    }
+    body.dark-mode .search-box input {
+        background: #2C2C2C;
+        color: #E0E0E0;
+    }
+
+    @media (max-width: 768px) {
+        .help-hero h1 {
+            font-size: 1.8rem;
+        }
+        .search-box {
+            flex-direction: column;
+        }
+        .stats-rapides {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="help-hero">
+    <div class="container">
+        <h1>Centre d'aide</h1>
+        <p>Trouvez des réponses à toutes vos questions sur la plateforme</p>
+        <div class="search-box">
+            <input type="text" id="helpSearch" placeholder="Rechercher de l'aide...">
+            <button onclick="searchHelp()"><i class="fas fa-search"></i> Rechercher</button>
+        </div>
+        <div class="stats-rapides">
+            <span class="stat-item"><i class="fas fa-question-circle"></i> FAQ complète</span>
+            <span class="stat-item"><i class="fas fa-headset"></i> Support 24/7</span>
+            <span class="stat-item"><i class="fas fa-clock"></i> Réponse sous 48h</span>
+        </div>
+    </div>
+</section>
+
+<div class="container help-main">
+    <!-- Catégories -->
+    <div class="categories-grid" id="categoriesGrid">
+        <a href="{% url 'core:faq' %}" class="cat-card">
+            <div class="cat-icon"><i class="fas fa-question-circle"></i></div>
+            <h3>FAQ</h3>
+            <p>Questions fréquentes et réponses détaillées</p>
+        </a>
+        <a href="{% url 'core:faq' %}#compte" class="cat-card">
+            <div class="cat-icon"><i class="fas fa-user-circle"></i></div>
+            <h3>Compte & connexion</h3>
+            <p>Création de compte, mot de passe, paramètres</p>
+        </a>
+        <a href="{% url 'parcours:selection_metier' %}" class="cat-card">
+            <div class="cat-icon"><i class="fas fa-graduation-cap"></i></div>
+            <h3>Formations</h3>
+            <p>Programmes, modules, progression</p>
+        </a>
+        <a href="{% url 'core:faq' %}#certification" class="cat-card">
+            <div class="cat-icon"><i class="fas fa-certificate"></i></div>
+            <h3>Certification</h3>
+            <p>Obtention, vérification, téléchargement</p>
+        </a>
+        <a href="{% url 'core:premium' %}" class="cat-card">
+            <div class="cat-icon"><i class="fas fa-euro-sign"></i></div>
+            <h3>Tarifs & abonnement</h3>
+            <p>Formules (29€/mois, 329€/an), paiements, facturation</p>
+        </a>
+        <a href="{% url 'core:support_technique' %}" class="cat-card">
+            <div class="cat-icon"><i class="fas fa-tools"></i></div>
+            <h3>Support technique</h3>
+            <p>Configuration, compatibilité, dépannage</p>
+        </a>
+    </div>
+
+    <!-- Articles populaires -->
+    <div class="popular-articles">
+        <h3><i class="fas fa-fire" style="color: var(--primary);"></i> Articles les plus consultés</h3>
+        <div class="articles-list">
+            <a href="{% url 'core:faq' %}#comment-obtenir-certificat" class="article-link">
+                <span>📜 Comment obtenir mon certificat SHA-256 ?</span>
+                <span>2 min de lecture</span>
+            </a>
+            <a href="{% url 'core:faq' %}#tarifs" class="article-link">
+                <span>💰 Quels sont les tarifs des abonnements ?</span>
+                <span>1 min de lecture</span>
+            </a>
+            <a href="{% url 'core:faq' %}#telechargement" class="article-link">
+                <span>📥 Puis-je télécharger les cours hors-ligne ?</span>
+                <span>1 min de lecture</span>
+            </a>
+            <a href="{% url 'core:faq' %}#certificats-verifiables" class="article-link">
+                <span>🔗 Les certificats sont-ils vérifiables par les employeurs ?</span>
+                <span>1 min de lecture</span>
+            </a>
+            <a href="{% url 'core:premium' %}" class="article-link">
+                <span>🔄 Comment changer de formule d'abonnement ?</span>
+                <span>1 min de lecture</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="contact-cta">
+        <h3>Vous n'avez pas trouvé de réponse ?</h3>
+        <p style="opacity:0.9;">Notre équipe de support est disponible pour vous aider.</p>
+        <a href="{% url 'core:contact' %}" class="btn-contact">
+            Contacter le support <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+<script>
+    function searchHelp() {
+        const query = document.getElementById('helpSearch').value.toLowerCase().trim();
+        if (query === '') return;
+        
+        // Rediriger vers la FAQ avec recherche
+        window.location.href = `/faq/?q=${encodeURIComponent(query)}`;
+    }
+    
+    // Recherche avec la touche Entrée
+    document.getElementById('helpSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchHelp();
+        }
+    });
+</script>
+
+{% endblock %}
