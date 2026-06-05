@@ -99,7 +99,7 @@ def generer_audio_cours(cours_texte, langue='fr', cours_id=None):
     return fichiers_audio
 
 
- def get_audio_url(texte, langue='fr', cours_id=None):
+def get_audio_url(texte, langue='fr', cours_id=None):
     """Retourne l'URL du fichier audio, le génère si nécessaire."""
     if not texte or len(texte.strip()) < 50:
         return None

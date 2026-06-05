@@ -1,0 +1,176 @@
+{
+  "name": "Ventoryx Academy",
+  "short_name": "Ventoryx",
+  "description": "Formation théorique aéronautique — 8 parcours, certificats vérifiables SHA-256, mode hors-ligne",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#3B82F6",
+  "theme_color": "#3B82F6",
+  "orientation": "any",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["education", "aviation"],
+  "prefer_related_applications": false,
+  
+  "icons": [
+    {
+      "src": "/static/images/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "/static/images/screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Accueil et parcours de formation aéronautique"
+    },
+    {
+      "src": "/static/images/screenshot-2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tableau de bord et progression utilisateur"
+    },
+    {
+      "src": "/static/images/screenshot-3.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Mode hors-ligne et téléchargement des cours"
+    },
+    {
+      "src": "/static/images/screenshot-4.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Certificats SHA-256 vérifiables"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Mes parcours",
+      "short_name": "Parcours",
+      "description": "Accéder à mes formations",
+      "url": "/parcours/",
+      "icons": [
+        {
+          "src": "/static/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Tableau de bord",
+      "short_name": "Dashboard",
+      "description": "Voir ma progression",
+      "url": "/tableau-de-bord/",
+      "icons": [
+        {
+          "src": "/static/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Forum",
+      "short_name": "Forum",
+      "description": "Échanger avec la communauté",
+      "url": "/forum/",
+      "icons": [
+        {
+          "src": "/static/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Téléchargements",
+      "short_name": "Offline",
+      "description": "Mes cours hors-ligne",
+      "url": "/telechargements/",
+      "icons": [
+        {
+          "src": "/static/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+
+  "share_target": {
+    "action": "/partager/",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+
+  "related_applications": [],
+  
+  "iarc_rating_id": ""
+} complète pour Ventoryx Academy - Formation aéronautique"
+    }

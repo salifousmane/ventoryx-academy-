@@ -87,6 +87,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
@@ -173,10 +174,19 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 0.25
 AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']
 AXES_RESET_ON_SUCCESS = True
+
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = False
 
 # ============================================================
 # SESSIONS
@@ -187,7 +197,7 @@ SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_AGE = 14400
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # ============================================================
 # FICHIERS & MÉDIAS
@@ -195,7 +205,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -212,26 +222,38 @@ CKEDITOR_CONFIGS = {
 }
 
 # ============================================================
-# CSP
+# CSP (django-csp 4.x format)
 # ============================================================
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net")
-CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net")
-CSP_IMG_SRC = ("'self'", "data:", "https://images.unsplash.com", "https://images.pexels.com")
-CSP_CONNECT_SRC = ("'self'",)
-CSP_FRAME_SRC = ("'none'",)
+CONTENT_SECURITY_POLICY = {
+    'DIRECTIVES': {
+        'default-src': ("'self'",),
+        'script-src': ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"),
+        'style-src': ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"),
+        'font-src': ("'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"),
+        'img-src': ("'self'", "data:", "https://images.unsplash.com", "https://images.pexels.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"),
+        'connect-src': ("'self'",),
+        'frame-src': ("'none'",),
+    }
+}
 
 # ============================================================
 # CACHE
 # ============================================================
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
-        'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient'},
+_REDIS_URL = os.getenv('REDIS_URL', '')
+if _REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': _REDIS_URL,
+            'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient'},
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        }
+    }
 
 # ============================================================
 # CELERY

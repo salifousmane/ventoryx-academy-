@@ -106,3 +106,7 @@ django-recaptcha==4.0.0
 django-debug-toolbar==4.4.6
 django-extensions==3.2.3
 ipython==8.26.0
+gunicorn
+Pillow
+python-dotenv
+whitenoise
