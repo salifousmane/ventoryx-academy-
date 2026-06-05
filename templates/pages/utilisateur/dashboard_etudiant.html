@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tableau de bord — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-hero {
+        background: linear-gradient(135deg, #1E3A5F, #0F1C2E);
+        color: white;
+        padding: 2rem 0;
+    }
+    .dashboard-hero h1 {
+        color: white;
+        margin: 0;
+        font-size: 1.6rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+    
+    .stat-mini {
+        background: white;
+        border-radius: 12px;
+        padding: 1.2rem 1rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    .stat-mini:hover {
+        transform: translateY(-3px);
+    }
+    .stat-mini .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .stat-mini .stat-label {
+        font-size: 0.75rem;
+        color: #6C757D;
+        margin-top: 0.2rem;
+    }
+    
+    .card-dashboard {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .card-dashboard h2 {
+        font-size: 1.1rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+        padding-left: 0.8rem;
+        border-left: 4px solid #0077B6;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .card-dashboard h2.warning-border { border-left-color: #f59e0b; }
+    .card-dashboard h2.success-border { border-left-color: #10b981; }
+    .card-dashboard h2.purple-border { border-left-color: #8B5CF6; }
+    .card-dashboard h2.gold-border { border-left-color: #D4AF37; }
+    
+    .progress-item {
+        margin-bottom: 1rem;
+    }
+    .progress-item .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.3rem;
+        font-size: 0.85rem;
+    }
+    .progress-bar-custom {
+        background: #E9ECEF;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+    }
+    .progress-bar-custom .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.6s ease;
+    }
+    
+    .parcours-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+    .parcours-link:hover {
+        padding-left: 0.5rem;
+        color: #0077B6;
+    }
+    .parcours-link:last-child {
+        border-bottom: none;
+    }
+    
+    .certif-item {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .certif-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.8rem;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.85rem;
+    }
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    .activity-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-top: 0.4rem;
+        flex-shrink: 0;
+    }
+    
+    .btn-quick-action {
+        display: block;
+        text-align: center;
+        padding: 0.7rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s ease;
+    }
+    .btn-quick-action:hover {
+        transform: translateY(-2px);
+    }
+    
+    .notif-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 0.65rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: #6C757D;
+    }
+    .empty-state i {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ADB5BD;
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-hero h1 {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Bannière -->
+<section class="dashboard-hero">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1>Bienvenue, {{ user.first_name }}</h1>
+                <p style="margin: 0; opacity: 0.8;">
+                    {% if parcours_actif %}
+                        <i class="fas fa-graduation-cap"></i> {{ parcours_actif.nom }} — 
+                        Module {{ module_actuel.numero }}/{{ parcours_actif.total_modules }} · 
+                        {{ cours_termines }}/{{ parcours_actif.total_cours }} cours terminés
+                    {% else %}
+                        <i class="fas fa-compass"></i> Choisissez un parcours pour commencer votre formation
+                    {% endif %}
+                </p>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <!-- Notifications -->
+                <div style="position: relative; cursor: pointer;" id="notifBell">
+                    <i class="fas fa-bell" style="font-size: 1.2rem;"></i>
+                    {% if notifications_non_lues > 0 %}
+                    <span class="notif-badge">{{ notifications_non_lues }}</span>
+                    {% endif %}
+                </div>
+                <!-- Messagerie -->
+                <a href="{% url 'messaging:inbox' %}" style="color: white; position: relative;">
+                    <i class="fas fa-envelope" style="font-size: 1.2rem;"></i>
+                    {% if messages_non_lus > 0 %}
+                    <span class="notif-badge">{{ messages_non_lus }}</span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'users:logout' %}" style="color: white; opacity: 0.7; text-decoration: none;" title="Déconnexion">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Panneau notifications -->
+        <div id="notifPanel" style="display: none; position: absolute; right: 2rem; top: 5rem; width: 340px; background: white; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); z-index: 100; max-height: 400px; overflow-y: auto; color: #212529;">
+            <div style="padding: 1rem; border-bottom: 1px solid #E9ECEF; font-weight: 600; font-size: 0.9rem;">
+                Notifications
+                {% if notifications_non_lues > 0 %}
+                <span style="float:right; font-size:0.7rem; color:#0077B6; cursor:pointer;" onclick="markAllRead()">Tout marquer comme lu</span>
+                {% endif %}
+            </div>
+            {% for notif in notifications %}
+            <div style="padding: 0.8rem 1rem; border-bottom: 1px solid #E9ECEF; {% if not notif.est_lue %}background: rgba(0,119,182,0.03); border-left: 3px solid #0077B6;{% endif %}">
+                <div style="font-size: 0.85rem; {% if not notif.est_lue %}font-weight: 600;{% endif %}">{{ notif.titre }}</div>
+                <div style="font-size: 0.75rem; color: #6C757D;">{{ notif.message }}</div>
+                <div style="font-size: 0.65rem; color: #ADB5BD;">{{ notif.date_creation|date:"d/m/Y H:i" }}</div>
+            </div>
+            {% empty %}
+            <div style="padding: 2rem; text-align: center; color: #6C757D;">
+                <i class="fas fa-bell-slash" style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem;"></i>
+                Aucune notification
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="container" style="padding: 2rem 0;">
+
+    <!-- Statistiques -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div class="stat-mini">
+            <div class="stat-value" style="color: #0077B6;">{{ parcours_actifs }}</div>
+            <div class="stat-label">Parcours actif{{ parcours_actifs|pluralize }}</div>
+        </div>
+        <div class="stat-mini">
+            <div class="stat-value" style="color: #10b981;">{{ tests_reussis }}/{{ tests_total }}</div>
+            <div class="stat-label">Tests réussis</div>
+        </div>
+        <div class="stat-mini">
+            <div class="stat-value" style="color: #0077B6;">{{ cours_termines }}/{{ cours_total }}</div>
+            <div class="stat-label">Cours terminés</div>
+        </div>
+        <div class="stat-mini">
+            <div class="stat-value" style="color: #D4AF37;">{{ moyenne_generale }}%</div>
+            <div class="stat-label">Moyenne générale</div>
+        </div>
+        <div class="stat-mini">
+            <div class="stat-value" style="color: #8B5CF6;">{{ heures_formation }}</div>
+            <div class="stat-label">Heures de formation</div>
+        </div>
+        <div class="stat-mini">
+            <div class="stat-value" style="color: #f59e0b;">{{ rang_classement }}</div>
+            <div class="stat-label">Classement</div>
+        </div>
+    </div>
+
+    <!-- Grille principale -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+
+        <!-- ============ COLONNE GAUCHE ============ -->
+        <div>
+
+            <!-- Reprendre le dernier cours -->
+            {% if dernier_cours %}
+            <div class="card-dashboard" style="border-left: 4px solid #D4AF37;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h2 style="border-left: none; padding-left: 0; margin-bottom: 0.3rem;">📖 Reprendre votre formation</h2>
+                        <p style="color: #6C757D; font-size: 0.9rem; margin: 0;">
+                            {{ dernier_cours.module.titre }} · Cours {{ dernier_cours.ordre }}/{{ dernier_cours.module.cours_count }}
+                        </p>
+                        <p style="font-weight: 600; color: #0F1C2E; margin: 0.3rem 0 0;">
+                            {{ dernier_cours.titre }}
+                        </p>
+                    </div>
+                    <a href="{% url 'parcours:cours' metier=parcours_actif.slug module=dernier_cours.module.ordre cours=dernier_cours.ordre %}" 
+                       class="btn-quick-action" 
+                       style="background: #D4AF37; color: #0F1C2E; padding: 0.7rem 1.5rem;">
+                        <i class="fas fa-play"></i> Continuer
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Progression détaillée par parcours -->
+            <div class="card-dashboard">
+                <h2>📊 Progression détaillée</h2>
+                {% for prog in progressions %}
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>
+                            <strong>{{ prog.metier }}</strong>
+                            <span style="font-size: 0.75rem; color: #6C757D; margin-left: 0.5rem;">
+                                Module {{ prog.module_actuel }}/{{ prog.total_modules }}
+                            </span>
+                        </span>
+                        <span style="font-weight: 600;">{{ prog.pourcentage }}%</span>
+                    </div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill" style="width: {{ prog.pourcentage }}%; background: {% if prog.pourcentage >= 70 %}#10b981{% elif prog.pourcentage >= 40 %}#f59e0b{% else %}#0077B6{% endif %};"></div>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #6C757D; margin-top: 0.2rem;">
+                        {{ prog.cours_termines }}/{{ prog.total_cours }} cours · {{ prog.tests_reussis }}/{{ prog.total_tests }} tests
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-chart-line"></i>
+                    <p>Aucune progression pour le moment.</p>
+                    <a href="{% url 'parcours:selection_metier' %}" class="btn-quick-action" style="background: #0077B6; color: white; display: inline-block; padding: 0.7rem 1.5rem; margin-top: 0.5rem;">
+                        Choisir un parcours
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Prochains tests -->
+            {% if prochains_tests %}
+            <div class="card-dashboard">
+                <h2 class="warning-border">📝 Tests à venir</h2>
+                {% for test in prochains_tests %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">{{ test.titre }}</div>
+                        <div style="font-size: 0.75rem; color: #6C757D;">
+                            {{ test.module.titre }} · {{ test.questions_count }} questions · {{ test.duree }} min
+                        </div>
+                    </div>
+                    <a href="{% url 'parcours:test' metier=test.metier.slug test_id=test.id %}" 
+                       class="btn-quick-action" style="background: #f59e0b; color: white; padding: 0.5rem 1rem; font-size: 0.8rem;">
+                        <i class="fas fa-pen"></i> Passer le test
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Activité récente -->
+            <div class="card-dashboard">
+                <h2 class="purple-border">🕐 Activité récente</h2>
+                {% for activite in activites_recentes %}
+                <div class="activity-item">
+                    <div class="activity-dot" style="background: {% if activite.type == 'cours' %}#0077B6{% elif activite.type == 'test' %}#10b981{% elif activite.type == 'certificat' %}#D4AF37{% else %}#8B5CF6{% endif %};"></div>
+                    <div>
+                        <span style="font-weight: 600;">{{ activite.description }}</span>
+                        <div style="font-size: 0.7rem; color: #ADB5BD;">{{ activite.date|date:"d/m/Y à H:i" }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-history"></i>
+                    <p>Aucune activité récente. Commencez un cours !</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ============ COLONNE DROITE ============ -->
+        <div>
+
+            <!-- Parcours disponibles -->
+            <div class="card-dashboard">
+                <h2>🎓 Mes parcours</h2>
+                {% for metier in metiers_disponibles %}
+                <a href="{% url 'parcours:accueil_parcours' metier=metier.slug %}" class="parcours-link">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.9rem;">{{ metier.nom }}</div>
+                        <div style="font-size: 0.75rem; color: #6C757D;">
+                            {% if metier.progression > 0 %}
+                                {{ metier.progression }}% complété
+                            {% else %}
+                                Non commencé
+                            {% endif %}
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #0077B6;"></i>
+                </a>
+                {% endfor %}
+                
+                {% if metiers_disponibles|length < 5 %}
+                <a href="{% url 'parcours:selection_metier' %}" class="btn-quick-action" style="background: #f0f0f0; color: #0077B6; margin-top: 0.5rem;">
+                    <i class="fas fa-plus"></i> Explorer d'autres parcours
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Certificats obtenus -->
+            <div class="card-dashboard">
+                <h2 class="success-border">📜 Certificats</h2>
+                {% for cert in certificats %}
+                <div class="certif-item">
+                    <div style="font-weight: 600; font-size: 0.85rem;">
+                        <i class="fas fa-medal" style="color: #D4AF37;"></i> {{ cert.parcours }}
+                    </div>
+                    <div style="font-size: 0.7rem; color: #6C757D;">
+                        Obtenu le {{ cert.date_delivrance|date:"d/m/Y" }}
+                    </div>
+                    <div style="margin-top: 0.3rem;">
+                        <a href="{% url 'users:verifier_certificat' %}" style="font-size: 0.75rem; color: #0077B6;">
+                            <i class="fas fa-external-link-alt"></i> Vérifier
+                        </a>
+                        <span style="margin: 0 0.5rem; color: #E9ECEF;">|</span>
+                        <a href="{% url 'users:telecharger_certificat' cert.id %}" style="font-size: 0.75rem; color: #10b981;">
+                            <i class="fas fa-download"></i> Télécharger
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-certificate"></i>
+                    <p>Terminez tous les modules et le test global d'un parcours pour obtenir un certificat.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Communauté -->
+            <div class="card-dashboard">
+                <h2 class="purple-border">💬 Communauté</h2>
+                <a href="{% url 'forum:index' %}" class="btn-quick-action" style="background: #8B5CF6; color: white; margin-bottom: 0.5rem;">
+                    <i class="fas fa-comments"></i> Accéder au forum général
+                </a>
+                {% if parcours_actif %}
+                <a href="{% url 'forum:metier' metier=parcours_actif.slug %}" class="btn-quick-action" style="background: #f0f0f0; color: #8B5CF6;">
+                    <i class="fas fa-users"></i> Forum {{ parcours_actif.nom }}
+                </a>
+                {% endif %}
+                
+                {% if discussions_recentes %}
+                <div style="margin-top: 1rem; border-top: 1px solid #f0f0f0; padding-top: 0.8rem;">
+                    <div style="font-size: 0.8rem; color: #6C757D; margin-bottom: 0.5rem;">Discussions récentes :</div>
+                    {% for disc in discussions_recentes %}
+                    <a href="{% url 'forum:sujet' metier=disc.forum.metier sujet_id=disc.id %}" 
+                       style="display: block; font-size: 0.8rem; padding: 0.3rem 0; color: #0077B6; text-decoration: none;">
+                        <i class="fas fa-comment"></i> {{ disc.titre|truncatechars:40 }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Recommandations -->
+            {% if recommandations %}
+            <div class="card-dashboard">
+                <h2 class="gold-border">💡 Recommandé pour vous</h2>
+                {% for reco in recommandations %}
+                <div style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.85rem;">
+                    <i class="fas fa-lightbulb" style="color: #D4AF37;"></i> {{ reco.texte }}
+                    {% if reco.lien %}
+                    <a href="{{ reco.lien }}" style="display: block; font-size: 0.75rem; color: #0077B6; margin-top: 0.2rem;">
+                        {{ reco.label }} <i class="fas fa-arrow-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle panneau notifications
+document.getElementById('notifBell')?.addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('notifPanel').classList.toggle('show');
+});
+
+document.addEventListener('click', function(e) {
+    const panel = document.getElementById('notifPanel');
+    if (panel && panel.classList.contains('show') && !e.target.closest('#notifBell')) {
+        panel.classList.remove('show');
+    }
+});
+
+function markAllRead() {
+    fetch("{% url 'messaging:marquer_tout_lu' %}", { 
+        method: 'POST', 
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' } 
+    }).then(() => location.reload());
+}
+</script>
+
+<style>
+#notifPanel.show { display: block !important; }
+</style>
+{% endblock %}
