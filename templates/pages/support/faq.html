@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}FAQ — {{ site_name }}{% endblock %}
+
+{% block meta_description %}Foire aux questions {{ site_name }} — Réponses aux questions fréquentes sur nos formations aéronautiques, certificats, tarifs et support technique.{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --gold: #D4AF37;
+        --success: #10b981;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .faq-hero {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        padding: 4rem 0 3rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .faq-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.03' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+    .faq-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        color: white;
+        position: relative;
+        z-index: 2;
+    }
+    .faq-hero p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 2;
+    }
+
+    .faq-main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    /* Search */
+    .search-container {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        margin: 2rem 0;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .search-container input {
+        flex: 1;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--gray-light);
+        border-radius: 50px;
+        font-size: 1rem;
+        background: var(--white);
+        color: var(--secondary);
+        transition: border-color 0.3s;
+    }
+    .search-container input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+    .btn-search {
+        padding: 0.8rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-search:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+    .results-count {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Categories */
+    .categories-filter {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+    .cat-btn {
+        padding: 0.5rem 1.2rem;
+        background: var(--white);
+        border: 1px solid var(--gray-light);
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+    }
+    .cat-btn.active, .cat-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* FAQ Sections */
+    .faq-section {
+        margin-bottom: 2rem;
+    }
+    .faq-section h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        color: var(--secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--gray-light);
+    }
+    .faq-item {
+        background: var(--white);
+        border-radius: 16px;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    .faq-item:hover {
+        transform: translateX(5px);
+    }
+    .faq-q {
+        padding: 1.2rem 1.5rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        color: var(--secondary);
+    }
+    .faq-q i {
+        color: var(--primary);
+        transition: transform 0.2s;
+    }
+    .faq-item.open .faq-q i {
+        transform: rotate(180deg);
+    }
+    .faq-a {
+        padding: 0 1.5rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        color: var(--gray);
+        background: var(--bg-light);
+        line-height: 1.6;
+    }
+    .faq-item.open .faq-a {
+        padding: 1rem 1.5rem;
+        max-height: 500px;
+    }
+
+    /* Popular questions */
+    .popular-questions {
+        background: linear-gradient(135deg, var(--bg-light), var(--white));
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .popular-questions h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    .popular-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+    .popular-tag {
+        padding: 0.3rem 1rem;
+        background: var(--primary);
+        color: white;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        transition: transform 0.3s;
+    }
+    .popular-tag:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Contact CTA */
+    .contact-cta {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        text-align: center;
+        padding: 3rem;
+        border-radius: 20px;
+        margin: 3rem 0;
+    }
+    .contact-cta h3 {
+        color: white;
+    }
+    .btn-contact {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.8rem 2rem;
+        background: var(--gold);
+        color: var(--secondary);
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: transform 0.3s;
+    }
+    .btn-contact:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Dark mode */
+    body.dark-mode .search-container,
+    body.dark-mode .faq-item,
+    body.dark-mode .popular-questions {
+        background: #1E1E1E;
+    }
+    body.dark-mode .faq-q {
+        color: #E0E0E0;
+    }
+    body.dark-mode .faq-a {
+        background: #2C2C2C;
+        color: #ADB5BD;
+    }
+    body.dark-mode .popular-questions {
+        background: #2C2C2C;
+    }
+    body.dark-mode .cat-btn {
+        background: #2C2C2C;
+        border-color: #3C3C3C;
+        color: #E0E0E0;
+    }
+    body.dark-mode .cat-btn.active,
+    body.dark-mode .cat-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .faq-hero h1 {
+            font-size: 1.8rem;
+        }
+        .search-container {
+            flex-direction: column;
+        }
+        .btn-search {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="faq-hero">
+    <div class="container">
+        <h1>Foire aux questions</h1>
+        <p>Trouvez les réponses aux questions les plus courantes</p>
+    </div>
+</section>
+
+<div class="faq-main">
+    <!-- Recherche -->
+    <div class="search-container">
+        <input type="text" id="faqSearch" placeholder="Rechercher une question...">
+        <button class="btn-search" onclick="searchFAQ()"><i class="fas fa-search"></i> Rechercher</button>
+    </div>
+    <div id="searchResultsCount" class="results-count"></div>
+
+    <!-- Questions populaires -->
+    <div class="popular-questions">
+        <h3><i class="fas fa-fire"></i> Questions populaires</h3>
+        <div class="popular-list">
+            <a href="#" class="popular-tag" onclick="scrollToQuestion('comment-obtenir-certificat'); return false;">Comment obtenir mon certificat ?</a>
+            <a href="#" class="popular-tag" onclick="scrollToQuestion('tarifs'); return false;">Quels sont les tarifs ?</a>
+            <a href="#" class="popular-tag" onclick="scrollToQuestion('telechargement'); return false;">Télécharger les cours ?</a>
+            <a href="#" class="popular-tag" onclick="scrollToQuestion('navigateurs'); return false;">Navigateurs supportés</a>
+        </div>
+    </div>
+
+    <!-- Catégories -->
+    <div class="categories-filter">
+        <button class="cat-btn active" data-cat="all">📋 Toutes</button>
+        <button class="cat-btn" data-cat="compte">👤 Compte</button>
+        <button class="cat-btn" data-cat="formation">📚 Formation</button>
+        <button class="cat-btn" data-cat="certification">🎓 Certification</button>
+        <button class="cat-btn" data-cat="tarifs">💰 Tarifs</button>
+        <button class="cat-btn" data-cat="technique">🛠️ Technique</button>
+    </div>
+
+    <!-- Section Compte -->
+    <div class="faq-section" data-cat="compte">
+        <h2><i class="fas fa-user-circle"></i> Compte & accès</h2>
+        <div class="faq-item" id="q-compte-1">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Comment créer un compte ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Rendez-vous sur la page d'inscription, remplissez le formulaire avec vos informations. C'est gratuit et prend moins d'une minute.</div>
+        </div>
+        <div class="faq-item" id="q-compte-2">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                J'ai oublié mon mot de passe <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Cliquez sur "Mot de passe oublié" sur la page de connexion. Un email de réinitialisation vous sera envoyé.</div>
+        </div>
+        <div class="faq-item" id="q-compte-3">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Puis-je utiliser mon compte sur plusieurs appareils ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Oui, votre progression est synchronisée sur tous vos appareils.</div>
+        </div>
+    </div>
+
+    <!-- Section Formation -->
+    <div class="faq-section" data-cat="formation">
+        <h2><i class="fas fa-graduation-cap"></i> Formation</h2>
+        <div class="faq-item" id="q-formation-1">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Comment accéder aux formations ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Créez un compte, choisissez un parcours dans "Formations" et commencez à apprendre.</div>
+        </div>
+        <div class="faq-item" id="q-formation-2">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Combien de temps dure une formation ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Chaque module représente environ 10h de formation. Un parcours complet (4 modules) prend environ 40h, à votre rythme.</div>
+        </div>
+        <div class="faq-item" id="q-formation-3">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Y a-t-il des prérequis ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Aucun diplôme requis. Un ordinateur et une connexion internet suffisent. L'anglais technique est recommandé pour certains parcours.</div>
+        </div>
+    </div>
+
+    <!-- Section Certification -->
+    <div class="faq-section" data-cat="certification">
+        <h2><i class="fas fa-certificate"></i> Certification</h2>
+        <div class="faq-item" id="comment-obtenir-certificat">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Comment obtenir mon certificat ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Terminez tous les modules et réussissez le test global avec un score minimum de 70%. Le certificat est automatiquement généré.</div>
+        </div>
+        <div class="faq-item" id="certificats-verifiables">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Les certificats sont-ils vérifiables ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Oui, chaque certificat possède un numéro de série et un hash SHA-256 vérifiable via notre page de vérification.</div>
+        </div>
+    </div>
+
+    <!-- Section Tarifs (prix corrigés) -->
+    <div class="faq-section" data-cat="tarifs">
+        <h2><i class="fas fa-euro-sign"></i> Tarifs</h2>
+        <div class="faq-item" id="tarifs">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Quels sont les tarifs ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">2 parcours sont gratuits (Contrôleur aérien et Technicien aéronautique). L'abonnement Mensuel (<strong>39€/mois</strong>) donne accès à 7 parcours. L'Annuel (<strong>329€/an</strong>) inclut le parcours Premium et économise 29%.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Puis-je changer de formule ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Oui, vous pouvez évoluer à tout moment. La différence est calculée au prorata.</div>
+        </div>
+    </div>
+
+    <!-- Section Technique -->
+    <div class="faq-section" data-cat="technique">
+        <h2><i class="fas fa-tools"></i> Technique</h2>
+        <div class="faq-item" id="navigateurs">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Quels navigateurs sont supportés ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Chrome, Firefox, Safari, Edge dans leurs versions récentes.</div>
+        </div>
+        <div class="faq-item" id="telechargement">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Puis-je télécharger les cours ? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Le téléchargement hors-ligne est disponible pour les abonnés Annuels uniquement (formule Premium).</div>
+        </div>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="contact-cta">
+        <h3>Vous n'avez pas trouvé votre réponse ?</h3>
+        <p style="opacity:0.9;">Notre équipe est disponible pour vous aider.</p>
+        <a href="{% url 'core:contact' %}" class="btn-contact">
+            Contacter le support <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+<script>
+    // Filtrage par catégorie
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const cat = btn.dataset.cat;
+            document.querySelectorAll('.faq-section').forEach(s => {
+                s.style.display = (cat === 'all' || s.dataset.cat === cat) ? 'block' : 'none';
+            });
+        });
+    });
+
+    // Recherche
+    function searchFAQ() {
+        const q = document.getElementById('faqSearch').value.toLowerCase().trim();
+        const allItems = document.querySelectorAll('.faq-item');
+        let visibleCount = 0;
+        
+        allItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const isVisible = q === '' || text.includes(q);
+            item.style.display = isVisible ? 'block' : 'none';
+            if (isVisible) visibleCount++;
+        });
+        
+        const resultDiv = document.getElementById('searchResultsCount');
+        if (q !== '') {
+            resultDiv.innerHTML = `<i class="fas fa-search"></i> ${visibleCount} résultat${visibleCount > 1 ? 's' : ''} trouvé${visibleCount > 1 ? 's' : ''}`;
+        } else {
+            resultDiv.innerHTML = '';
+        }
+    }
+    
+    // Barre de recherche avec entrée
+    document.getElementById('faqSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchFAQ();
+    });
+
+    // Scroll vers une question spécifique
+    function scrollToQuestion(questionId) {
+        const element = document.getElementById(questionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.classList.add('open');
+            setTimeout(() => {
+                element.classList.remove('open');
+            }, 3000);
+        }
+    }
+
+    // Ouvrir la question avec l'ancre dans l'URL
+    window.addEventListener('load', () => {
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            const element = document.getElementById(hash);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.classList.add('open');
+            }
+        }
+    });
+</script>
+
+{% endblock %}  }
+        }
+    });
+</script>
+
+{% endblock %}
