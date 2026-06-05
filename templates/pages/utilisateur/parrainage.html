@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Parrainage — 1 mois offert — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Parrainez vos amis et gagnez 1 mois d'abonnement offert pour chaque nouveau membre qui s'inscrit avec votre lien. Programme de parrainage Ventoryx Academy.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .parrainage-container {
+        max-width: 1000px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    
+    /* Hero */
+    .hero-parrainage {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white;
+        text-align: center;
+        padding: 3rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+    }
+    .offer-badge {
+        background: #FF6B35;
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+    .hero-parrainage h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    .hero-parrainage p {
+        opacity: 0.9;
+    }
+    
+    /* Lien de parrainage */
+    .referral-box {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+    .referral-link {
+        background: #F8FAFE;
+        padding: 1rem;
+        border-radius: 12px;
+        font-family: monospace;
+        word-break: break-all;
+        border: 1px solid #E9ECEF;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+    }
+    .copy-btn {
+        background: #0077B6;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+    .copy-btn:hover {
+        background: #005f8a;
+    }
+    
+    /* Boutons de partage */
+    .share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .share-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        color: white;
+        font-size: 0.85rem;
+        transition: transform 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .share-btn:hover { transform: translateY(-2px); }
+    .share-wa { background: #25D366; }
+    .share-fb { background: #1877F2; }
+    .share-tw { background: #1DA1F2; }
+    .share-li { background: #0077B5; }
+    .share-mail { background: #6C757D; }
+    
+    /* Statistiques */
+    .stats-parrainage {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0077B6;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .stat-label {
+        color: #6C757D;
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+    
+    /* Conditions */
+    .conditions {
+        background: #F8FAFE;
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .conditions h3 {
+        font-family: 'Montserrat', sans-serif;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .conditions ul {
+        margin-left: 1.5rem;
+    }
+    .conditions li {
+        margin-bottom: 0.5rem;
+        color: #495057;
+    }
+    
+    /* FAQ */
+    .faq-parrainage {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    .faq-parrainage h3 {
+        font-family: 'Montserrat', sans-serif;
+        margin-bottom: 1rem;
+    }
+    .faq-item {
+        border-bottom: 1px solid #E9ECEF;
+        margin-bottom: 1rem;
+    }
+    .faq-question {
+        padding: 0.8rem 0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+    }
+    .faq-answer {
+        padding-bottom: 1rem;
+        display: none;
+        color: #6C757D;
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+    .faq-item.open .faq-answer {
+        display: block;
+    }
+    .faq-item.open .faq-icon {
+        transform: rotate(180deg);
+    }
+    
+    @media (max-width: 768px) {
+        .hero-parrainage h1 { font-size: 1.5rem; }
+        .stats-parrainage { grid-template-columns: 1fr; }
+        .share-buttons { flex-direction: column; align-items: center; }
+        .share-btn { width: 100%; justify-content: center; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="parrainage-container">
+    <!-- Hero -->
+    <div class="hero-parrainage">
+        <div class="offer-badge">🎁 Offre limitée</div>
+        <h1>Parrainez un ami,<br>gagnez <span style="color:#FF6B35;">1 mois offert</span></h1>
+        <p>Pour chaque ami qui s'abonne, vous recevez 1 mois gratuit</p>
+    </div>
+    
+    <!-- Lien de parrainage -->
+    <div class="referral-box">
+        <h3><i class="fas fa-link"></i> Votre lien de parrainage unique</h3>
+        <div class="referral-link" id="referralLink">
+            {{ site_url }}/?ref={{ user.referral_code }}
+        </div>
+        <button class="copy-btn" onclick="copyLink()">
+            <i class="fas fa-copy"></i> Copier le lien
+        </button>
+        
+        <div class="share-buttons">
+            <a href="https://wa.me/?text={{ site_url }}/?ref={{ user.referral_code|urlencode }}" target="_blank" class="share-btn share-wa">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ site_url|urlencode }}/?ref={{ user.referral_code|urlencode }}" target="_blank" class="share-btn share-fb">
+                <i class="fab fa-facebook"></i> Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ site_url|urlencode }}/?ref={{ user.referral_code|urlencode }}&text=Je%20te%20recommande%20{{ site_name|urlencode }}%20-%201%20mois%20offert%20!" target="_blank" class="share-btn share-tw">
+                <i class="fab fa-twitter"></i> X
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site_url|urlencode }}/?ref={{ user.referral_code|urlencode }}" target="_blank" class="share-btn share-li">
+                <i class="fab fa-linkedin"></i> LinkedIn
+            </a>
+            <a href="mailto:?subject=Découvre {{ site_name }}&body=Je te recommande cette plateforme de formation aéronautique : {{ site_url }}/?ref={{ user.referral_code|urlencode }}" class="share-btn share-mail">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistiques personnelles -->
+    <div class="stats-parrainage">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_referrals|default:"0" }}</div>
+            <div class="stat-label">Amis parrainés</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ months_earned|default:"0" }}</div>
+            <div class="stat-label">Mois offerts gagnés</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ next_reward|default:"1" }}</div>
+            <div class="stat-label">Prochain parrainage = 1 mois offert</div>
+        </div>
+    </div>
+    
+    <!-- Conditions -->
+    <div class="conditions">
+        <h3><i class="fas fa-gavel"></i> Conditions de l'offre</h3>
+        <ul>
+            <li>✅ <strong>1 mois offert</strong> pour chaque nouvel abonné qui utilise votre lien</li>
+            <li>✅ L'offre est valable pour les formules <strong>mensuelle et annuelle</strong></li>
+            <li>✅ Les mois offerts sont <strong>cumulables</strong> (sans limite)</li>
+            <li>✅ Le parrainage est valable pendant <strong>30 jours</strong> après le clic</li>
+            <li>✅ Vous recevez votre mois offert dès que le filleul effectue son premier paiement</li>
+            <li>❌ L'auto-parrainage est interdit (même adresse IP ou email)</li>
+        </ul>
+    </div>
+    
+    <!-- FAQ -->
+    <div class="faq-parrainage">
+        <h3><i class="fas fa-question-circle"></i> Questions fréquentes</h3>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Comment savoir si mon filleul s'est inscrit ?</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                Vous recevez un email de confirmation dès qu'un ami s'inscrit avec votre lien. Vous pouvez aussi suivre vos parrainages dans votre tableau de bord.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Quand est-ce que je reçois mon mois offert ?</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                Votre mois offert est automatiquement appliqué dès que votre filleul effectue son premier paiement. Vous serez notifié par email.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Puis-je parrainer plusieurs personnes ?</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                Oui, absolument ! Il n'y a pas de limite. Chaque parrainage vous offre 1 mois supplémentaire, cumulable.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Que se passe-t-il si mon filleul résilie ?</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                Si votre filleul résilie avant la fin du premier mois, vous ne perdez pas votre mois offert déjà acquis.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Puis-je parrainer quelqu'un qui utilise déjà {{ site_name }} ?</span>
+                <i class="fas fa-chevron-down faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+                Non, le parrainage ne fonctionne que pour les nouveaux utilisateurs qui n'ont jamais créé de compte sur {{ site_name }}.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyLink() {
+        const link = document.getElementById('referralLink').innerText;
+        navigator.clipboard.writeText(link);
+        alert('✅ Lien copié ! Partagez-le avec vos amis.');
+    }
+    
+    function toggleFaq(element) {
+        const item = element.parentElement;
+        item.classList.toggle('open');
+    }
+</script>
+
+{% endblock %}
