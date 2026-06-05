@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ article.titre }} — Blog {{ site_name }}{% endblock %}
+
+{% block meta_description %}{{ article.resume|truncatechars:160 }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --gold: #D4AF37;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .article-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        transition: color 0.3s;
+    }
+    .btn-back:hover {
+        color: var(--primary-dark);
+    }
+
+    .article-header {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        margin-bottom: 2rem;
+        transition: transform 0.3s;
+    }
+    .article-header:hover {
+        transform: translateY(-3px);
+    }
+    .article-badge {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: #E8F4FD;
+        color: var(--primary);
+    }
+    .article-header h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    .article-meta {
+        font-size: 0.85rem;
+        color: var(--gray);
+        margin: 1rem 0;
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .article-meta i {
+        margin-right: 0.3rem;
+    }
+
+    .article-cover {
+        width: 100%;
+        border-radius: 16px;
+        max-height: 400px;
+        object-fit: cover;
+        margin-bottom: 1rem;
+    }
+
+    .article-body {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        line-height: 1.8;
+        color: var(--secondary);
+    }
+    .article-body img {
+        max-width: 100%;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+    .article-body h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        margin: 1.5rem 0 1rem;
+        color: var(--secondary);
+    }
+    .article-body h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.2rem;
+        margin: 1.2rem 0 0.8rem;
+        color: var(--secondary);
+    }
+    .article-body p {
+        margin-bottom: 1rem;
+    }
+
+    /* Partage social */
+    .share-section {
+        margin: 2rem 0;
+        padding: 1rem 0;
+        border-top: 1px solid var(--gray-light);
+        border-bottom: 1px solid var(--gray-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .share-title {
+        font-size: 0.9rem;
+        color: var(--gray);
+    }
+    .share-buttons {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+    }
+    .share-btn {
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: transform 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .share-btn:hover {
+        transform: translateY(-2px);
+    }
+    .share-fb { background: #1877F2; color: white; }
+    .share-tw { background: #1DA1F2; color: white; }
+    .share-li { background: #0077B5; color: white; }
+    .share-wa { background: #25D366; color: white; }
+    .share-mail { background: #6C757D; color: white; }
+
+    /* Auteur */
+    .author-box {
+        background: var(--bg-light);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .author-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+    .author-info {
+        flex: 1;
+    }
+    .author-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--secondary);
+    }
+    .author-bio {
+        font-size: 0.85rem;
+        color: var(--gray);
+        margin-top: 0.3rem;
+    }
+
+    /* Navigation articles */
+    .article-nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+    .nav-prev, .nav-next {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1rem 1.2rem;
+        text-decoration: none;
+        color: var(--secondary);
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .nav-prev:hover {
+        transform: translateX(-5px);
+        background: var(--bg-light);
+    }
+    .nav-next:hover {
+        transform: translateX(5px);
+        background: var(--bg-light);
+    }
+    .nav-next {
+        text-align: right;
+    }
+    .nav-label {
+        font-size: 0.7rem;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .nav-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+    }
+
+    /* Articles recommandés */
+    .recommended-section {
+        margin-top: 2rem;
+    }
+    .recommended-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: var(--secondary);
+    }
+    .recommended-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    .recommended-card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1rem;
+        text-decoration: none;
+        color: var(--secondary);
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        display: block;
+    }
+    .recommended-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .recommended-card h4 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    .recommended-card p {
+        font-size: 0.75rem;
+        color: var(--gray);
+        margin-bottom: 0.5rem;
+    }
+    .recommended-meta {
+        font-size: 0.65rem;
+        color: var(--gray);
+    }
+
+    /* Dark mode */
+    body.dark-mode .article-header,
+    body.dark-mode .article-body,
+    body.dark-mode .nav-prev,
+    body.dark-mode .nav-next,
+    body.dark-mode .recommended-card {
+        background: #1E1E1E;
+    }
+    body.dark-mode .article-header h1,
+    body.dark-mode .article-body {
+        color: #E0E0E0;
+    }
+    body.dark-mode .author-box {
+        background: #2C2C2C;
+    }
+    body.dark-mode .share-section {
+        border-top-color: #2C2C2C;
+        border-bottom-color: #2C2C2C;
+    }
+
+    @media (max-width: 768px) {
+        .article-container {
+            padding: 1rem;
+        }
+        .article-header {
+            padding: 1.5rem;
+        }
+        .article-header h1 {
+            font-size: 1.5rem;
+        }
+        .article-body {
+            padding: 1.5rem;
+        }
+        .article-nav {
+            grid-template-columns: 1fr;
+        }
+        .nav-prev, .nav-next {
+            text-align: center;
+        }
+        .share-section {
+            flex-direction: column;
+            text-align: center;
+        }
+        .author-box {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="article-container">
+    <a href="{% url 'blog:index' %}" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Retour au blog
+    </a>
+    
+    <div class="article-header">
+        <span class="article-badge">{{ article.categorie|default:"Actualité" }}</span>
+        <h1>{{ article.titre }}</h1>
+        <div class="article-meta">
+            <span><i class="far fa-calendar"></i> {{ article.date_publication|date:"d F Y" }}</span>
+            <span><i class="far fa-user"></i> {{ article.auteur.get_full_name|default:article.auteur.username }}</span>
+            <span><i class="far fa-eye"></i> {{ article.vues }} vues</span>
+            <span><i class="far fa-clock"></i> {{ article.temps_lecture|default:5 }} min de lecture</span>
+        </div>
+    </div>
+
+    {% if article.cover_image %}
+    <img src="{{ article.cover_image.url }}" alt="{{ article.titre }}" class="article-cover" loading="lazy">
+    {% endif %}
+
+    <div class="article-body">
+        {{ article.contenu|safe }}
+    </div>
+
+    <!-- Partage social -->
+    <div class="share-section">
+        <span class="share-title"><i class="fas fa-share-alt"></i> Partager cet article :</span>
+        <div class="share-buttons">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="share-btn share-fb">
+                <i class="fab fa-facebook-f"></i> Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ article.titre|urlencode }}" target="_blank" class="share-btn share-tw">
+                <i class="fab fa-twitter"></i> X
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" target="_blank" class="share-btn share-li">
+                <i class="fab fa-linkedin-in"></i> LinkedIn
+            </a>
+            <a href="https://wa.me/?text={{ article.titre|urlencode }}%20-%20{{ request.build_absolute_uri|urlencode }}" target="_blank" class="share-btn share-wa">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="mailto:?subject={{ article.titre }}&body={{ request.build_absolute_uri }}" class="share-btn share-mail">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+        </div>
+    </div>
+
+    <!-- Auteur -->
+    <div class="author-box">
+        <div class="author-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="author-info">
+            <div class="author-name">{{ article.auteur.get_full_name|default:article.auteur.username }}</div>
+            <div class="author-bio">
+                {% if article.auteur.profile.bio %}
+                    {{ article.auteur.profile.bio }}
+                {% else %}
+                    Expert en formation aéronautique chez {{ site_name }}. Passionné par l'aviation et la transmission des connaissances.
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation précédent/suivant -->
+    {% if article_precedent or article_suivant %}
+    <div class="article-nav">
+        {% if article_precedent %}
+        <a href="{% url 'blog:detail' article_precedent.slug %}" class="nav-prev">
+            <div class="nav-label"><i class="fas fa-arrow-left"></i> Article précédent</div>
+            <div class="nav-title">{{ article_precedent.titre|truncatechars:60 }}</div>
+        </a>
+        {% else %}
+        <div></div>
+        {% endif %}
+        {% if article_suivant %}
+        <a href="{% url 'blog:detail' article_suivant.slug %}" class="nav-next">
+            <div class="nav-label">Article suivant <i class="fas fa-arrow-right"></i></div>
+            <div class="nav-title">{{ article_suivant.titre|truncatechars:60 }}</div>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Articles recommandés -->
+    {% if articles_recommandes %}
+    <div class="recommended-section">
+        <h3 class="recommended-title"><i class="fas fa-star" style="color: var(--gold);"></i> À lire aussi</h3>
+        <div class="recommended-grid">
+            {% for recommandation in articles_recommandes|slice:":3" %}
+            <a href="{% url 'blog:detail' recommandation.slug %}" class="recommended-card">
+                <h4>{{ recommandation.titre }}</h4>
+                <p>{{ recommandation.resume|truncatechars:80 }}</p>
+                <div class="recommended-meta">
+                    <i class="far fa-calendar"></i> {{ recommandation.date_publication|date:"d/m/Y" }}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Incrémentation des vues via AJAX
+    fetch(`/api/blog/{{ article.id }}/view/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    }).catch(() => {});
+</script>
+
+{% endblock %}
