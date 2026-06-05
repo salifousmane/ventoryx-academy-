@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chiffres clés — {{ site_name }} en données{% endblock %}
+
+{% block meta_description %}
+Découvrez les chiffres clés de Ventoryx Academy : 8 parcours, 650 cours, 15 langues, 112 quiz. Statistiques détaillées de la plateforme.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-container {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    .stats-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .stats-header h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        color: #0F1C2E;
+        margin-bottom: 1rem;
+    }
+    .stats-header p {
+        color: #6C757D;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .big-numbers {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    .big-number-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        transition: transform 0.3s;
+    }
+    .big-number-card:hover {
+        transform: translateY(-5px);
+    }
+    .big-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #0077B6;
+        font-family: 'Montserrat', sans-serif;
+    }
+    .big-number-label {
+        font-size: 1rem;
+        color: #0F1C2E;
+        margin-top: 0.5rem;
+    }
+    .big-number-detail {
+        font-size: 0.8rem;
+        color: #6C757D;
+        margin-top: 0.3rem;
+    }
+
+    .section-title {
+        text-align: center;
+        margin: 3rem 0 2rem;
+    }
+    .section-title h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        color: #0F1C2E;
+    }
+
+    .parcours-table {
+        background: white;
+        border-radius: 20px;
+        overflow-x: auto;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-bottom: 3rem;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #E9ECEF;
+    }
+    th {
+        background: #0F1C2E;
+        color: white;
+        font-weight: 600;
+    }
+    td:first-child {
+        font-weight: 600;
+        background: #F8FAFE;
+    }
+    .price-free {
+        color: #10b981;
+        font-weight: 700;
+    }
+    .price-paid {
+        color: #FF6B35;
+        font-weight: 700;
+    }
+
+    .langues-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+    .langue-item {
+        background: #F8FAFE;
+        padding: 0.8rem;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 992px) {
+        .big-numbers { grid-template-columns: repeat(2, 1fr); }
+        .langues-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+        .big-numbers { grid-template-columns: 1fr; }
+        .langues-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="stats-container">
+    <div class="stats-header">
+        <h1><i class="fas fa-chart-simple"></i> Ventoryx Academy en chiffres</h1>
+        <p>Découvrez les données clés de la plateforme</p>
+    </div>
+
+    <!-- Grands chiffres -->
+    <div class="big-numbers">
+        <div class="big-number-card">
+            <div class="big-number">8</div>
+            <div class="big-number-label">Parcours certifiants</div>
+            <div class="big-number-detail">7 standards + 1 Premium</div>
+        </div>
+        <div class="big-number-card">
+            <div class="big-number">650</div>
+            <div class="big-number-label">Cours disponibles</div>
+            <div class="big-number-detail">dont 90 modules Premium</div>
+        </div>
+        <div class="big-number-card">
+            <div class="big-number">112</div>
+            <div class="big-number-label">Quiz interactifs</div>
+            <div class="big-number-detail">Correction automatique</div>
+        </div>
+        <div class="big-number-card">
+            <div class="big-number">15</div>
+            <div class="big-number-label">Langues</div>
+            <div class="big-number-detail">Dont arabe, chinois, russe</div>
+        </div>
+    </div>
+
+    <!-- Détail par parcours -->
+    <div class="section-title">
+        <h2>📊 Détail par parcours</h2>
+    </div>
+    <div class="parcours-table">
+        <table>
+            <thead>
+                <tr><th>Parcours</th><th>Modules</th><th>Cours</th><th>Quiz</th><th>Prix</th><th>Badge</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Pilote de ligne</td><td>4</td><td>80</td><td>16</td><td class="price-paid">39€/mois</td><td>—</td></tr>
+                <tr><td>Personnel navigant (PNC)</td><td>4</td><td>80</td><td>16</td><td class="price-paid">39€/mois</td><td>—</td></tr>
+                <tr><td>Ingénieur aéronautique</td><td>4</td><td>80</td><td>16</td><td class="price-paid">39€/mois</td><td>—</td></tr>
+                <tr><td>Contrôleur aérien</td><td>4</td><td>80</td><td>16</td><td class="price-free">GRATUIT</td><td>🎓 Offert</td></tr>
+                <tr><td>Technicien aéronautique</td><td>4</td><td>80</td><td>16</td><td class="price-free">GRATUIT</td><td>🎓 Offert</td></tr>
+                <tr><td>Mécanicien avion</td><td>4</td><td>80</td><td>16</td><td class="price-paid">39€/mois</td><td>—</td></tr>
+                <tr><td>Agent d'escale</td><td>4</td><td>80</td><td>16</td><td class="price-paid">39€/mois</td><td>—</td></tr>
+                <tr><td>Formation avancée Premium</td><td>6</td><td>90</td><td>0</td><td class="price-paid">329€/an</td><td>👑 Exclusif Annuel</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Langues -->
+    <div class="section-title">
+        <h2>🌍 Langues disponibles</h2>
+    </div>
+    <div class="langues-grid">
+        <div class="langue-item">🇫🇷 Français</div>
+        <div class="langue-item">🇬🇧 English</div>
+        <div class="langue-item">🇪🇸 Español</div>
+        <div class="langue-item">🇵🇹 Português</div>
+        <div class="langue-item">🇸🇦 العربية</div>
+        <div class="langue-item">🇨🇳 中文</div>
+        <div class="langue-item">🇷🇺 Русский</div>
+        <div class="langue-item">🇩🇪 Deutsch</div>
+        <div class="langue-item">🇮🇹 Italiano</div>
+        <div class="langue-item">🇯🇵 日本語</div>
+        <div class="langue-item">🇰🇷 한국어</div>
+        <div class="langue-item">🇮🇳 हिन्दी</div>
+        <div class="langue-item">🇹🇷 Türkçe</div>
+        <div class="langue-item">🇳🇱 Nederlands</div>
+        <div class="langue-item">🇸🇪 Svenska</div>
+    </div>
+
+    <!-- Autres données -->
+    <div class="big-numbers" style="margin-top: 2rem;">
+        <div class="big-number-card">
+            <div class="big-number">4</div>
+            <div class="big-number-label">Modules par parcours</div>
+            <div class="big-number-detail">6 pour le Premium</div>
+        </div>
+        <div class="big-number-card">
+            <div class="big-number">40h</div>
+            <div class="big-number-label">Formation estimée</div>
+            <div class="big-number-detail">Par parcours standard</div>
+        </div>
+        <div class="big-number-card">
+            <div class="big-number">100%</div>
+            <div class="big-number-label">En ligne</div>
+            <div class="big-number-detail">Accessible partout</div>
+        </div>
+        <div class="big-number-card">
+            <div class="big-number">24/7</div>
+            <div class="big-number-label">Assistant IA</div>
+            <div class="big-number-detail">15 langues</div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'parcours:selection_metier' %}" class="btn-primary" style="background: #FF6B35; padding: 0.8rem 2rem; border-radius: 50px; color: white; text-decoration: none; display: inline-block;">
+            Découvrir nos parcours →
+        </a>
+    </div>
+</div>
+
+{% endblock %}
