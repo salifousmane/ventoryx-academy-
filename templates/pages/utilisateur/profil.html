@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon profil — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .profile-header {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+    }
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #0077B6;
+    }
+    .profile-body {
+        padding: 2rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #0F1C2E;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #E9ECEF;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: 'Open Sans', sans-serif;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #0077B6;
+    }
+    .btn-save {
+        background: #0077B6;
+        color: white;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-save:hover {
+        background: #005f8a;
+        transform: translateY(-2px);
+    }
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+    .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background: #6C757D;
+        color: white;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    @media (max-width: 768px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+        .btn-save, .btn-danger, .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <h2>{{ user.get_full_name|default:user.username }}</h2>
+            <p>{{ user.email }}</p>
+        </div>
+
+        <div class="profile-body">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'users:profile' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Prénom *</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" name="phone" value="{{ user.profile.phone|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Métier / Fonction</label>
+                    <select name="job">
+                        <option value="">Sélectionnez</option>
+                        <option value="pilote" {% if user.profile.job == 'pilote' %}selected{% endif %}>Pilote</option>
+                        <option value="pnc" {% if user.profile.job == 'pnc' %}selected{% endif %}>PNC</option>
+                        <option value="ingenieur" {% if user.profile.job == 'ingenieur' %}selected{% endif %}>Ingénieur</option>
+                        <option value="controleur" {% if user.profile.job == 'controleur' %}selected{% endif %}>Contrôleur</option>
+                        <option value="technicien" {% if user.profile.job == 'technicien' %}selected{% endif %}>Technicien</option>
+                        <option value="mecanicien" {% if user.profile.job == 'mecanicien' %}selected{% endif %}>Mécanicien</option>
+                        <option value="agent" {% if user.profile.job == 'agent' %}selected{% endif %}>Agent d'escale</option>
+                        <option value="etudiant" {% if user.profile.job == 'etudiant' %}selected{% endif %}>Étudiant</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>À propos de moi</label>
+                    <textarea name="bio" rows="4" placeholder="Parlez-nous de vous...">{{ user.profile.bio|default:'' }}</textarea>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Enregistrer les modifications
+                    </button>
+                    <a href="{% url 'users:change_password' %}" class="btn-secondary">
+                        <i class="fas fa-key"></i> Changer mon mot de passe
+                    </a>
+                    <a href="{% url 'users:delete_account' %}" class="btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
+                        <i class="fas fa-trash"></i> Supprimer mon compte
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
