@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Espace Partenaire — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .partner-dashboard {
+        background: #F8FAFE;
+        min-height: 100vh;
+    }
+    .partner-header {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white;
+        padding: 2rem 0;
+    }
+    .partner-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: -2rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0077B6;
+    }
+    .section-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .referral-link {
+        background: #F8F9FA;
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: monospace;
+        word-break: break-all;
+    }
+    .commission-badge {
+        display: inline-block;
+        background: #FF6B35;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+    }
+    .convention-status {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+    }
+    .status-signed { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .table-referrals {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table-referrals th, .table-referrals td {
+        padding: 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid #E9ECEF;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="partner-dashboard">
+    <div class="partner-header">
+        <div class="container">
+            <h1><i class="fas fa-handshake"></i> Espace Partenaire</h1>
+            <p>Bienvenue, {{ partner_name }}</p>
+            <span class="commission-badge">Commission : {{ commission_rate }}%</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="partner-stats">
+            <div class="stat-card"><div class="stat-value">{{ total_referrals }}</div><div>Apprenants référés</div></div>
+            <div class="stat-card"><div class="stat-value">{{ active_subscriptions }}</div><div>Abonnements actifs</div></div>
+            <div class="stat-card"><div class="stat-value">{{ total_commission }} €</div><div>Commission générée</div></div>
+            <div class="stat-card"><div class="stat-value">{{ pending_payment }} €</div><div>À reverser</div></div>
+        </div>
+
+        <div class="section-card">
+            <h3><i class="fas fa-link"></i> Votre lien de parrainage</h3>
+            <div class="referral-link" id="referralLink">
+                {{ site_url }}/?ref={{ partner_code }}
+            </div>
+            <button onclick="copyReferralLink()" style="margin-top:0.5rem; padding:0.5rem 1rem; background:#0077B6; color:white; border:none; border-radius:8px;">
+                <i class="fas fa-copy"></i> Copier le lien
+            </button>
+        </div>
+
+        <div class="section-card">
+            <h3><i class="fas fa-file-signature"></i> Convention de partenariat</h3>
+            {% if convention_signed %}
+                <span class="convention-status status-signed"><i class="fas fa-check"></i> Signée le {{ convention_date|date:"d/m/Y" }}</span>
+                <a href="#" style="margin-left:1rem; color:#0077B6;"><i class="fas fa-download"></i> Télécharger</a>
+            {% else %}
+                <span class="convention-status status-pending"><i class="fas fa-clock"></i> En attente de signature</span>
+                <a href="{% url 'partners:convention' %}" style="margin-left:1rem; color:#FF6B35;">Signer la convention →</a>
+            {% endif %}
+        </div>
+
+        <div class="section-card">
+            <h3><i class="fas fa-users"></i> Apprenants référés</h3>
+            <table class="table-referrals">
+                <thead>
+                    <tr><th>Apprenant</th><th>Date d'inscription</th><th>Abonnement</th><th>Commission</th></tr>
+                </thead>
+                <tbody>
+                    {% for user in referred_users %}
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.signup_date|date:"d/m/Y" }}</td>
+                        <td>{% if user.subscription_active %}✅ Actif{% else %}⏳ En attente{% endif %}</td>
+                        <td>{{ user.commission }} €</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align: center;">Aucun apprenant référé pour le moment. Partagez votre lien !</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-card">
+            <h3><i class="fas fa-folder-open"></i> Ressources</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="#" style="color:#0077B6;"><i class="fas fa-file-pdf"></i> Kit de communication</a>
+                <a href="#" style="color:#0077B6;"><i class="fas fa-chart-bar"></i> Rapports mensuels</a>
+                <a href="#" style="color:#0077B6;"><i class="fas fa-envelope"></i> Templates email</a>
+                <a href="#" style="color:#0077B6;"><i class="fas fa-question-circle"></i> FAQ Partenaire</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyReferralLink() {
+    const link = document.getElementById('referralLink').innerText;
+    navigator.clipboard.writeText(link);
+    alert('Lien copié dans le presse-papier !');
+}
+</script>
+
+{% endblock %}
