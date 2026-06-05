@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Support technique — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Support technique Ventoryx Academy — Problèmes de connexion, compatibilité navigateur, accès aux cours. Déposez un ticket, réponse sous 48h.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --gold: #D4AF37;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .support-hero {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .support-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.03' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+    }
+    .support-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        color: white;
+        position: relative;
+        z-index: 2;
+    }
+    .support-hero p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 2;
+    }
+
+    .support-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        max-width: 1100px;
+        margin: 3rem auto;
+        padding: 0 2rem;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .form-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        transition: transform 0.3s;
+    }
+    .form-card:hover {
+        transform: translateY(-3px);
+    }
+    .form-card h2 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--secondary);
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--secondary);
+        margin-bottom: 0.3rem;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--gray-light);
+        border-radius: 12px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 0.95rem;
+        background: var(--white);
+        color: var(--secondary);
+        transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Priorité badges */
+    .priority-low { color: var(--success); font-weight: 600; }
+    .priority-medium { color: var(--warning); font-weight: 600; }
+    .priority-high { color: var(--danger); font-weight: 600; }
+
+    .btn-submit {
+        width: 100%;
+        padding: 0.9rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .btn-submit:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    .info-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s;
+    }
+    .info-card:hover {
+        transform: translateY(-3px);
+    }
+    .info-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    .info-card i {
+        color: var(--primary);
+        margin-right: 0.5rem;
+    }
+    .info-card p {
+        color: var(--gray);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    .status-online {
+        background: var(--success);
+        color: white;
+    }
+
+    .diagnostic-list {
+        margin-top: 0.8rem;
+    }
+    .diagnostic-link {
+        display: block;
+        padding: 0.5rem 0;
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.3s;
+    }
+    .diagnostic-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    /* Dark mode */
+    body.dark-mode .form-card,
+    body.dark-mode .info-card {
+        background: #1E1E1E;
+    }
+    body.dark-mode .form-card h2,
+    body.dark-mode .info-card h3 {
+        color: #E0E0E0;
+    }
+    body.dark-mode .form-group input,
+    body.dark-mode .form-group select,
+    body.dark-mode .form-group textarea {
+        background: #2C2C2C;
+        border-color: #3C3C3C;
+        color: #E0E0E0;
+    }
+
+    @media (max-width: 768px) {
+        .support-hero h1 {
+            font-size: 1.8rem;
+        }
+        .support-layout {
+            grid-template-columns: 1fr;
+            padding: 0 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="support-hero">
+    <div class="container">
+        <h1>Support technique</h1>
+        <p>Une question technique ? Notre équipe est là pour vous aider.</p>
+    </div>
+</section>
+
+<div class="support-layout">
+    <!-- Formulaire de ticket -->
+    <div class="form-card">
+        <h2><i class="fas fa-ticket-alt"></i> Ouvrir un ticket</h2>
+        {% if messages %}
+            {% for message in messages %}
+            <div style="padding:1rem;border-radius:12px;margin-bottom:1rem;{% if message.tags == 'success' %}background:#d4edda;color:#155724;{% elif message.tags == 'error' %}background:#f8d7da;color:#721c24;{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'core:contact' %}">
+            {% csrf_token %}
+            <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </div>
+            <input type="hidden" name="category" value="technique">
+            
+            <div class="form-group">
+                <label>Nom complet *</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Type de problème *</label>
+                <select name="type_probleme" required>
+                    <option value="">Sélectionnez</option>
+                    <option value="connexion">🔐 Problème de connexion / mot de passe</option>
+                    <option value="acces">📚 Accès aux cours / module bloqué</option>
+                    <option value="video">🎬 Lecture vidéo</option>
+                    <option value="telechargement">📥 Téléchargement hors-ligne</option>
+                    <option value="certificat">📜 Certificat / test global</option>
+                    <option value="paiement">💳 Paiement / facturation</option>
+                    <option value="autre">❓ Autre problème technique</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Urgence *</label>
+                <select name="urgence">
+                    <option value="faible">🟢 Faible - Pas urgent</option>
+                    <option value="moyenne" selected>🟡 Moyenne - Problème gênant</option>
+                    <option value="haute">🔴 Haute - Bloquant</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Navigateur utilisé</label>
+                <select name="navigateur">
+                    <option value="">Sélectionnez</option>
+                    <option>Chrome</option>
+                    <option>Firefox</option>
+                    <option>Safari</option>
+                    <option>Edge</option>
+                    <option>Autre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description détaillée *</label>
+                <textarea name="message" required placeholder="Décrivez votre problème en détail... (étapes pour reproduire, captures d'écran...)"></textarea>
+            </div>
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Envoyer le ticket
+            </button>
+        </form>
+    </div>
+
+    <!-- Informations et outils -->
+    <div>
+        <div class="info-card">
+            <h3><i class="fas fa-envelope"></i> Email support</h3>
+            <p>{{ email_contact|default:"support@ventoryx-academy.com" }}</p>
+            <div>
+                <span class="status-badge status-online">
+                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Support actif
+                </span>
+                <span style="font-size: 0.7rem; color: var(--gray); margin-left: 0.5rem;">Lun-Ven 9h-18h</span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h3><i class="fas fa-clock"></i> Délai de réponse</h3>
+            <p>Réponse sous <strong>48 heures ouvrées</strong></p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Urgence haute : réponse prioritaire sous 24h</p>
+        </div>
+
+        <div class="info-card">
+            <h3><i class="fas fa-laptop"></i> Navigateurs supportés</h3>
+            <p>Chrome (recommandé), Firefox, Safari, Edge — versions récentes</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem;">⚠️ Internet Explorer n'est pas supporté</p>
+        </div>
+
+        <div class="info-card">
+            <h3><i class="fas fa-stethoscope"></i> Autodiagnostic</h3>
+            <div class="diagnostic-list">
+                <a href="#" class="diagnostic-link"><i class="fas fa-wifi"></i> Vérifier ma connexion internet</a>
+                <a href="#" class="diagnostic-link"><i class="fas fa-cookie-bite"></i> Vider le cache navigateur</a>
+                <a href="#" class="diagnostic-link"><i class="fas fa-redo-alt"></i> Réinitialiser mon mot de passe</a>
+                <a href="#" class="diagnostic-link"><i class="fas fa-download"></i> Tester le téléchargement</a>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h3><i class="fas fa-robot"></i> Assistant IA</h3>
+            <p>Besoin d'une réponse immédiate ?</p>
+            <button onclick="toggleAiChat()" style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; cursor: pointer; margin-top: 0.5rem;">
+                <i class="fas fa-comment-dots"></i> Ouvrir l'assistant IA
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAiChat() {
+        const chatPanel = document.getElementById('aiChatPanel');
+        if (chatPanel) {
+            chatPanel.style.display = chatPanel.style.display === 'flex' ? 'none' : 'flex';
+        } else {
+            window.location.href = "{% url 'core:index' %}";
+        }
+    }
+</script>
+
+{% endblock %}
