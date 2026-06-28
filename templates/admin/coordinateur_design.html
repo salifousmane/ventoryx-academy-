@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Coordination Design UX — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root { --dept-primary: #EC4899; --dept-dark: #DB2777; }
+    .coord-hero { background: linear-gradient(135deg, #0F1C2E, #1E3A5F); color: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .coord-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; display: flex; align-items: center; gap: 0.8rem; }
+    .badge-role { background: #EC4899; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #EC4899; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; margin-top: 0.3rem; }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .chart-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .chart-card h3 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .chart-card canvas { max-height: 200px; }
+    .quick-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; margin-bottom: 2rem; }
+    .action-btn { background: white; border: 1px solid #E9ECEF; border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .action-btn:hover { border-color: #EC4899; box-shadow: 0 6px 20px rgba(236,72,153,0.15); transform: translateY(-2px); }
+    .action-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .form-section { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .form-section h3 { font-family: 'Montserrat', sans-serif; font-size: 1rem; margin-bottom: 1rem; color: #0F1C2E; border-bottom: 2px solid #E9ECEF; padding-bottom: 0.6rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.6rem 0.9rem; border: 1px solid #E9ECEF; border-radius: 8px; font-size: 0.9rem; }
+    .btn-primary { background: #EC4899; color: white; border: none; padding: 0.7rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .btn-secondary { background: #E5E7EB; color: #374151; border: none; padding: 0.7rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem; }
+    .section-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; margin: 2rem 0 1rem; color: #0F1C2E; display: flex; align-items: center; gap: 0.6rem; }
+    .messages-flash { padding: 1rem; background: #E0F7EC; border-radius: 8px; margin-bottom: 1rem; color: #065F46; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="messages-flash">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="coord-hero">
+        <h1><i class="fas fa-palette"></i> Coordination Design & UX <span class="badge-role">Coordinateur</span></h1>
+        <p style="margin: 0.5rem 0 0; opacity: 0.85;">Maquettes, composants UI, identité visuelle et expérience utilisateur — {{ messages_recents }} message(s) non lu(s)</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_maquettes|default:"14" }}</div>
+            <div class="stat-label">Maquettes actives</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ composants|default:"37" }}</div>
+            <div class="stat-label">Composants UI</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ taux_ux|default:"88" }}%</div>
+            <div class="stat-label">Score UX (Lighthouse)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ messages_recents }}</div>
+            <div class="stat-label">Messages non lus</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ livraisons|default:"6" }}</div>
+            <div class="stat-label">Livraisons ce mois</div>
+        </div>
+    </div>
+
+    <!-- Graphiques (4 obligatoires) -->
+    <h2 class="section-title"><i class="fas fa-chart-bar" style="color:#EC4899;"></i> Tableau de bord analytique</h2>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-layer-group" style="color:#EC4899;"></i> Maquettes par statut</h3>
+            <canvas id="chartMaquettes"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line" style="color:#8B5CF6;"></i> Score UX mensuel</h3>
+            <canvas id="chartUX"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-puzzle-piece" style="color:#3B82F6;"></i> Composants par type</h3>
+            <canvas id="chartComposants"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-tasks" style="color:#F59E0B;"></i> Livraisons par mois</h3>
+            <canvas id="chartLivraisons"></canvas>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="document.getElementById('formMaquette').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">🖼️</div><strong>Créer maquette</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formComposant').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">🧩</div><strong>Créer composant</strong>
+        </button>
+        <button class="action-btn" onclick="window.print()">
+            <div class="action-icon">🖨️</div><strong>Imprimer rapport</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formMsg').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">📨</div><strong>Contacter DG</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formMsg').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">📢</div><strong>Briefer l'équipe</strong>
+        </button>
+    </div>
+
+    <!-- Créer maquette -->
+    <div id="formMaquette" class="form-section">
+        <h3><i class="fas fa-layer-group" style="color:#EC4899;"></i> Créer une maquette</h3>
+        <form method="post" action="{% url 'gestion:design_creer_maquette' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Nom de la maquette *</label>
+                <input type="text" name="nom" placeholder="Ex: Page d'accueil V3" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Contexte et objectifs..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select name="type">
+                    <option value="wireframe">Wireframe</option>
+                    <option value="maquette">Maquette haute-fidélité</option>
+                    <option value="prototype">Prototype interactif</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">🖼️ Créer la maquette</button>
+        </form>
+    </div>
+
+    <!-- Créer composant -->
+    <div id="formComposant" class="form-section">
+        <h3><i class="fas fa-puzzle-piece" style="color:#3B82F6;"></i> Créer un composant UI</h3>
+        <form method="post" action="{% url 'gestion:design_creer_composant' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Nom du composant *</label>
+                <input type="text" name="nom" placeholder="Ex: Card Programme" required>
+            </div>
+            <div class="form-group">
+                <label>Catégorie</label>
+                <select name="categorie">
+                    <option value="navigation">Navigation</option>
+                    <option value="formulaire">Formulaire</option>
+                    <option value="carte">Carte / Card</option>
+                    <option value="bouton">Bouton</option>
+                    <option value="tableau">Tableau</option>
+                    <option value="modal">Modal / Dialog</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="2" placeholder="Description du composant..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">🧩 Créer le composant</button>
+        </form>
+    </div>
+
+    <!-- Communication -->
+    <div id="formMsg" class="form-section">
+        <h3><i class="fas fa-paper-plane"></i> Communication</h3>
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-bottom: 1rem;">
+            {% csrf_token %}
+            <input type="hidden" name="departement" value="design">
+            <div class="form-group">
+                <label>Message à la Direction Générale</label>
+                <textarea name="message" rows="3" placeholder="Votre message..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">📨 Envoyer à la DG</button>
+        </form>
+        <form method="post" action="{% url 'messaging:envoyer_coordinateur' %}">
+            {% csrf_token %}
+            <input type="hidden" name="departement" value="design">
+            <div class="form-group">
+                <label>Briefer l'équipe design</label>
+                <textarea name="message" rows="3" placeholder="Brief pour les gestionnaires design..."></textarea>
+            </div>
+            <button type="submit" class="btn-secondary">📢 Envoyer à l'équipe</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('chartMaquettes'), {
+    type: 'doughnut',
+    data: {
+        labels: ['En cours','Validée','En révision','Archivée'],
+        datasets: [{ data: [5, 6, 2, 1], backgroundColor: ['#EC4899','#10B981','#F59E0B','#E5E7EB'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('chartUX'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Fév','Mar','Avr','Mai','Juin'],
+        datasets: [{ label: 'Score UX', data: [81, 83, 85, 86, 87, 88], borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 75, max: 100 } } }
+});
+
+new Chart(document.getElementById('chartComposants'), {
+    type: 'bar',
+    data: {
+        labels: ['Navigation','Formulaire','Carte','Bouton','Tableau','Modal'],
+        datasets: [{ label: 'Composants', data: [8, 12, 7, 4, 3, 3], backgroundColor: '#EC4899', borderRadius: 8 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('chartLivraisons'), {
+    type: 'bar',
+    data: {
+        labels: ['Jan','Fév','Mar','Avr','Mai','Juin'],
+        datasets: [{ label: 'Livraisons', data: [3, 5, 4, 7, 5, 6], backgroundColor: '#3B82F6', borderRadius: 8 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+</script>
+{% endblock %}

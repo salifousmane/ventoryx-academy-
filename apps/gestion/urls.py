@@ -31,4 +31,8 @@ urlpatterns = [
     path('dg/archiver-messages/', views.dg_archiver_messages, name='dg_archiver_messages'),
     path('dg/auditer-departement/', views.dg_auditer_departement, name='dg_auditer_departement'),
     path('dg/valider-budget/', views.dg_valider_budget, name='dg_valider_budget'),
+    path('dg/creer-alerte/', views.dg_creer_alerte, name='dg_creer_alerte'),
+    path('dg/ajouter-partenaire/', views.dg_ajouter_partenaire, name='dg_ajouter_partenaire'),
+    path('dg/vider-cache/', views.dg_vider_cache, name='dg_vider_cache'),
+    path('dg/candidatures/', views.admin_candidatures, name='admin_candidatures'),
 ]

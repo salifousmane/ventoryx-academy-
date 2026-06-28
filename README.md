@@ -2,8 +2,8 @@
 
 Architecture
 
-· Framework : Django 5.0
-· Base de données : PostgreSQL (SQLite en développement)
+· Framework : Django 6.0.6
+· Base de données : SQLite (développement) — PostgreSQL recommandé en production
 · Frontend : Templates Django + CSS/JS statique
 · Sécurité : Argon2, CSRF, CSP, rate limiting, audit immutable
 · IA : Assistant GPT-4o intégré, traduction 15 langues, Text-to-Speech
@@ -21,9 +21,8 @@ Gestionnaire Ses propres pages et contenus
 Prérequis système
 
 · Python 3.10 ou supérieur
-· PostgreSQL 14+ (ou SQLite pour développement)
-· Redis (pour Celery)
-· 2GB RAM minimum (4GB recommandé)
+· SQLite (inclus) — ou PostgreSQL 14+ en production
+· 1GB RAM minimum (2GB recommandé)
 
 Installation
 
@@ -376,7 +375,7 @@ Tests automatisés, analyse de sécurité (bandit + safety) et vérification des
 Lancement production
 
 ```bash
-gunicorn wsgi:application -w 4 -b 0.0.0.0:8080
+gunicorn wsgi:application -w 4 -b 0.0.0.0:5000
 ```
 
 Déploiement Docker

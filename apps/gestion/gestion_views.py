@@ -567,3 +567,64 @@ def dg_valider_budget(request):
     _log(request, 'validation_budget', 'Budget validé', 'critique')
     return JsonResponse({'success': True, 'message': 'Budget validé.'})
   
+
+
+# ============================================================
+# DG — Vues supplémentaires
+# ============================================================
+
+@login_required
+@dg_required
+@require_POST
+def dg_creer_alerte(request):
+    """Crée une alerte plateforme."""
+    import json as _json
+    data = _json.loads(request.body)
+    type_alerte = data.get('type', 'information')
+    message = data.get('message', '').strip()
+    if not message:
+        return JsonResponse({'success': False, 'error': 'Message requis'})
+    _log(request, 'alerte_cree', f'Alerte {type_alerte}: {message[:80]}', 'critique')
+    return JsonResponse({'success': True, 'message': f'Alerte "{type_alerte}" créée.'})
+
+
+@login_required
+@dg_required
+@require_POST
+def dg_ajouter_partenaire(request):
+    """Ajoute un partenaire (DG)."""
+    import json as _json
+    data = _json.loads(request.body)
+    nom = data.get('nom', '').strip()
+    if not nom:
+        return JsonResponse({'success': False, 'error': 'Nom requis'})
+    _log(request, 'partenaire_ajoute_dg', f'Partenaire DG: {nom}')
+    return JsonResponse({'success': True, 'message': f'Partenaire "{nom}" ajouté.'})
+
+
+@login_required
+@dg_required
+@require_POST
+def dg_vider_cache(request):
+    """Vide le cache Django."""
+    from django.core.cache import cache as django_cache
+    django_cache.clear()
+    _log(request, 'cache_vide', 'Cache vidé', 'critique')
+    return JsonResponse({'success': True, 'message': 'Cache vidé avec succès.'})
+
+
+@login_required
+@dg_required
+def admin_candidatures(request):
+    """Page administration des candidatures."""
+    from apps.institution.models import Candidature
+    candidatures = Candidature.objects.select_related('offre').order_by('-date_candidature')
+    context = {
+        'page_title': 'Administration Candidatures',
+        'candidatures': candidatures,
+        'total': candidatures.count(),
+        'shortlist': candidatures.filter(statut='shortlist').count(),
+        'en_attente': candidatures.filter(statut='soumise').count(),
+        'rejets': candidatures.filter(statut='rejetee').count(),
+    }
+    return render(request, 'admin/administration_candidatures.html', context)

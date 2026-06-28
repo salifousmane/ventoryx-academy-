@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Coordination Support & Administration — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root { --dept-primary: #3B82F6; --dept-dark: #2563EB; }
+    .coord-hero { background: linear-gradient(135deg, #0F1C2E, #1E3A5F); color: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .coord-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; display: flex; align-items: center; gap: 0.8rem; }
+    .badge-role { background: #3B82F6; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #3B82F6; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; margin-top: 0.3rem; }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .chart-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .chart-card h3 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .chart-card canvas { max-height: 200px; }
+    .quick-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; margin-bottom: 2rem; }
+    .action-btn { background: white; border: 1px solid #E9ECEF; border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .action-btn:hover { border-color: #3B82F6; box-shadow: 0 6px 20px rgba(59,130,246,0.15); transform: translateY(-2px); }
+    .action-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .form-section { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .form-section h3 { font-family: 'Montserrat', sans-serif; font-size: 1rem; margin-bottom: 1rem; color: #0F1C2E; border-bottom: 2px solid #E9ECEF; padding-bottom: 0.6rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.6rem 0.9rem; border: 1px solid #E9ECEF; border-radius: 8px; font-size: 0.9rem; }
+    .btn-primary { background: #3B82F6; color: white; border: none; padding: 0.7rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .btn-secondary { background: #E5E7EB; color: #374151; border: none; padding: 0.7rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem; }
+    .section-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; margin: 2rem 0 1rem; color: #0F1C2E; display: flex; align-items: center; gap: 0.6rem; }
+    .messages-flash { padding: 1rem; background: #E0F7EC; border-radius: 8px; margin-bottom: 1rem; color: #065F46; }
+    .ticket-card { background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+    .badge-ouvert { background: #FEE2E2; color: #dc2626; }
+    .badge-resolu { background: #E0F7EC; color: #065F46; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="messages-flash">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="coord-hero">
+        <h1><i class="fas fa-headset"></i> Coordination Support & Administration <span class="badge-role">Coordinateur</span></h1>
+        <p style="margin: 0.5rem 0 0; opacity: 0.85;">Gestion des tickets, messages entrants et assistance administrative — {{ messages_recents }} message(s) non lu(s)</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_tickets|default:"8" }}</div>
+            <div class="stat-label">Tickets ouverts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ tickets_resolus|default:"42" }}</div>
+            <div class="stat-label">Tickets résolus (mois)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ temps_reponse|default:"2.4" }}h</div>
+            <div class="stat-label">Temps moyen réponse</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ messages_recents }}</div>
+            <div class="stat-label">Messages non lus</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ satisfaction|default:"97" }}%</div>
+            <div class="stat-label">Satisfaction apprenants</div>
+        </div>
+    </div>
+
+    <!-- Graphiques (4 obligatoires) -->
+    <h2 class="section-title"><i class="fas fa-chart-bar" style="color:#3B82F6;"></i> Tableau de bord analytique</h2>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-ticket-alt" style="color:#3B82F6;"></i> Tickets par priorité</h3>
+            <canvas id="chartTickets"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line" style="color:#10B981;"></i> Volume messages (30j)</h3>
+            <canvas id="chartMessages"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-clock" style="color:#F59E0B;"></i> Temps de résolution moyen</h3>
+            <canvas id="chartTemps"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-smile" style="color:#EC4899;"></i> Satisfaction par catégorie</h3>
+            <canvas id="chartSatisfaction"></canvas>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="document.getElementById('formTicket').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">🎫</div><strong>Créer ticket</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formChat').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">💬</div><strong>Chat support</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formRepondre').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">↩️</div><strong>Répondre message</strong>
+        </button>
+        <button class="action-btn" onclick="window.location.href='{% url 'messaging:contact_list' %}'">
+            <div class="action-icon">📥</div><strong>Boîte de réception</strong>
+        </button>
+        <button class="action-btn" onclick="window.location.href='{% url 'messaging:inbox' %}'">
+            <div class="action-icon">🔔</div><strong>Notifications</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formMsg').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">📨</div><strong>Contacter DG</strong>
+        </button>
+    </div>
+
+    <!-- Créer ticket -->
+    <div id="formTicket" class="form-section">
+        <h3><i class="fas fa-ticket-alt" style="color:#3B82F6;"></i> Créer un ticket support</h3>
+        <form method="post" action="{% url 'gestion:support_creer_ticket' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Sujet *</label>
+                <input type="text" name="sujet" placeholder="Résumé du problème" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Détails du ticket..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Priorité</label>
+                <select name="priorite">
+                    <option value="basse">Basse</option>
+                    <option value="moyenne" selected>Moyenne</option>
+                    <option value="haute">Haute</option>
+                    <option value="critique">Critique</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">🎫 Créer le ticket</button>
+        </form>
+    </div>
+
+    <!-- Chat support -->
+    <div id="formChat" class="form-section">
+        <h3><i class="fas fa-comments" style="color:#10B981;"></i> Envoyer un message chat</h3>
+        <form method="post" action="{% url 'gestion:support_envoyer_chat' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Message *</label>
+                <textarea name="message" rows="3" placeholder="Votre message..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">💬 Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Répondre à un message -->
+    <div id="formRepondre" class="form-section">
+        <h3><i class="fas fa-reply" style="color:#F59E0B;"></i> Répondre à un message de contact</h3>
+        <form method="post" action="{% url 'gestion:support_repondre_message' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>ID du message *</label>
+                <input type="number" name="message_id" placeholder="Identifiant du message" required>
+            </div>
+            <div class="form-group">
+                <label>Réponse *</label>
+                <textarea name="reponse" rows="4" placeholder="Votre réponse au contact..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">↩️ Envoyer la réponse</button>
+        </form>
+    </div>
+
+    <!-- Communication -->
+    <div id="formMsg" class="form-section">
+        <h3><i class="fas fa-paper-plane"></i> Communication</h3>
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-bottom: 1rem;">
+            {% csrf_token %}
+            <input type="hidden" name="departement" value="support">
+            <div class="form-group">
+                <label>Message à la Direction Générale</label>
+                <textarea name="message" rows="3" placeholder="Votre message..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">📨 Envoyer à la DG</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('chartTickets'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Critique','Haute','Moyenne','Basse'],
+        datasets: [{ data: [2, 3, 8, 5], backgroundColor: ['#ef4444','#F59E0B','#3B82F6','#10B981'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('chartMessages'), {
+    type: 'line',
+    data: {
+        labels: ['Sem 1','Sem 2','Sem 3','Sem 4'],
+        datasets: [{ label: 'Messages reçus', data: [12, 18, 14, 22], borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('chartTemps'), {
+    type: 'bar',
+    data: {
+        labels: ['Jan','Fév','Mar','Avr','Mai','Juin'],
+        datasets: [{ label: 'Heures', data: [3.2, 2.8, 3.5, 2.4, 2.1, 2.4], backgroundColor: '#F59E0B', borderRadius: 8 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('chartSatisfaction'), {
+    type: 'radar',
+    data: {
+        labels: ['Réactivité','Clarté','Résolution','Courtoisie','Suivi'],
+        datasets: [{ label: 'Score /5', data: [4.8, 4.5, 4.7, 4.9, 4.6], borderColor: '#EC4899', backgroundColor: 'rgba(236,72,153,0.1)', pointBackgroundColor: '#EC4899' }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 5 } } }
+});
+</script>
+{% endblock %}

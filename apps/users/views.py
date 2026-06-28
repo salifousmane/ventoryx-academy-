@@ -157,9 +157,12 @@ def dashboard_coordinateur(request, departement):
 
     templates = {
         'pedagogie': 'admin/coordinateur_pedagogie.html',
-        'marketing': 'admin/coordinateur_ marketing.html',
+        'marketing': 'admin/coordinateur_marketing.html',
         'technique': 'admin/coordinateur_technique.html',
         'operations': 'admin/coordonnateur_operations.html',
+        'qualite': 'admin/coordinateur_qualite.html',
+        'support': 'admin/coordinateur_support.html',
+        'design': 'admin/coordinateur_design.html',
     }
     template = templates.get(departement, 'admin/gestionnaire.html')
     return render(request, template, context)

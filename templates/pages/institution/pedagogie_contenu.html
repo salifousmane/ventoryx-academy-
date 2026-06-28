@@ -343,7 +343,7 @@
     <!-- Ajouter un module -->
     <h2 class="section-title"><i class="fas fa-plus-circle"></i> Ajouter un module</h2>
     <div class="form-card">
-        <form method="post" action="{% url 'gestion: pedagogie_creer_module' %}">
+        <form method="post" action="{% url 'gestion:pedagogie_creer_module' %}">
             {% csrf_token %}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group"><label>Nom du module</label><input type="text" name="titre" class="form-control" placeholder="Ex: Communication aéronautique" required></div>

@@ -302,7 +302,7 @@
     <!-- Créer une campagne -->
     <h2 class="section-title"><i class="fas fa-plus-circle"></i> Créer une campagne</h2>
     <div class="form-card">
-        <form method="post" action="{% url 'gestion: marketing_creer_campagne' %}">
+        <form method="post" action="{% url 'gestion:marketing_creer_campagne' %}">
             {% csrf_token %}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group"><label>Nom de la campagne</label><input type="text" name="nom" class="form-control" placeholder="Ex: Recrutement Pilotes" required></div>

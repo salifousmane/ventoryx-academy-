@@ -284,7 +284,7 @@
     <!-- Ajouter une maquette -->
     <h2 class="section-title"><i class="fas fa-plus-circle"></i> Ajouter une maquette</h2>
     <div class="form-card">
-        <form method="post" action="{% url 'gestion: design_creer_maquette' %}">
+        <form method="post" action="{% url 'gestion:design_creer_maquette' %}">
             {% csrf_token %}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group"><label>Nom de la maquette</label><input type="text" name="nom" class="form-control" placeholder="Ex: Dashboard formateur" required></div>

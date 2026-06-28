@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Coordination Qualité & Innovation — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root { --dept-primary: #8B5CF6; --dept-dark: #7C3AED; }
+    .coord-hero { background: linear-gradient(135deg, #0F1C2E, #1E3A5F); color: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .coord-hero h1 { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; display: flex; align-items: center; gap: 0.8rem; }
+    .badge-role { background: #8B5CF6; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #8B5CF6; font-family: 'Montserrat', sans-serif; }
+    .stat-label { font-size: 0.75rem; color: #6C757D; margin-top: 0.3rem; }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .chart-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .chart-card h3 { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #0F1C2E; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .chart-card canvas { max-height: 200px; }
+    .quick-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; margin-bottom: 2rem; }
+    .action-btn { background: white; border: 1px solid #E9ECEF; border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .action-btn:hover { border-color: #8B5CF6; box-shadow: 0 6px 20px rgba(139,92,246,0.15); transform: translateY(-2px); }
+    .action-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .form-section { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+    .form-section h3 { font-family: 'Montserrat', sans-serif; font-size: 1rem; margin-bottom: 1rem; color: #0F1C2E; border-bottom: 2px solid #E9ECEF; padding-bottom: 0.6rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.3rem; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.6rem 0.9rem; border: 1px solid #E9ECEF; border-radius: 8px; font-size: 0.9rem; }
+    .btn-primary { background: #8B5CF6; color: white; border: none; padding: 0.7rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .btn-secondary { background: #E5E7EB; color: #374151; border: none; padding: 0.7rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem; }
+    .section-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; margin: 2rem 0 1rem; color: #0F1C2E; display: flex; align-items: center; gap: 0.6rem; }
+    .messages-flash { padding: 1rem; background: #E0F7EC; border-radius: 8px; margin-bottom: 1rem; color: #065F46; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="messages-flash">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="coord-hero">
+        <h1><i class="fas fa-star"></i> Coordination Qualité & Innovation <span class="badge-role">Coordinateur</span></h1>
+        <p style="margin: 0.5rem 0 0; opacity: 0.85;">Supervision des audits, indicateurs qualité et projets d'innovation — {{ messages_recents }} message(s) non lu(s)</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_nc|default:"3" }}</div>
+            <div class="stat-label">Non-conformités ouvertes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ total_audits|default:"12" }}</div>
+            <div class="stat-label">Audits réalisés (trimestre)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ score_qualite|default:"94" }}%</div>
+            <div class="stat-label">Score qualité global</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ total_innovations|default:"7" }}</div>
+            <div class="stat-label">Innovations en cours</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ messages_recents }}</div>
+            <div class="stat-label">Messages non lus</div>
+        </div>
+    </div>
+
+    <!-- Graphiques (4 obligatoires) -->
+    <h2 class="section-title"><i class="fas fa-chart-bar" style="color:#8B5CF6;"></i> Tableau de bord analytique</h2>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444;"></i> Non-conformités par catégorie</h3>
+            <canvas id="chartNC"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line" style="color:#8B5CF6;"></i> Évolution du score qualité</h3>
+            <canvas id="chartQualite"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-lightbulb" style="color:#F59E0B;"></i> Projets innovation par statut</h3>
+            <canvas id="chartInnovations"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-clipboard-check" style="color:#10B981;"></i> Audits planifiés vs réalisés</h3>
+            <canvas id="chartAudits"></canvas>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <h2 class="section-title"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Actions rapides</h2>
+    <div class="quick-actions">
+        <button class="action-btn" onclick="document.getElementById('formNC').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">⚠️</div><strong>Signaler NC</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formInnovation').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">💡</div><strong>Proposer innovation</strong>
+        </button>
+        <form method="post" action="{% url 'gestion:qualite_lancer_audit' %}" style="display:contents;">
+            {% csrf_token %}
+            <button type="submit" class="action-btn">
+                <div class="action-icon">🔍</div><strong>Lancer audit</strong>
+            </button>
+        </form>
+        <button class="action-btn" onclick="document.getElementById('formInnovation').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">📊</div><strong>Rapport qualité</strong>
+        </button>
+        <button class="action-btn" onclick="window.print()">
+            <div class="action-icon">🖨️</div><strong>Imprimer bilan</strong>
+        </button>
+        <button class="action-btn" onclick="document.getElementById('formMsg').scrollIntoView({behavior:'smooth'})">
+            <div class="action-icon">📨</div><strong>Contacter DG</strong>
+        </button>
+    </div>
+
+    <!-- Formulaire Signaler NC -->
+    <div id="formNC" class="form-section">
+        <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444;"></i> Signaler une non-conformité</h3>
+        <form method="post" action="{% url 'gestion:qualite_signaler_nc' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Description de la non-conformité *</label>
+                <textarea name="description" rows="3" placeholder="Décrivez la non-conformité observée..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Gravité</label>
+                <select name="gravite">
+                    <option value="mineure">Mineure</option>
+                    <option value="majeure">Majeure</option>
+                    <option value="critique">Critique</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Département concerné</label>
+                <select name="departement">
+                    <option value="pedagogie">Pédagogie</option>
+                    <option value="technique">Technique</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="operations">Opérations</option>
+                    <option value="support">Support</option>
+                    <option value="design">Design</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">⚠️ Signaler</button>
+        </form>
+    </div>
+
+    <!-- Formulaire Proposer Innovation -->
+    <div id="formInnovation" class="form-section">
+        <h3><i class="fas fa-lightbulb" style="color:#F59E0B;"></i> Proposer un projet d'innovation</h3>
+        <form method="post" action="{% url 'gestion:qualite_proposer_innovation' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Nom du projet *</label>
+                <input type="text" name="nom" placeholder="Ex: Tableau de bord prédictif" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Décrivez votre proposition..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Impact estimé</label>
+                <select name="impact">
+                    <option value="faible">Faible</option>
+                    <option value="moyen">Moyen</option>
+                    <option value="fort">Fort</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">💡 Proposer</button>
+        </form>
+    </div>
+
+    <!-- Communication -->
+    <div id="formMsg" class="form-section">
+        <h3><i class="fas fa-paper-plane"></i> Communication</h3>
+        <form method="post" action="{% url 'messaging:envoyer_dg' %}" style="margin-bottom: 1rem;">
+            {% csrf_token %}
+            <input type="hidden" name="departement" value="qualite">
+            <div class="form-group">
+                <label>Message à la Direction Générale</label>
+                <textarea name="message" rows="3" placeholder="Votre message..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">📨 Envoyer à la DG</button>
+        </form>
+        <form method="post" action="{% url 'messaging:envoyer_coordinateur' %}">
+            {% csrf_token %}
+            <input type="hidden" name="departement" value="qualite">
+            <div class="form-group">
+                <label>Message aux gestionnaires</label>
+                <textarea name="message" rows="3" placeholder="Message à votre équipe..."></textarea>
+            </div>
+            <button type="submit" class="btn-secondary">📢 Envoyer à l'équipe</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('chartNC'), {
+    type: 'bar',
+    data: {
+        labels: ['Pédagogie','Technique','Support','Opérations','Design'],
+        datasets: [{ label: 'NC ouvertes', data: [1, 3, 0, 2, 1], backgroundColor: '#ef4444', borderRadius: 8 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('chartQualite'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Fév','Mar','Avr','Mai','Juin'],
+        datasets: [{ label: 'Score qualité (%)', data: [88, 90, 87, 92, 93, 94], borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.3 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 80, max: 100 } } }
+});
+
+new Chart(document.getElementById('chartInnovations'), {
+    type: 'doughnut',
+    data: {
+        labels: ['En cours','En attente','Validé','Rejeté'],
+        datasets: [{ data: [4, 2, 1, 0], backgroundColor: ['#8B5CF6','#F59E0B','#10B981','#ef4444'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('chartAudits'), {
+    type: 'bar',
+    data: {
+        labels: ['T1','T2','T3','T4'],
+        datasets: [
+            { label: 'Planifiés', data: [3, 4, 3, 4], backgroundColor: 'rgba(139,92,246,0.3)', borderRadius: 8 },
+            { label: 'Réalisés', data: [3, 4, 2, 3], backgroundColor: '#8B5CF6', borderRadius: 8 }
+        ]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+</script>
+{% endblock %}

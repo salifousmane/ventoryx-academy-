@@ -375,6 +375,23 @@
                 <h3><i class="fas fa-tachometer-alt" style="color:#ef4444;"></i> Taux de traitement</h3>
                 <canvas id="chartTaux"></canvas>
             </div>
+
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-users" style="color:#8B5CF6;"></i> Évolution apprenants</h3>
+                <canvas id="chartApprenants"></canvas>
+            </div>
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-graduation-cap" style="color:#F59E0B;"></i> Parcours par métier</h3>
+                <canvas id="chartParcours"></canvas>
+            </div>
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-euro-sign" style="color:#10B981;"></i> Abonnements actifs</h3>
+                <canvas id="chartAbonnements"></canvas>
+            </div>
+            <div class="dg-chart-card">
+                <h3><i class="fas fa-star" style="color:#EC4899;"></i> Satisfaction apprenants</h3>
+                <canvas id="chartSatisfaction"></canvas>
+            </div>
         </div>
 
         <!-- ==================== COORDINATEURS ==================== -->
@@ -636,6 +653,66 @@ new Chart(document.getElementById('chartTaux'), {
         }]
     },
     options: { responsive: true, maintainAspectRatio: false }
+});
+
+
+// Graphique Apprenants
+new Chart(document.getElementById('chartApprenants'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Fév','Mar','Avr','Mai','Juin'],
+        datasets: [{
+            label: 'Apprenants',
+            data: [120, 145, 178, 210, 265, {{ total_utilisateurs }}],
+            borderColor: '#8B5CF6',
+            backgroundColor: 'rgba(139,92,246,0.1)',
+            fill: true, tension: 0.3
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+// Graphique Parcours
+new Chart(document.getElementById('chartParcours'), {
+    type: 'bar',
+    data: {
+        labels: ['Pilote','PNC','Ingénieur','Contrôleur','Technicien','Mécanicien','Agent'],
+        datasets: [{
+            label: 'Inscrits',
+            data: [42, 38, 31, 55, 28, 19, 47],
+            backgroundColor: ['#3B82F6','#10B981','#8B5CF6','#F59E0B','#EC4899','#6366F1','#059669'],
+            borderRadius: 8
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+// Graphique Abonnements
+new Chart(document.getElementById('chartAbonnements'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Gratuit','Standard 29€/mois','Premium Annuel'],
+        datasets: [{
+            data: [55, 35, 10],
+            backgroundColor: ['#E5E7EB','#3B82F6','#F59E0B']
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+// Graphique Satisfaction
+new Chart(document.getElementById('chartSatisfaction'), {
+    type: 'bar',
+    data: {
+        labels: ['Très satisfait','Satisfait','Neutre','Insatisfait'],
+        datasets: [{
+            label: '%',
+            data: [62, 28, 7, 3],
+            backgroundColor: ['#10B981','#3B82F6','#F59E0B','#ef4444'],
+            borderRadius: 8
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
 });
 
 // ==================== MODALS ====================

@@ -90,6 +90,17 @@
         }
     </style>
 
+    <style>
+        nav#mainNav .nav-current {
+            color: var(--primary, #0077B6);
+            font-weight: 700;
+            cursor: default;
+            pointer-events: none;
+            border-bottom: 2px solid currentColor;
+            padding-bottom: 2px;
+        }
+    </style>
+
     {% block extra_css %}{% endblock %}
 
     <!-- CSRF Token pour les requêtes AJAX -->
@@ -109,22 +120,33 @@
             </a>
 
             <nav id="mainNav">
-                <a href="{% url 'core:index' %}">Accueil</a>
-                <a href="{% url 'parcours:selection_metier' %}">Parcours</a>
-                <a href="{% url 'core:premium' %}">Abonnements</a>
-                <a href="{% url 'core:verification_certificat' %}">Certification</a>
-                <a href="{% url 'core:faq' %}">FAQ</a>
-                <a href="{% url 'blog:index' %}">Blog</a>
-                <a href="{% url 'core:contact' %}">Contact</a>
-                <a href="{% url 'forum:index' %}">Forum</a>
-                <a href="{% url 'core:a_propos' %}">À propos</a>
-                <a href="{% url 'core:carriere' %}">Carrières</a>
+                {% url 'core:index' as url_home %}
+                {% url 'parcours:selection_metier' as url_parcours %}
+                {% url 'core:premium' as url_premium %}
+                {% url 'core:verification_certificat' as url_certif %}
+                {% url 'core:faq' as url_faq %}
+                {% url 'blog:index' as url_blog %}
+                {% url 'core:contact' as url_contact %}
+                {% url 'forum:index' as url_forum %}
+                {% url 'core:a_propos' as url_apropos %}
+                {% url 'core:carriere' as url_carriere %}
+                {% if request.path == url_home %}<span class="nav-current">Accueil</span>{% else %}<a href="{{ url_home }}">Accueil</a>{% endif %}
+                {% if request.path == url_parcours %}<span class="nav-current">Parcours</span>{% else %}<a href="{{ url_parcours }}">Parcours</a>{% endif %}
+                {% if request.path == url_premium %}<span class="nav-current">Abonnements</span>{% else %}<a href="{{ url_premium }}">Abonnements</a>{% endif %}
+                {% if request.path == url_certif %}<span class="nav-current">Certification</span>{% else %}<a href="{{ url_certif }}">Certification</a>{% endif %}
+                {% if request.path == url_faq %}<span class="nav-current">FAQ</span>{% else %}<a href="{{ url_faq }}">FAQ</a>{% endif %}
+                {% if request.path == url_blog %}<span class="nav-current">Blog</span>{% else %}<a href="{{ url_blog }}">Blog</a>{% endif %}
+                {% if request.path == url_contact %}<span class="nav-current">Contact</span>{% else %}<a href="{{ url_contact }}">Contact</a>{% endif %}
+                {% if request.path == url_forum %}<span class="nav-current">Forum</span>{% else %}<a href="{{ url_forum }}">Forum</a>{% endif %}
+                {% if request.path == url_apropos %}<span class="nav-current">À propos</span>{% else %}<a href="{{ url_apropos }}">À propos</a>{% endif %}
+                {% if request.path == url_carriere %}<span class="nav-current">Carrières</span>{% else %}<a href="{{ url_carriere }}">Carrières</a>{% endif %}
                 {% if user.is_authenticated %}
                     <a href="{% url 'users:dashboard' %}" class="nav-user-space">
                         <i class="fas fa-user-check"></i> Mon espace
                     </a>
                 {% else %}
-                    <a href="{% url 'users:login' %}">Connexion</a>
+                    {% url 'users:login' as url_login %}
+                    {% if request.path == url_login %}<span class="nav-current">Connexion</span>{% else %}<a href="{{ url_login }}">Connexion</a>{% endif %}
                 {% endif %}
             </nav>
 

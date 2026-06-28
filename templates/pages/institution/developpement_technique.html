@@ -322,7 +322,7 @@
     <!-- Ajouter une tâche -->
     <h2 class="section-title"><i class="fas fa-plus-circle"></i> Ajouter une tâche</h2>
     <div class="form-card">
-        <form method="post" action="{% url 'gestion: technique_creer_tache' %}">
+        <form method="post" action="{% url 'gestion:technique_creer_tache' %}">
             {% csrf_token %}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group"><label>Nom de la tâche</label><input type="text" name="titre" class="form-control" placeholder="Ex: Mise à jour dépendances" required></div>

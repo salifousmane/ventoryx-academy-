@@ -298,7 +298,7 @@
     <!-- Créer un ticket -->
     <h2 class="section-title"><i class="fas fa-plus-circle"></i> Créer un ticket</h2>
     <div class="form-card">
-        <form method="post" action="{% url 'gestion: support_creer_ticket' %}">
+        <form method="post" action="{% url 'gestion:support_creer_ticket' %}">
             {% csrf_token %}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                 <div class="form-group"><label>Utilisateur</label><input type="text" name="utilisateur" class="form-control" placeholder="Nom de l'utilisateur" required></div>
