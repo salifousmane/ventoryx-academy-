@@ -6,11 +6,16 @@ from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
+import os
+
+_sw_js_path = os.path.join(settings.BASE_DIR, 'static', 'js', 'sw.js')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('sw.js', serve, {'path': 'js/sw.js', 'document_root': settings.BASE_DIR / 'static'}),
 ]
 
 urlpatterns += i18n_patterns(
