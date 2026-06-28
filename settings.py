@@ -185,8 +185,8 @@ AXES_COOLOFF_TIME = 0.25
 AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']
 AXES_RESET_ON_SUCCESS = True
 
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'password1*', 'password2*']
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 
 # ============================================================
 # SESSIONS
