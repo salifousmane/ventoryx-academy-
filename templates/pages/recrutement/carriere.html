@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Carrières — Ventoryx Academy{% endblock %}
+
+{% block content %}
+<style>
+.carriere-hero { background: linear-gradient(135deg, #1a3a6b 0%, #2d5a8e 100%); color: white; padding: 80px 20px; text-align: center; }
+.carriere-hero h1 { font-size: 2.5rem; margin-bottom: 16px; }
+.carriere-hero p { font-size: 1.15rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+.carriere-section { max-width: 1100px; margin: 60px auto; padding: 0 20px; }
+.offres-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; margin-top: 40px; }
+.offre-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 28px; border-left: 4px solid var(--primary, #1a3a6b); transition: transform .2s, box-shadow .2s; }
+.offre-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+.offre-card h3 { font-size: 1.2rem; color: #1a3a6b; margin-bottom: 8px; }
+.offre-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.offre-meta span { font-size: 0.85rem; color: #666; display: flex; align-items: center; gap: 5px; }
+.offre-card p { color: #555; line-height: 1.6; font-size: 0.95rem; margin-bottom: 20px; }
+.btn-postuler { display: inline-block; background: var(--primary, #1a3a6b); color: white; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background .2s; }
+.btn-postuler:hover { background: #2d5a8e; color: white; }
+.no-offres { text-align: center; padding: 60px 20px; color: #888; }
+.no-offres i { font-size: 3rem; margin-bottom: 16px; display: block; color: #ccc; }
+.candidature-spontanee { background: #f0f4ff; border-radius: 12px; padding: 40px; text-align: center; margin-top: 50px; }
+.candidature-spontanee h3 { color: #1a3a6b; font-size: 1.4rem; margin-bottom: 12px; }
+.candidature-spontanee p { color: #555; margin-bottom: 24px; }
+</style>
+
+<div class="carriere-hero">
+    <h1><i class="fas fa-briefcase"></i> Rejoignez notre équipe</h1>
+    <p>Ventoryx Academy recrute des passionnés de l'aéronautique et de la formation. Construisons ensemble l'avenir de l'excellence aéronautique.</p>
+</div>
+
+<section class="carriere-section">
+    <h2 style="color:#1a3a6b; font-size:1.8rem; margin-bottom:8px;">Offres d'emploi</h2>
+    <p style="color:#666;">{{ offres.count }} offre{{ offres.count|pluralize }} disponible{{ offres.count|pluralize }}</p>
+
+    {% if offres %}
+    <div class="offres-grid">
+        {% for offre in offres %}
+        <div class="offre-card">
+            <h3>{{ offre.titre }}</h3>
+            <div class="offre-meta">
+                {% if offre.departement %}<span><i class="fas fa-building"></i> {{ offre.departement }}</span>{% endif %}
+                {% if offre.type_contrat %}<span><i class="fas fa-file-contract"></i> {{ offre.type_contrat }}</span>{% endif %}
+                {% if offre.localisation %}<span><i class="fas fa-map-marker-alt"></i> {{ offre.localisation }}</span>{% endif %}
+                <span><i class="fas fa-calendar"></i> {{ offre.date_publication|date:"d M Y" }}</span>
+            </div>
+            <p>{{ offre.description|truncatewords:30 }}</p>
+            <a href="{% url 'core:postuler_offre' offre_id=offre.id %}" class="btn-postuler">
+                <i class="fas fa-paper-plane"></i> Postuler
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-offres">
+        <i class="fas fa-search"></i>
+        <h3>Aucune offre actuellement</h3>
+        <p>Nous n'avons pas de poste ouvert en ce moment, mais vous pouvez déposer une candidature spontanée.</p>
+    </div>
+    {% endif %}
+
+    <div class="candidature-spontanee">
+        <h3><i class="fas fa-envelope"></i> Candidature spontanée</h3>
+        <p>Vous ne trouvez pas le poste idéal ? Envoyez-nous votre candidature et nous vous contacterons lors de nos prochains recrutements.</p>
+        <a href="{% url 'core:postuler' %}" class="btn-postuler">
+            <i class="fas fa-paper-plane"></i> Envoyer ma candidature
+        </a>
+    </div>
+</section>
+{% endblock %}

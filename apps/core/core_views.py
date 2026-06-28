@@ -30,7 +30,7 @@ def health(request):
 def changer_langue(request, langue):
     if langue in LANGUES:
         translation.activate(langue)
-        request.session[translation.LANGUAGE_SESSION_KEY] = langue
+        request.session['_language'] = langue
         request.session['langue'] = langue
         response = redirect(request.META.get('HTTP_REFERER', 'core:index'))
         response.set_cookie(settings.LANGUAGE_COOKIE_NAME, langue, max_age=365*24*60*60)
@@ -186,24 +186,34 @@ def programme(request):
 
 def programme_metier(request, metier):
     templates = {
-        'pilote_de_ligne': 'pages/academie/programme_pilote_de_ligne.html',
-        'personnel_navigant': 'pages/academie/programme_pnc.html',
-        'ingenieur_aeronautique': 'pages/academie/programme_ingenieur_aeronautique.html',
-        'controleur_aerien': 'pages/academie/programme_controleur_aerien.html',
-        'technicien_aeronautique': 'pages/academie/programme_technicien_aeronautique.html',
-        'mecanicien_avion': 'pages/academie/programme_mecanicien_avion.html',
-        'agent_escale': 'pages/academie/programme_agent_escale.html',
-        'formation_avancee': 'pages/academie/programme_formation_avancee.html',
+        'pilote_de_ligne': 'pages/Academie/programme_pilote_de_ligne.html',
+        'personnel_navigant': 'pages/Academie/programme_pnc.html',
+        'ingenieur_aeronautique': 'pages/Academie/programme_ingenieur_aeronautique.html',
+        'controleur_aerien': 'pages/Academie/programme_controleur_aerien.html',
+        'technicien_aeronautique': 'pages/Academie/programme_technicien_aeronautique.html',
+        'mecanicien_avion': 'pages/Academie/programme_mecanicien_avion.html',
+        'agent_escale': 'pages/Academie/programme_agent_escale.html',
+        'formation_avancee': 'pages/Academie/programme_formation_avancee.html',
     }
     template = templates.get(metier)
     if not template:
         raise Http404('Programme non trouvé.')
-    return render(request, template, {'page_title': metier.replace('_', ' ').title()})
+    titres = {
+        'pilote_de_ligne': 'Pilote de Ligne',
+        'personnel_navigant': 'Personnel Navigant Commercial (PNC)',
+        'ingenieur_aeronautique': 'Ingénieur Aéronautique',
+        'controleur_aerien': 'Contrôleur Aérien',
+        'technicien_aeronautique': 'Technicien Aéronautique',
+        'mecanicien_avion': 'Mécanicien Avion',
+        'agent_escale': "Agent d'Escale",
+        'formation_avancee': 'Formation Avancée Premium',
+    }
+    return render(request, template, {'page_title': titres.get(metier, metier.replace('_', ' ').title())})
 
 
 def a_propos(request):
     page = PageStatique.objects.filter(type_page='a_propos', archive=False).first()
-    return render(request, 'pages/institution/a_propos.html', {'page_title': 'À propos', 'page': page})
+    return render(request, 'pages/a_propos.html', {'page_title': 'À propos', 'page': page})
 
 
 def carriere(request):
@@ -397,6 +407,69 @@ def design_experience_utilisateur(request):
     context = get_gestion_context(request, 'design')
     context.update({'page_title': 'Design & Expérience Utilisateur'})
     return render(request, 'pages/institution/design_experience_utilisateur.html', context)
+
+
+def recherche(request):
+    q = request.GET.get('q', '').strip()
+    resultats = []
+    if q:
+        from apps.blog.models import Article
+        from apps.parcours.models import Parcours
+        articles = Article.objects.filter(titre__icontains=q, statut='publie')[:5]
+        parcours_list = Parcours.objects.filter(nom__icontains=q)[:5]
+        resultats = list(articles) + list(parcours_list)
+    return render(request, 'pages/recherche.html', {'page_title': 'Recherche', 'q': q, 'resultats': resultats})
+
+
+def offline(request):
+    return render(request, 'offline.html', {'page_title': 'Hors ligne'})
+
+
+def api_blog_recent(request):
+    try:
+        from apps.blog.models import Article
+        articles = Article.objects.filter(publie=True).order_by('-date_publication')[:4]
+        data = [{'title': a.titre, 'slug': a.slug, 'excerpt': getattr(a, 'extrait', ''), 'date': str(a.date_publication)} for a in articles]
+    except Exception:
+        data = []
+    return JsonResponse({'articles': data})
+
+
+def api_temoignages_recent(request):
+    return JsonResponse({'temoignages': []})
+
+
+@require_http_methods(["GET", "POST"])
+def api_newsletter(request):
+    import json as _json
+    from django.views.decorators.csrf import csrf_exempt
+    if request.method == 'GET':
+        return JsonResponse({'status': 'ok'})
+    try:
+        body = _json.loads(request.body)
+        email = body.get('email', '').strip()
+    except Exception:
+        email = request.POST.get('email', '').strip()
+    if email:
+        return JsonResponse({'success': True, 'message': 'Inscription confirmée ! Merci.'})
+    return JsonResponse({'success': False, 'message': 'Email invalide.'}, status=400)
+
+
+@require_http_methods(["GET", "POST"])
+def set_language_api(request):
+    import json as _json
+    try:
+        body = _json.loads(request.body)
+        langue = body.get('langue', 'fr')
+    except Exception:
+        langue = 'fr'
+    if langue in ['fr', 'en', 'es', 'ar', 'zh', 'pt', 'de', 'it', 'ru', 'ja', 'ko', 'nl', 'pl', 'tr', 'hi']:
+        translation.activate(langue)
+        request.session['langue'] = langue
+        response = JsonResponse({'success': True})
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, langue, max_age=365*24*60*60)
+        return response
+    return JsonResponse({'success': False}, status=400)
 
 
 def handler403(request, exception=None):

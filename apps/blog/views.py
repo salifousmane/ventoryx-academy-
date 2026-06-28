@@ -19,7 +19,7 @@ def detail(request, slug):
     article.vues += 1
     article.save(update_fields=['vues'])
     articles_recents = Article.objects.filter(statut='publie').exclude(pk=article.pk).order_by('-date_publication')[:3]
-    return render(request, 'pages/support/article_detail.html', {
+    return render(request, 'pages/support/blog_detail.html', {
         'article': article,
         'articles_recents': articles_recents,
         'page_title': article.titre,

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Partenariats — Ventoryx Academy{% endblock %}
+
+{% block content %}
+<style>
+.partenariats-hero { background: linear-gradient(135deg, #1a3a6b 0%, #4a90d9 100%); color: white; padding: 80px 20px; text-align: center; }
+.partenariats-hero h1 { font-size: 2.5rem; margin-bottom: 16px; }
+.partenariats-hero p { font-size: 1.15rem; opacity: 0.9; max-width: 650px; margin: 0 auto; }
+.section { max-width: 1100px; margin: 60px auto; padding: 0 20px; }
+.section h2 { color: #1a3a6b; font-size: 1.9rem; margin-bottom: 12px; }
+.section p { color: #555; line-height: 1.7; }
+.avantages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; margin-top: 36px; }
+.avantage-card { background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.07); padding: 28px; text-align: center; }
+.avantage-card .icon { width: 60px; height: 60px; background: #e8f0fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.5rem; color: #1a3a6b; }
+.avantage-card h3 { color: #1a3a6b; margin-bottom: 10px; font-size: 1.05rem; }
+.avantage-card p { color: #666; font-size: 0.9rem; line-height: 1.6; }
+.types-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 36px; }
+.type-card { background: #f8faff; border-radius: 12px; padding: 28px; border: 1px solid #e0e8ff; }
+.type-card h3 { color: #1a3a6b; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.type-card ul { list-style: none; padding: 0; }
+.type-card ul li { color: #555; padding: 6px 0; display: flex; align-items: flex-start; gap: 8px; font-size: 0.9rem; }
+.type-card ul li::before { content: '✓'; color: #1a3a6b; font-weight: bold; flex-shrink: 0; margin-top: 1px; }
+.cta-section { background: linear-gradient(135deg, #1a3a6b, #2d5a8e); color: white; border-radius: 16px; padding: 50px 40px; text-align: center; margin: 60px auto; max-width: 800px; }
+.cta-section h2 { font-size: 1.8rem; margin-bottom: 16px; }
+.cta-section p { opacity: 0.9; margin-bottom: 28px; }
+.btn-cta { display: inline-block; background: white; color: #1a3a6b; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: transform .2s; }
+.btn-cta:hover { transform: translateY(-2px); color: #1a3a6b; }
+</style>
+
+<div class="partenariats-hero">
+    <h1><i class="fas fa-handshake"></i> Partenariats</h1>
+    <p>Unissez vos forces à Ventoryx Academy pour former les professionnels de l'aéronautique de demain.</p>
+</div>
+
+<section class="section">
+    <h2>Pourquoi devenir partenaire ?</h2>
+    <p>Ventoryx Academy est la référence de la formation aéronautique certifiante en ligne. En devenant partenaire, vous bénéficiez d'une visibilité exceptionnelle auprès de nos 10 000+ apprenants et de la crédibilité d'une marque reconnue dans le secteur.</p>
+    <div class="avantages-grid">
+        <div class="avantage-card">
+            <div class="icon"><i class="fas fa-eye"></i></div>
+            <h3>Visibilité accrue</h3>
+            <p>Votre marque mise en avant sur notre plateforme et nos communications.</p>
+        </div>
+        <div class="avantage-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <h3>Accès aux talents</h3>
+            <p>Identifiez et recrutez les meilleurs apprenants certifiés directement.</p>
+        </div>
+        <div class="avantage-card">
+            <div class="icon"><i class="fas fa-certificate"></i></div>
+            <h3>Co-certification</h3>
+            <p>Délivrez des certificats co-signés avec Ventoryx Academy.</p>
+        </div>
+        <div class="avantage-card">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <h3>Rapports & données</h3>
+            <p>Accès à des tableaux de bord sur les compétences formées.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Types de partenariats</h2>
+    <div class="types-grid">
+        <div class="type-card">
+            <h3><i class="fas fa-building"></i> Entreprises</h3>
+            <ul>
+                <li>Formation de vos équipes en interne</li>
+                <li>Plan de formation sur mesure</li>
+                <li>Tableau de bord dédié entreprise</li>
+                <li>Facturation mensuelle simplifiée</li>
+            </ul>
+        </div>
+        <div class="type-card">
+            <h3><i class="fas fa-university"></i> Institutions</h3>
+            <ul>
+                <li>Intégration dans votre cursus pédagogique</li>
+                <li>Accès multi-apprenants centralisé</li>
+                <li>Certificats co-accrédités</li>
+                <li>Support académique dédié</li>
+            </ul>
+        </div>
+        <div class="type-card">
+            <h3><i class="fas fa-plane"></i> Compagnies aériennes</h3>
+            <ul>
+                <li>Programmes de montée en compétences</li>
+                <li>Formations réglementaires conformes</li>
+                <li>Suivi des progressions par équipe</li>
+                <li>Intégration système RH possible</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<div class="cta-section">
+    <h2>Intéressé par un partenariat ?</h2>
+    <p>Contactez notre équipe commerciale pour discuter d'une collaboration sur mesure adaptée à vos besoins.</p>
+    <a href="{% url 'core:contact' %}" class="btn-cta">
+        <i class="fas fa-envelope"></i> Nous contacter
+    </a>
+</div>
+{% endblock %}

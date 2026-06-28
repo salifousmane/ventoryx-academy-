@@ -20,7 +20,7 @@ def index(request):
         'forums': forums,
         'page_title': 'Forum communautaire',
     }
-    return render(request, 'forum/forum_principal.html', context)
+    return render(request, 'pages/forum/forum_principal.html', context)
 
 
 def metier(request, metier):
@@ -33,7 +33,7 @@ def metier(request, metier):
         'sujets': sujets,
         'page_title': forum.nom,
     }
-    return render(request, 'forum/forum_metier.html', context)
+    return render(request, 'pages/forum/forum_metier.html', context)
 
 
 def sous_forum(request, metier, slug):
@@ -48,7 +48,7 @@ def sous_forum(request, metier, slug):
         'sujets': sujets,
         'page_title': f"{sous_forum_obj.nom} - {forum.nom}",
     }
-    return render(request, 'forum/sous_forum.html', context)
+    return render(request, 'pages/forum/sous_forum.html', context)
 
 
 def sujet(request, metier, sujet_id):
@@ -69,7 +69,7 @@ def sujet(request, metier, sujet_id):
         'messages': messages_list,
         'page_title': sujet_obj.titre,
     }
-    return render(request, 'forum/sujet.html', context)
+    return render(request, 'pages/forum/sujet.html', context)
 
 
 @login_required
@@ -109,7 +109,7 @@ def nouveau_sujet(request, metier, slug=None):
         'sous_forum': sous_forum_obj,
         'page_title': 'Nouveau sujet',
     }
-    return render(request, 'forum/nouveau_sujet.html', context)
+    return render(request, 'pages/forum/nouveau_sujet.html', context)
 
 
 @login_required

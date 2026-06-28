@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} — Ventoryx Academy{% endblock %}
+
+{% block content %}
+<style>
+.legal-hero { background: #f0f4ff; padding: 48px 20px; text-align: center; border-bottom: 1px solid #e0e8ff; }
+.legal-hero h1 { color: #1a3a6b; font-size: 2rem; margin-bottom: 8px; }
+.legal-hero p { color: #666; }
+.legal-content { max-width: 860px; margin: 48px auto; padding: 0 20px 60px; }
+.legal-content h2 { color: #1a3a6b; font-size: 1.3rem; margin: 32px 0 12px; border-bottom: 2px solid #e0e8ff; padding-bottom: 8px; }
+.legal-content p, .legal-content li { color: #444; line-height: 1.8; font-size: 0.97rem; }
+.legal-content ul, .legal-content ol { padding-left: 24px; }
+.legal-date { background: #f8f9fa; border-radius: 8px; padding: 12px 18px; margin-bottom: 32px; color: #666; font-size: 0.9rem; }
+</style>
+
+<div class="legal-hero">
+    <h1>{{ page.titre|default:page_title }}</h1>
+    <p>Ventoryx Academy — Document officiel</p>
+</div>
+
+<div class="legal-content">
+    {% if page.date_modification %}
+    <div class="legal-date">
+        <i class="fas fa-calendar-alt"></i> Dernière mise à jour : {{ page.date_modification|date:"d F Y" }}
+    </div>
+    {% endif %}
+
+    {% if page.contenu %}
+        {{ page.contenu|safe }}
+    {% else %}
+        <p><em>Ce document est en cours de rédaction. Veuillez nous contacter pour toute question.</em></p>
+    {% endif %}
+
+    <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #eee; color: #888; font-size: 0.85rem; text-align: center;">
+        Pour toute question concernant ce document, contactez-nous à <a href="{% url 'core:contact' %}">notre page de contact</a>.
+    </div>
+</div>
+{% endblock %}

@@ -107,11 +107,21 @@ def validation_secondaire(request):
 
 
 def google_login(request):
-    return redirect('core:index')
+    try:
+        from allauth.socialaccount.providers.google.views import oauth2_login
+        return oauth2_login(request)
+    except Exception:
+        from django.contrib import messages
+        messages.error(request, "La connexion Google n'est pas encore configurée. Veuillez utiliser email + mot de passe.")
+        return redirect('users:login')
 
 
 def google_callback(request):
-    return redirect('core:index')
+    try:
+        from allauth.socialaccount.providers.google.views import oauth2_callback
+        return oauth2_callback(request)
+    except Exception:
+        return redirect('users:login')
 
 
 @login_required
