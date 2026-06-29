@@ -1,0 +1,720 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Abonnements — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Découvrez les offres {{ site_name }} : Gratuit, Mensuel (39€/mois), Annuel (329€/an). Formation aéronautique en ligne, certificats SHA-256, assistant IA.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --success: #10b981;
+    }
+
+    /* ============ VIDEO HERO ============ */
+    .pricing-hero {
+        position: relative;
+        min-height: 450px;
+        overflow: hidden;
+        color: white;
+    }
+    .hero-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+        z-index: 0;
+    }
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 28, 46, 0.75);
+        z-index: 1;
+    }
+    .pricing-hero .container {
+        position: relative;
+        z-index: 2;
+        padding: 4rem 0 3rem;
+        text-align: center;
+    }
+    .pricing-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.8rem;
+        color: white;
+        margin-bottom: 0.8rem;
+    }
+    .pricing-hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .market-compare {
+        display: inline-block;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        padding: 0.6rem 1.5rem;
+        border-radius: 30px;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    /* ============ GARANTIE ============ */
+    .guarantee-strip {
+        background: #ECFDF5;
+        border-bottom: 1px solid var(--success);
+        padding: 0.8rem;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #065F46;
+    }
+
+    /* ============ WELCOME OFFER ============ */
+    .welcome-offer {
+        background: linear-gradient(135deg, #fef9e6, #fef3c7);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        border: 2px solid #D4AF37;
+        text-align: center;
+        transition: transform 0.3s;
+    }
+    .welcome-offer:hover {
+        transform: translateY(-3px);
+    }
+
+    /* ============ PRICING CARDS ============ */
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    .pricing-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        text-align: center;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    .pricing-card:nth-child(1) { animation-delay: 0.05s; }
+    .pricing-card:nth-child(2) { animation-delay: 0.1s; }
+    .pricing-card:nth-child(3) { animation-delay: 0.15s; }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .pricing-card.featured {
+        border: 2px solid var(--primary);
+        box-shadow: 0 15px 40px rgba(59,130,246,0.15);
+    }
+    .pricing-badge {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0.4rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        font-family: 'Montserrat', sans-serif;
+        white-space: nowrap;
+    }
+    .pricing-badge.popular {
+        background: var(--success);
+        color: white;
+    }
+    .pricing-badge.best {
+        background: #D4AF37;
+        color: #0F1C2E;
+    }
+
+    /* ============ SIMULATEUR DE PRIX ============ */
+    .simulator {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        transition: transform 0.3s;
+    }
+    .simulator:hover {
+        transform: translateY(-3px);
+    }
+    .simulator h2 { text-align: center; margin-bottom: 1.5rem; }
+    .simulator-control {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .simulator-control label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    .simulator-control input {
+        width: 100%;
+        margin-bottom: 1rem;
+        accent-color: var(--primary);
+    }
+    .result-box {
+        background: var(--bg-light);
+        border-radius: 16px;
+        padding: 1rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .total-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    /* ============ TABLEAU COMPARATIF ============ */
+    .compare-table-wrapper {
+        overflow-x: auto;
+        margin-bottom: 4rem;
+    }
+    .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .compare-table thead th {
+        background: var(--secondary);
+        color: white;
+        padding: 1.2rem 1rem;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.95rem;
+        text-align: center;
+    }
+    .compare-table thead th:first-child {
+        text-align: left;
+        padding-left: 1.5rem;
+        background: var(--secondary-light);
+    }
+    .compare-table thead th.highlight-col {
+        background: var(--primary);
+    }
+    .compare-table thead th.premium-col {
+        background: #D4AF37;
+        color: #0F1C2E;
+    }
+    .compare-table tbody td {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid var(--gray-light);
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+    .compare-table tbody td:first-child {
+        text-align: left;
+        font-weight: 600;
+        color: var(--secondary);
+        padding-left: 1.5rem;
+    }
+    .compare-table tbody tr:hover {
+        background: var(--bg-light);
+    }
+    .icon-check { color: var(--success); font-size: 1.1rem; }
+    .icon-cross { color: #e9ecef; font-size: 1.1rem; }
+
+    /* ============ TÉMOIGNAGES ============ */
+    .testimonials-preview {
+        margin: 3rem 0;
+        padding: 2rem;
+        background: var(--bg-light);
+        border-radius: 20px;
+    }
+    .testimonial-item {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        font-style: italic;
+        transition: transform 0.3s;
+    }
+    .testimonial-item:hover {
+        transform: translateX(5px);
+    }
+
+    /* ============ CERTIFICATS APERÇU ============ */
+    .certif-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    .certif-preview {
+        text-align: center;
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        transition: transform 0.3s;
+    }
+    .certif-preview:hover {
+        transform: translateY(-5px);
+    }
+    .certif-card {
+        border-radius: 12px;
+        padding: 2rem 1.5rem;
+        margin-bottom: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .certif-card.standard-cert {
+        background: linear-gradient(135deg, #f8fafc, #e9f2f8);
+        border: 2px solid var(--primary);
+    }
+    .certif-card.premium-cert {
+        background: linear-gradient(135deg, #fef9e6, #fef3c7);
+        border: 2px solid #D4AF37;
+    }
+
+    /* ============ FAQ ============ */
+    .faq-item {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .faq-item:hover {
+        transform: translateX(5px);
+    }
+
+    .section-header {
+        text-align: center;
+        max-width: 750px;
+        margin: 0 auto 3rem;
+    }
+    .section-header h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        color: var(--secondary);
+        position: relative;
+        display: inline-block;
+    }
+    .section-header h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+
+    /* Dark mode compatibility */
+    body.dark-mode .pricing-card,
+    body.dark-mode .simulator,
+    body.dark-mode .certif-preview,
+    body.dark-mode .testimonial-item,
+    body.dark-mode .faq-item {
+        background: #1E1E1E;
+    }
+    body.dark-mode .result-box {
+        background: #2C2C2C;
+    }
+    body.dark-mode .welcome-offer {
+        background: #2C2C2C;
+    }
+    body.dark-mode .compare-table tbody td {
+        border-bottom-color: #2C2C2C;
+    }
+
+    @media (max-width: 768px) {
+        .pricing-hero h1 { font-size: 2rem; }
+        .pricing-grid { grid-template-columns: 1fr; }
+        .compare-table thead th,
+        .compare-table tbody td { padding: 0.7rem 0.5rem; font-size: 0.75rem; }
+        .certif-preview-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ============ BANDEAU URGENCE ============ -->
+{% if places_bienvenue_restantes and places_bienvenue_restantes > 0 %}
+<div class="urgency-banner">
+    <i class="fas fa-fire"></i>
+    Offre de bienvenue : plus que 
+    <strong>{{ places_bienvenue_restantes }}</strong> 
+    place{{ places_bienvenue_restantes|pluralize }} disponible{{ places_bienvenue_restantes|pluralize }} 
+    pour un accès gratuit
+</div>
+{% endif %}
+
+<!-- ============ GARANTIE ============ -->
+<div class="guarantee-strip">
+    <i class="fas fa-shield-alt"></i>
+    Satisfait ou remboursé sous 14 jours &nbsp;|&nbsp;
+    <i class="fas fa-lock"></i> Paiement 100% sécurisé Stripe &nbsp;|&nbsp;
+    <i class="fas fa-user-shield"></i> Données protégées RGPD
+</div>
+
+<!-- ============ HERO AVEC VIDÉO ============ -->
+<section class="pricing-hero">
+    <video autoplay muted loop playsinline class="hero-video" poster="{% static 'images/hero-poster.jpg' %}">
+        <source src="{% static 'videos/aviation-hero.mp4' %}" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <h1>Choisissez votre formule</h1>
+        <p>
+            Démarrez gratuitement ou passez au Mensuel pour accéder à tous les parcours.
+        </p>
+        <div class="market-compare">
+            <span style="font-size: 1.1rem; font-weight: 600;">
+                📚 Formation théorique aéronautique structurée<br>
+                <span style="color: #10b981; font-weight: 700;">
+                    À partir de 0 € — Accès immédiat
+                </span>
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- ============ CONTENU PRINCIPAL ============ -->
+<section style="padding: 5rem 0;">
+    <div class="container">
+
+        <!-- OFFRE DE BIENVENUE -->
+        <div class="welcome-offer">
+            <i class="fas fa-gift" style="font-size: 2rem; color: #D4AF37; margin-bottom: 0.5rem;"></i>
+            <h2 style="font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: #0F1C2E; margin-bottom: 0.5rem;">
+                Offre de bienvenue
+            </h2>
+            <p style="color: #6C757D; max-width: 550px; margin: 0 auto;">
+                Les deux premières inscriptions bénéficient d'un accès gratuit.<br>
+                <strong>Inscription n°1 :</strong> 30 jours offerts &nbsp;|&nbsp;
+                <strong>Inscription n°2 :</strong> 30 jours offerts.
+            </p>
+        </div>
+
+        <!-- SIMULATEUR DE PRIX -->
+        <div class="simulator">
+            <h2>💰 Simulez votre budget</h2>
+            <p style="text-align: center; margin-bottom: 1rem;">Calculez le coût de votre formation sur mesure</p>
+            <div class="simulator-control">
+                <label>Durée de formation : <span id="monthsValue">12</span> mois</label>
+                <input type="range" id="monthsSlider" min="1" max="24" value="12" step="1">
+                <div class="result-box">
+                    <div style="font-size: 0.85rem; color: var(--gray);">Coût total estimé</div>
+                    <div class="total-price"><span id="totalPrice">468</span> €</div>
+                    <div style="font-size: 0.8rem;">Soit <span id="pricePerMonth">39</span> €/mois</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.5rem;">🔒 Sans engagement. Résiliable à tout moment.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 CARTES TARIFAIRES -->
+        <div class="pricing-grid">
+            
+            <!-- GRATUIT -->
+            <div class="pricing-card">
+                <div class="pricing-icon free">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3 class="pricing-name">Gratuit</h3>
+                <p class="pricing-subtitle">Pour découvrir la plateforme</p>
+                <div class="pricing-amount free-amount">0 €</div>
+                <p class="pricing-period">à vie</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> <strong>2 parcours</strong></li>
+                    <li><i class="fas fa-check"></i> Technicien aéronautique</li>
+                    <li><i class="fas fa-check"></i> Contrôleur aérien</li>
+                    <li><i class="fas fa-check"></i> 160 cours</li>
+                    <li><i class="fas fa-check"></i> Certificats standard</li>
+                    <li class="disabled"><i class="fas fa-times"></i> 5 autres parcours</li>
+                </ul>
+                <a href="{% url 'users:register' %}" class="btn-pricing free-btn">
+                    <i class="fas fa-user-plus"></i> Créer un compte gratuit
+                </a>
+            </div>
+
+            <!-- MENSUEL -->
+            <div class="pricing-card featured">
+                <span class="pricing-badge popular">⭐ Le plus populaire</span>
+                <div class="pricing-icon standard">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3 class="pricing-name">Mensuel</h3>
+                <p class="pricing-subtitle">Sans engagement</p>
+                <div class="pricing-amount">39 €</div>
+                <p class="pricing-period">par mois</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> <strong>7 parcours</strong> standards</li>
+                    <li><i class="fas fa-check"></i> Pilote de ligne, PNC, Ingénieur</li>
+                    <li><i class="fas fa-check"></i> 560 cours</li>
+                    <li><i class="fas fa-check"></i> Certificats standard</li>
+                    <li><i class="fas fa-check"></i> Support standard (48h)</li>
+                </ul>
+                <a href="{% url 'users:register' %}" class="btn-pricing standard-btn">
+                    Choisir le Mensuel
+                </a>
+            </div>
+
+            <!-- ANNUEL -->
+            <div class="pricing-card">
+                <span class="pricing-badge best">👑 Meilleure offre</span>
+                <div class="pricing-icon premium">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3 class="pricing-name">Annuel</h3>
+                <p class="pricing-subtitle">Le plus complet</p>
+                <div class="pricing-saving">
+                    <i class="fas fa-piggy-bank"></i> Économisez 29%
+                </div>
+                <div class="pricing-amount">329 €</div>
+                <p class="pricing-period">par an (27,42 €/mois)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> <strong>8 parcours</strong> (tout inclus)</li>
+                    <li><i class="fas fa-check"></i> Parcours Avancé Premium</li>
+                    <li><i class="fas fa-check"></i> 650 cours au total</li>
+                    <li><i class="fas fa-check"></i> <strong>Certificats Premium</strong></li>
+                    <li><i class="fas fa-check"></i> Support prioritaire (24h)</li>
+                    <li><i class="fas fa-check"></i> Téléchargement hors-ligne</li>
+                </ul>
+                <a href="{% url 'users:register' %}" class="btn-pricing premium-btn">
+                    Choisir l'Annuel
+                </a>
+            </div>
+        </div>
+
+        <!-- TÉMOIGNAGES (APPEL API) -->
+        <div class="section-header">
+            <h2>Ils nous font confiance</h2>
+            <p>Ce que nos apprenants disent de Ventoryx Academy</p>
+        </div>
+        <div class="testimonials-preview" id="testimonialsPreview">
+            <div style="text-align: center; padding: 1rem;">
+                <i class="fas fa-spinner fa-spin"></i> Chargement des témoignages...
+            </div>
+        </div>
+
+        <!-- CERTIFICATS APERÇU -->
+        <div class="section-header">
+            <h2>Vos futurs certificats</h2>
+            <p>Standard ou Premium, chaque certificat est vérifiable en ligne avec son hash SHA-256 unique</p>
+        </div>
+
+        <div class="certif-preview-grid">
+            <div class="certif-preview">
+                <div class="certif-card standard-cert">
+                    <i class="fas fa-certificate certif-watermark"></i>
+                    <div class="certif-title">Certificat Standard</div>
+                    <div class="certif-name" style="font-size: 0.8rem; color: #6C757D;">{{ site_name }}</div>
+                    <div style="font-size: 0.7rem; color: #ADB5BD; margin-top: 0.5rem;">
+                        N° VTX-2026-XXXX &nbsp;|&nbsp; SHA-256 vérifiable
+                    </div>
+                </div>
+                <p style="font-size: 0.85rem; color: #6C757D;">
+                    Inclus dans toutes les formules
+                </p>
+            </div>
+            <div class="certif-preview">
+                <div class="certif-card premium-cert">
+                    <i class="fas fa-crown certif-watermark"></i>
+                    <div class="certif-title">Certificat Premium</div>
+                    <div class="certif-name" style="font-size: 0.8rem; color: #6C757D;">{{ site_name }}</div>
+                    <div style="font-size: 0.7rem; color: #ADB5BD; margin-top: 0.5rem;">
+                        N° VTX-P-2026-XXXX &nbsp;|&nbsp; Mention Excellence
+                    </div>
+                </div>
+                <p style="font-size: 0.85rem; color: #6C757D;">
+                    Exclusif à la formule Annuelle
+                </p>
+            </div>
+        </div>
+
+        <!-- TABLEAU COMPARATIF -->
+        <div class="section-header">
+            <h2>Comparatif détaillé</h2>
+            <p>Toutes les fonctionnalités en un coup d'œil</p>
+        </div>
+
+        <div class="compare-table-wrapper">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Fonctionnalité</th>
+                        <th>Gratuit</th>
+                        <th class="highlight-col">Mensuel</th>
+                        <th class="premium-col">Annuel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Prix</td><td><strong>0 €</strong></td><td><strong>39 €/mois</strong></td><td><strong>329 €/an</strong></td></tr>
+                    <tr><td>Économie vs Mensuel</td><td>—</td><td>—</td><td><strong>-29% (140 €)</strong></td></tr>
+                    <tr><td>Engagement</td><td>Aucun</td><td>Aucun</td><td>12 mois</td></tr>
+                    <tr><td>Technicien aéronautique</td><td><i class="fas fa-check icon-check"></i></td><td><i class="fas fa-check icon-check"></i></td><td><i class="fas fa-check icon-check"></i></td></tr>
+                    <tr><td>Contrôleur aérien</td><td><i class="fas fa-check icon-check"></i></td><td><i class="fas fa-check icon-check"></i></td><td><i class="fas fa-check icon-check"></i></td></tr>
+                    <tr><td>Pilote de ligne</td><td><i class="fas fa-times icon-cross"></i></td><td><i class="fas fa-check icon-check"></i></td><td><i class="fas fa-check icon-check"></i></td></tr>
+                    <tr><td>PNC</td><td><i class="fas fa-times icon-cross"></i></td><td><i class="fas fa-check icon-check"></i></td><td><i class="fas fa-check icon-check"></i></td></tr>
+                    <tr><td>Ingénieur aéronautique</td><td><i class="fas fa-times icon-cross"></i></td><td><i class="fas fa-check icon-check"></i></td><td><i class="fas fa-check icon-check"></i></td></tr>
+                    <tr><td>Avancé Premium</td><td><i class="fas fa-times icon-cross"></i></td><td><i class="fas fa-times icon-cross"></i></td><td><i class="fas fa-check icon-check"></i></td></tr>
+                    <tr><td>Nombre de cours</td><td>160</td><td>560</td><td><strong>650</strong></td></tr>
+                    <tr><td>Type de certificat</td><td>Standard</td><td>Standard</td><td><strong>Premium</strong></td></tr>
+                    <tr><td>Support</td><td>FAQ</td><td>Standard (48h)</td><td><strong>Prioritaire (24h)</strong></td></tr>
+                    <tr><td>Téléchargement hors-ligne</td><td><i class="fas fa-times icon-cross"></i></td><td><i class="fas fa-times icon-cross"></i></td><td><i class="fas fa-check icon-check"></i></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<!-- FAQ SIMPLIFIÉE -->
+<section style="padding: 4rem 0; background: #F8F9FA;">
+    <div class="container" style="max-width: 800px;">
+        <div class="section-header">
+            <h2>Questions fréquentes</h2>
+        </div>
+        <div style="display: grid; gap: 1rem;">
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <h3>Puis-je changer de formule ? <i class="fas fa-chevron-down"></i></h3>
+                <p class="faq-answer">Oui, vous pouvez passer du Gratuit au Mensuel, ou du Mensuel à l'Annuel à tout moment. La différence de prix est calculée au prorata de la période restante.</p>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <h3>Quelle est la différence entre les certificats ? <i class="fas fa-chevron-down"></i></h3>
+                <p class="faq-answer">Le certificat Standard atteste votre réussite. Le certificat Premium inclut une mention « Excellence » et un design doré. Les deux sont vérifiables en ligne avec un hash SHA-256.</p>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <h3>Comment fonctionne l'offre de bienvenue ? <i class="fas fa-chevron-down"></i></h3>
+                <p class="faq-answer">Les deux premières inscriptions bénéficient de 30 jours offerts sur l'abonnement Mensuel. Offre valable uniquement pour les 2 premiers inscrits.</p>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <h3>Puis-je résilier à tout moment ? <i class="fas fa-chevron-down"></i></h3>
+                <p class="faq-answer">Les formules Gratuite et Mensuelle sont sans engagement. L'Annuel est un engagement de 12 mois. Vous pouvez résilier depuis votre espace personnel.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // ============ SIMULATEUR DE PRIX ============
+    const slider = document.getElementById('monthsSlider');
+    const monthsValue = document.getElementById('monthsValue');
+    const totalPrice = document.getElementById('totalPrice');
+    const pricePerMonth = document.getElementById('pricePerMonth');
+
+    if (slider) {
+        slider.addEventListener('input', () => {
+            const months = parseInt(slider.value);
+            monthsValue.innerText = months;
+            const total = months * 39;
+            totalPrice.innerText = total;
+            pricePerMonth.innerText = 39;
+        });
+    }
+
+    // ============ TÉMOIGNAGES (APPEL API) ============
+    async function loadTestimonials() {
+        const container = document.getElementById('testimonialsPreview');
+        try {
+            const response = await fetch('/api/temoignages/recentes/?limit=2');
+            const data = await response.json();
+            
+            if (data.temoignages && data.temoignages.length > 0) {
+                container.innerHTML = data.temoignages.map(t => `
+                    <div class="testimonial-item">
+                        <i class="fas fa-quote-left" style="color: #0077B6; margin-right: 0.5rem;"></i>
+                        "${t.message.substring(0, 150)}${t.message.length > 150 ? '...' : ''}"
+                        <div style="margin-top: 0.5rem; font-weight: 600;">— ${t.name}</div>
+                        <div style="font-size: 0.75rem; color: #6C757D;">${t.role || 'Apprenant'}</div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = `
+                    <div class="testimonial-item">
+                        <i class="fas fa-quote-left" style="color: #0077B6; margin-right: 0.5rem;"></i>
+                        "Une plateforme exceptionnelle pour se préparer aux métiers de l'aérien."
+                        <div style="margin-top: 0.5rem; font-weight: 600;">— Thomas M.</div>
+                        <div style="font-size: 0.75rem; color: #6C757D;">Apprenant</div>
+                    </div>
+                    <div class="testimonial-item">
+                        <i class="fas fa-quote-left" style="color: #0077B6; margin-right: 0.5rem;"></i>
+                        "Le mode hors-ligne m'a sauvé pendant mes longues escales."
+                        <div style="margin-top: 0.5rem; font-weight: 600;">— Sophie D.</div>
+                        <div style="font-size: 0.75rem; color: #6C757D;">Apprenante</div>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            container.innerHTML = `
+                <div class="testimonial-item">
+                    <i class="fas fa-quote-left" style="color: #0077B6; margin-right: 0.5rem;"></i>
+                    "La plateforme est intuitive et les contenus sont très bien structurés."
+                    <div style="margin-top: 0.5rem; font-weight: 600;">— Alexandre M.</div>
+                    <div style="font-size: 0.75rem; color: #6C757D;">Testeur</div>
+                </div>
+                <div class="testimonial-item">
+                    <i class="fas fa-quote-left" style="color: #0077B6; margin-right: 0.5rem;"></i>
+                    "Les quiz sont un vrai plus pour vérifier ses connaissances."
+                    <div style="margin-top: 0.5rem; font-weight: 600;">— Laura D.</div>
+                    <div style="font-size: 0.75rem; color: #6C757D;">Testeuse</div>
+                </div>
+            `;
+        }
+    }
+    
+    loadTestimonials();
+</script>
+
+{% endblock %} class="fas fa-quote-left" style="color: #0077B6; margin-right: 0.5rem;"></i>
+                    "Une plateforme exceptionnelle pour se préparer aux métiers de l'aérien."
+                    <div style="margin-top: 0.5rem; font-weight: 600;">— Thomas M.</div>
+                    <div style="font-size: 0.75rem; color: #6C757D;">Apprenant</div>
+                </div>
+                <div class="testimonial-item">
+                    <i class="fas fa-quote-left" style="color: #0077B6; margin-right: 0.5rem;"></i>
+                    "Le mode hors-ligne m'a sauvé pendant mes longues escales."
+                    <div style="margin-top: 0.5rem; font-weight: 600;">— Sophie D.</div>
+                    <div style="font-size: 0.75rem; color: #6C757D;">Apprenante</div>
+                </div>
+            `;
+        }
+    }
+    
+    loadTestimonials();
+</script>
+
+{% endblock %}

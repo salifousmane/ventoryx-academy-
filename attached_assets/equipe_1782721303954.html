@@ -1,0 +1,563 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}L'équipe — Ventoryx Academy{% endblock %}
+
+{% block meta_description %}
+Découvrez toute l'équipe de Ventoryx Academy : direction, pédagogie, technique, marketing, support, administration et experts. 20+ passionnés à votre service.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #3B82F6;
+        --primary-dark: #2563EB;
+        --secondary: #0F1C2E;
+        --secondary-light: #1E3A5F;
+        --gray: #6C757D;
+        --gray-light: #E9ECEF;
+        --bg-light: #F8FAFE;
+        --white: #ffffff;
+        --gold: #D4AF37;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --purple: #8B5CF6;
+    }
+
+    .team-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+    }
+
+    /* Hero */
+    .team-hero {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .team-hero h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+    }
+    .team-hero .subtitle {
+        color: var(--gray);
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+    }
+    .team-stats-header {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .stat-header {
+        background: var(--white);
+        border-radius: 50px;
+        padding: 0.3rem 1rem;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Section title */
+    .section-title {
+        text-align: center;
+        margin: 3rem 0 2rem;
+    }
+    .section-title h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.6rem;
+        color: var(--secondary);
+        position: relative;
+        display: inline-block;
+    }
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    .section-title p {
+        color: var(--gray);
+        margin-top: 1rem;
+    }
+
+    /* Values */
+    .values-section {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    .value-card {
+        text-align: center;
+        padding: 2rem;
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    .value-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .value-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.8rem;
+    }
+    .value-card h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    .value-card p {
+        color: var(--gray);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    /* Team grid */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    .team-card {
+        background: var(--white);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.4s;
+    }
+    .team-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+    .team-card-header {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        padding: 2rem;
+        text-align: center;
+    }
+    .team-avatar {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--primary);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .team-card-header h3 {
+        color: white;
+        margin-top: 1rem;
+        margin-bottom: 0.3rem;
+    }
+    .team-role {
+        color: var(--gold);
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    .team-department {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        margin-top: 0.2rem;
+    }
+    .team-card-body {
+        padding: 1.5rem;
+    }
+    .team-bio {
+        color: var(--gray);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    .team-stats {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem 0;
+        padding: 0.5rem 0;
+        border-top: 1px solid var(--gray-light);
+        border-bottom: 1px solid var(--gray-light);
+    }
+    .team-stat {
+        text-align: center;
+        flex: 1;
+    }
+    .team-stat-value {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+    .team-stat-label {
+        font-size: 0.65rem;
+        color: var(--gray);
+    }
+    .team-social {
+        display: flex;
+        justify-content: center;
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+    .team-social a {
+        width: 34px;
+        height: 34px;
+        background: var(--bg-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray);
+        transition: all 0.3s;
+    }
+    .team-social a:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    /* Experts section */
+    .experts-section {
+        background: var(--bg-light);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+    }
+    .experts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    .expert-card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1.2rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .expert-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+    .expert-avatar {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 0.8rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+    .expert-card h4 {
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+    }
+    .expert-role {
+        font-size: 0.7rem;
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    /* Join section */
+    .join-section {
+        background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+        border-radius: 24px;
+        padding: 3rem;
+        text-align: center;
+        color: white;
+    }
+    .join-section h2 {
+        color: white;
+        margin-bottom: 0.5rem;
+    }
+    .join-section p {
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+    }
+    .btn-join {
+        background: var(--gold);
+        color: var(--secondary);
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s;
+        display: inline-block;
+    }
+    .btn-join:hover {
+        transform: translateY(-2px);
+        background: #c9a030;
+    }
+
+    /* Dark mode */
+    body.dark-mode .value-card,
+    body.dark-mode .team-card,
+    body.dark-mode .expert-card,
+    body.dark-mode .stat-header {
+        background: #1E1E1E;
+    }
+    body.dark-mode .team-social a {
+        background: #2C2C2C;
+        color: #ADB5BD;
+    }
+    body.dark-mode .experts-section {
+        background: #2C2C2C;
+    }
+
+    @media (max-width: 768px) {
+        .values-section {
+            grid-template-columns: 1fr;
+        }
+        .team-hero h1 {
+            font-size: 1.8rem;
+        }
+        .team-card-header {
+            padding: 1.5rem;
+        }
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="team-container">
+    <div class="team-hero">
+        <h1>L'équipe de Ventoryx Academy</h1>
+        <p class="subtitle">20+ passionnés réunis pour votre réussite aéronautique</p>
+        <div class="team-stats-header">
+            <span class="stat-header">📚 15 experts pédagogiques</span>
+            <span class="stat-header">💻 8 développeurs</span>
+            <span class="stat-header">🌍 12 pays représentés</span>
+        </div>
+    </div>
+
+    <!-- Valeurs -->
+    <div class="values-section">
+        <div class="value-card">
+            <div class="value-icon"><i class="fas fa-graduation-cap"></i></div>
+            <h3>Expertise pédagogique</h3>
+            <p>Nos formations sont conçues par des professionnels du secteur aéronautique avec des années d'expérience terrain.</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon"><i class="fas fa-heart"></i></div>
+            <h3>Passion</h3>
+            <p>L'aviation est plus qu'un métier, c'est une passion que nous transmettons à chaque apprenant.</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>Excellence</h3>
+            <p>Nous visons l'excellence dans chaque module, chaque cours, chaque test.</p>
+        </div>
+    </div>
+
+    <!-- ============ DIRECTION ============ -->
+    <div class="section-title">
+        <h2>Direction générale</h2>
+        <p>La vision et la stratégie de Ventoryx Academy</p>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-card-header">
+                <div class="team-avatar"><i class="fas fa-user-tie"></i></div>
+                <h3>Thomas Martin</h3>
+                <div class="team-role">Fondateur & Directeur Général</div>
+                <div class="team-department">Direction</div>
+            </div>
+            <div class="team-card-body">
+                <div class="team-bio">Ancien pilote de ligne, Thomas a créé Ventoryx Academy pour démocratiser la formation aéronautique.</div>
+                <div class="team-stats"><div class="team-stat"><div class="team-stat-value">15 ans</div><div class="team-stat-label">expérience</div></div><div class="team-stat"><div class="team-stat-value">10 000+</div><div class="team-stat-label">heures de vol</div></div></div>
+                <div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fas fa-envelope"></i></a></div>
+            </div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header">
+                <div class="team-avatar"><i class="fas fa-chalkboard-user"></i></div>
+                <h3>Sophie Dubois</h3>
+                <div class="team-role">Directrice pédagogique</div>
+                <div class="team-department">Direction</div>
+            </div>
+            <div class="team-card-body">
+                <div class="team-bio">Ancienne formatrice PNC chez Air France, elle conçoit et supervise tous les contenus pédagogiques.</div>
+                <div class="team-stats"><div class="team-stat"><div class="team-stat-value">8 ans</div><div class="team-stat-label">expérience</div></div><div class="team-stat"><div class="team-stat-value">2 500+</div><div class="team-stat-label">apprenants</div></div></div>
+                <div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fas fa-envelope"></i></a></div>
+            </div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header">
+                <div class="team-avatar"><i class="fas fa-code"></i></div>
+                <h3>Mehdi Benali</h3>
+                <div class="team-role">Directeur technique</div>
+                <div class="team-department">Direction</div>
+            </div>
+            <div class="team-card-body">
+                <div class="team-bio">Expert en IA et développement, il a conçu la plateforme et le système de certificats SHA-256.</div>
+                <div class="team-stats"><div class="team-stat"><div class="team-stat-value">10 ans</div><div class="team-stat-label">expérience</div></div><div class="team-stat"><div class="team-stat-value">15+</div><div class="team-stat-label">projets EdTech</div></div></div>
+                <div class="team-social"><a href="#"><i class="fab fa-github"></i></a><a href="#"><i class="fab fa-linkedin-in"></i></a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ ÉQUIPE PÉDAGOGIQUE ============ -->
+    <div class="section-title">
+        <h2>Équipe pédagogique</h2>
+        <p>Des experts par métier pour des formations de qualité</p>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-fighter-jet"></i></div><h3>Marc Laurent</h3><div class="team-role">Responsable Pilote</div><div class="team-department">Pédagogie</div></div>
+            <div class="team-card-body"><div class="team-bio">Commandant de bord retraité, il supervise les modules navigation et performance.</div><div class="team-stats"><div class="team-stat"><div class="team-stat-value">25 ans</div><div class="team-stat-label">expérience</div></div></div><div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-users"></i></div><h3>Julie Moreau</h3><div class="team-role">Responsable PNC</div><div class="team-department">Pédagogie</div></div>
+            <div class="team-card-body"><div class="team-bio">Ancienne chef de cabine, elle a conçu les modules sécurité et service.</div><div class="team-stats"><div class="team-stat"><div class="team-stat-value">12 ans</div><div class="team-stat-label">expérience</div></div></div><div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-microchip"></i></div><h3>Camille Laurent</h3><div class="team-role">Responsable Ingénierie</div><div class="team-department">Pédagogie</div></div>
+            <div class="team-card-body"><div class="team-bio">Diplômée ISAE-SUPAERO, spécialiste aérodynamique et propulsion.</div><div class="team-stats"><div class="team-stat"><div class="team-stat-value">8 ans</div><div class="team-stat-label">expérience</div></div></div><div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-radar"></i></div><h3>Jean-Luc Roche</h3><div class="team-role">Responsable Contrôle</div><div class="team-department">Pédagogie</div></div>
+            <div class="team-card-body"><div class="team-bio">Ancien contrôleur aérien, expert en phraséologie et gestion du trafic.</div><div class="team-stats"><div class="team-stat"><div class="team-stat-value">20 ans</div><div class="team-stat-label">expérience</div></div></div><div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-wrench"></i></div><h3>Karim Belkacem</h3><div class="team-role">Responsable Maintenance</div><div class="team-department">Pédagogie</div></div>
+            <div class="team-card-body"><div class="team-bio">Mécanicien avion certifié, il supervise les modules techniques.</div><div class="team-stats"><div class="team-stat"><div class="team-stat-value">20 ans</div><div class="team-stat-label">expérience</div></div></div><div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-ticket-alt"></i></div><h3>Nadia Bensalah</h3><div class="team-role">Responsable Escale</div><div class="team-department">Pédagogie</div></div>
+            <div class="team-card-body"><div class="team-bio">Ancienne responsable escale, experte en relation client aéroportuaire.</div><div class="team-stats"><div class="team-stat"><div class="team-stat-value">10 ans</div><div class="team-stat-label">expérience</div></div></div><div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+    </div>
+
+    <!-- ============ ÉQUIPE TECHNIQUE ============ -->
+    <div class="section-title">
+        <h2>Équipe technique</h2>
+        <p>Ceux qui font tourner la plateforme</p>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-database"></i></div><h3>Sarah Kone</h3><div class="team-role">Lead Developer IA</div><div class="team-department">Technique</div></div>
+            <div class="team-card-body"><div class="team-bio">Experte en IA, elle développe l'assistant pédagogique et les algorithmes de recommandation.</div><div class="team-social"><a href="#"><i class="fab fa-github"></i></a><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-crown"></i></div><h3>Alexis Petit</h3><div class="team-role">Lead Front-end</div><div class="team-department">Technique</div></div>
+            <div class="team-card-body"><div class="team-bio">Spécialiste React et Vue.js, il conçoit l'interface utilisateur.</div><div class="team-social"><a href="#"><i class="fab fa-github"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-cloud"></i></div><h3>David Niang</h3><div class="team-role">DevOps</div><div class="team-department">Technique</div></div>
+            <div class="team-card-body"><div class="team-bio">Responsable de l'infrastructure et de la scalabilité de la plateforme.</div><div class="team-social"><a href="#"><i class="fab fa-github"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-palette"></i></div><h3>Léa Lefebvre</h3><div class="team-role">UI/UX Designer</div><div class="team-department">Design</div></div>
+            <div class="team-card-body"><div class="team-bio">Elle conçoit l'expérience utilisateur et l'interface de la plateforme.</div><div class="team-social"><a href="#"><i class="fab fa-behance"></i></a></div></div>
+        </div>
+    </div>
+
+    <!-- ============ MARKETING & COMMUNICATION ============ -->
+    <div class="section-title">
+        <h2>Marketing & Communication</h2>
+        <p>Ceux qui font connaître Ventoryx Academy</p>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-chart-line"></i></div><h3>Claire Dumont</h3><div class="team-role">Responsable Marketing</div><div class="team-department">Marketing</div></div>
+            <div class="team-card-body"><div class="team-bio">Stratégie d'acquisition et notoriété de la marque.</div><div class="team-social"><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-comments"></i></div><h3>Omar Diop</h3><div class="team-role">Community Manager</div><div class="team-department">Marketing</div></div>
+            <div class="team-card-body"><div class="team-bio">Anime la communauté et les réseaux sociaux.</div><div class="team-social"><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-linkedin-in"></i></a></div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-rocket"></i></div><h3>Emma Bernard</h3><div class="team-role">Growth Hacker</div><div class="team-department">Marketing</div></div>
+            <div class="team-card-body"><div class="team-bio">Optimise la conversion et expérimente de nouveaux canaux.</div></div>
+        </div>
+    </div>
+
+    <!-- ============ SUPPORT & RELATION CLIENT ============ -->
+    <div class="section-title">
+        <h2>Support & Relation client</h2>
+        <p>À votre écoute</p>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-headset"></i></div><h3>Laura Garnier</h3><div class="team-role">Responsable support</div><div class="team-department">Support</div></div>
+            <div class="team-card-body"><div class="team-bio">Coordonne l'équipe support et gère les escalades.</div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-user-check"></i></div><h3>Moussa Diallo</h3><div class="team-role">Support technique</div><div class="team-department">Support</div></div>
+            <div class="team-card-body"><div class="team-bio">Expert technique, résout les problèmes complexes.</div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-smile"></i></div><h3>Alice Rousseau</h3><div class="team-role">Chargée clientèle</div><div class="team-department">Support</div></div>
+            <div class="team-card-body"><div class="team-bio">Premier contact pour les questions des apprenants.</div></div>
+        </div>
+    </div>
+
+    <!-- ============ ADMINISTRATION & RH ============ -->
+    <div class="section-title">
+        <h2>Administration & RH</h2>
+        <p>Les coulisses de l'organisation</p>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-users"></i></div><h3>Fatima Diallo</h3><div class="team-role">Responsable RH</div><div class="team-department">Administration</div></div>
+            <div class="team-card-body"><div class="team-bio">Gère les recrutements et la carrière des collaborateurs.</div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-calculator"></i></div><h3>Philippe Martin</h3><div class="team-role">Comptable</div><div class="team-department">Administration</div></div>
+            <div class="team-card-body"><div class="team-bio">Gestion financière et comptable de la société.</div></div>
+        </div>
+        <div class="team-card">
+            <div class="team-card-header"><div class="team-avatar"><i class="fas fa-gavel"></i></div><h3>Marie Camara</h3><div class="team-role">Juriste</div><div class="team-department">Administration</div></div>
+            <div class="team-card-body"><div class="team-bio">Conformité RGPD, contrats et aspects légaux.</div></div>
+        </div>
+    </div>
+
+    <!-- ============ EXPERTS CONTRIBUTEURS ============ -->
+    <div class="experts-section">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Nos experts contributeurs</h2>
+        <div class="experts-grid">
+            <div class="expert-card"><div class="expert-avatar"><i class="fas fa-user-md"></i></div><h4>Dr. Pierre Lefèvre</h4><div class="expert-role">Expert en facteurs humains</div></div>
+            <div class="expert-card"><div class="expert-avatar"><i class="fas fa-leaf"></i></div><h4>Anna Schmitt</h4><div class="expert-role">Aviation durable</div></div>
+            <div class="expert-card"><div class="expert-avatar"><i class="fas fa-chart-line"></i></div><h4>Yannick Sow</h4><div class="expert-role">Data analyst</div></div>
+            <div class="expert-card"><div class="expert-avatar"><i class="fas fa-language"></i></div><h4>Elena Rossi</h4><div class="expert-role">Anglais aéronautique</div></div>
+        </div>
+    </div>
+
+    <!-- Rejoindre l'équipe -->
+    <div class="join-section">
+        <h2>Rejoignez l'aventure</h2>
+        <p>Vous êtes expert en aéronautique, en pédagogie ou en développement ? Nous recrutons des talents passionnés.</p>
+        <a href="{% url 'core:carriere' %}" class="btn-join"><i class="fas fa-paper-plane"></i> Voir nos offres</a>
+    </div>
+</div>
+
+{% endblock %}

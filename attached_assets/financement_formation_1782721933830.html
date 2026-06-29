@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Financez votre formation — {{ site_name }}{% endblock %}
+
+{% block meta_description %}
+Découvrez comment financer votre formation aéronautique : CPF, Pôle Emploi, OPCO, paiement échelonné. Ventoryx Academy à partir de 39€/mois.
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .finance-container {
+        max-width: 1000px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+    .finance-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .finance-header h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        color: #0F1C2E;
+    }
+    .finance-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    .finance-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+    .finance-card:hover {
+        transform: translateY(-5px);
+    }
+    .finance-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    .finance-card h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+    .finance-card p {
+        color: #6C757D;
+        margin-bottom: 1rem;
+    }
+    .finance-card .btn {
+        display: inline-block;
+        background: #0077B6;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    .highlight {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white;
+        text-align: center;
+        padding: 2rem;
+        border-radius: 20px;
+        margin-top: 2rem;
+    }
+    .highlight .price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #FF6B35;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="finance-container">
+    <div class="finance-header">
+        <h1><i class="fas fa-euro-sign"></i> Financez votre formation</h1>
+        <p>Des solutions adaptées à tous les budgets — À partir de 39€/mois</p>
+    </div>
+
+    <div class="finance-grid">
+        <div class="finance-card">
+            <div class="finance-icon">🇫🇷</div>
+            <h2>Compte Personnel de Formation (CPF)</h2>
+            <p>Utilisez vos droits CPF pour financer votre abonnement Ventoryx Academy.</p>
+            <p><strong>500€ par an</strong> (plafond 5 000€)</p>
+            <a href="#" class="btn">Utiliser mon CPF →</a>
+        </div>
+
+        <div class="finance-card">
+            <div class="finance-icon">🏢</div>
+            <h2>Financement OPCO (salariés)</h2>
+            <p>Votre entreprise peut financer votre formation via son OPCO.</p>
+            <p><strong>Prise en charge totale possible</strong></p>
+            <a href="#" class="btn">Contacter mon OPCO →</a>
+        </div>
+
+        <div class="finance-card">
+            <div class="finance-icon">🎯</div>
+            <h2>Aide Pôle Emploi (AIF)</h2>
+            <p>Demandeurs d'emploi, faites financer votre formation.</p>
+            <p><strong>Jusqu'à 15 000€</strong></p>
+            <a href="#" class="btn">En savoir plus →</a>
+        </div>
+
+        <div class="finance-card">
+            <div class="finance-icon">💰</div>
+            <h2>Paiement échelonné</h2>
+            <p>Abonnement sans engagement, résiliable à tout moment.</p>
+            <p><strong>39€/mois ou 329€/an</strong> (2 mois offerts)</p>
+            <a href="{% url 'users:register' %}" class="btn">Commencer gratuitement →</a>
+        </div>
+
+        <div class="finance-card">
+            <div class="finance-icon">🎓</div>
+            <h2>Formations gratuites</h2>
+            <p>Contrôleur aérien et Technicien aéronautique : 100% gratuits.</p>
+            <p><strong>0€</strong></p>
+            <a href="{% url 'core:programme_metier' metier='controleur_aerien' %}" class="btn">Commencer gratuitement →</a>
+        </div>
+
+        <div class="finance-card">
+            <div class="finance-icon">🤝</div>
+            <h2>Parrainage</h2>
+            <p>Parrainez un ami et gagnez <strong>1 mois offert</strong>.</p>
+            <a href="{% url 'pages:utilisateur:parrainage' %}" class="btn">Découvrir →</a>
+        </div>
+    </div>
+
+    <div class="highlight">
+        <p>Ventoryx Academy</p>
+        <div class="price">39€ / mois</div>
+        <p>Formation aéronautique accessible à tous</p>
+        <a href="{% url 'users:register' %}" style="background:#FF6B35; color:white; padding:0.5rem 1.5rem; border-radius:50px; text-decoration:none; display:inline-block; margin-top:1rem;">Créer un compte gratuit →</a>
+    </div>
+</div>
+
+{% endblock %}

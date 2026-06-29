@@ -8,7 +8,6 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
-    # CORRECTION : ajout de uidb64 pour le reset password
     path('reset-password/<str:uidb64>/<str:token>/', views.reset_password, name='reset_password'),
     path('otp-verify/', views.otp_verify, name='otp_verify'),
     path('validation-secondaire/', views.validation_secondaire, name='validation_secondaire'),
@@ -26,4 +25,7 @@ urlpatterns = [
     path('paiement/webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('reunion/', views.reunion_virtuelle, name='reunion_virtuelle'),
     path('reunion/envoyer/', views.reunion_envoyer_message, name='reunion_envoyer_message'),
+    path('equipe/', views.page_equipe, name='equipe'),
+    path('rapports-transparence/', views.page_rapports_transparence, name='rapports_transparence'),
+    path('documentation/', views.documentation, name='documentation'),
 ]

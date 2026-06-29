@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Finaliser votre abonnement — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-container {
+        max-width: 700px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
+    .checkout-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .plan-toggle {
+        display: flex;
+        background: #F8F9FA;
+        border-radius: 50px;
+        padding: 0.3rem;
+        margin-bottom: 2rem;
+    }
+    .toggle-btn {
+        flex: 1;
+        padding: 0.8rem;
+        border: none;
+        background: transparent;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .toggle-btn.active {
+        background: #0077B6;
+        color: white;
+    }
+    .save-badge {
+        background: #10b981;
+        color: white;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 50px;
+        margin-left: 0.5rem;
+    }
+    .plan-summary {
+        background: #F8FAFE;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    .plan-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #0F1C2E;
+    }
+    .plan-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0077B6;
+    }
+    .promo-code {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+    .promo-code input {
+        flex: 1;
+        padding: 0.8rem;
+        border: 1px solid #E9ECEF;
+        border-radius: 8px;
+    }
+    .promo-code button {
+        padding: 0.8rem 1.5rem;
+        background: #E9ECEF;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .total {
+        border-top: 2px solid #E9ECEF;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    .btn-stripe {
+        width: 100%;
+        padding: 1rem;
+        background: #635BFF;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 1.5rem;
+    }
+    .cgv-link {
+        font-size: 0.8rem;
+        color: #6C757D;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="checkout-container">
+    <div class="checkout-card">
+        <h2>Finaliser votre abonnement</h2>
+
+        <!-- Toggle mensuel / annuel -->
+        <div class="plan-toggle">
+            <button class="toggle-btn" onclick="selectPlan('mensuel')">Mensuel</button>
+            <button class="toggle-btn active" onclick="selectPlan('annuel')">
+                Annuel <span class="save-badge">-29%</span>
+            </button>
+        </div>
+
+        <div id="planSummary" class="plan-summary">
+            <div class="plan-name" id="planName">Abonnement Annuel</div>
+            <div class="plan-price" id="planPrice">329 €</div>
+            <div style="font-size: 0.8rem; color: #6C757D;" id="planPeriod">par an — économisez 29%</div>
+        </div>
+
+        <!-- Code promo -->
+        <div class="promo-code">
+            <input type="text" id="promoCode" placeholder="Code promo">
+            <button onclick="applyPromo()">Appliquer</button>
+        </div>
+
+        <div class="total" id="totalSection">
+            Total : <span id="totalPrice">329 €</span> <span id="discountInfo" style="font-size:0.8rem;color:#10b981;"></span>
+        </div>
+
+        <button id="checkoutBtn" class="btn-stripe" onclick="checkout()">
+            <i class="fas fa-lock"></i> Payer avec Stripe
+        </button>
+
+        <div id="errorMsg" class="error-message"></div>
+
+        <p class="cgv-link">
+            En payant, vous acceptez nos <a href="{% url 'core:cgv' %}">Conditions Générales de Vente</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    let currentPlan = 'annuel';
+    let currentDiscount = 0;
+
+    const plans = {
+        mensuel: { name: 'Abonnement Mensuel', price: 39, period: 'par mois — sans engagement' },
+        annuel: { name: 'Abonnement Annuel', price: 329, period: 'par an — économisez 33%' }
+    };
+
+    function selectPlan(plan) {
+        currentPlan = plan;
+        document.querySelectorAll('.toggle-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', (i === 0 && plan === 'mensuel') || (i === 1 && plan === 'annuel'));
+        });
+        updatePriceDisplay();
+    }
+
+    function updatePriceDisplay() {
+        let price = plans[currentPlan].price;
+        if (currentDiscount > 0) {
+            price = price * (1 - currentDiscount / 100);
+        }
+        document.getElementById('planName').innerText = plans[currentPlan].name;
+        document.getElementById('planPrice').innerText = price.toFixed(2) + ' €';
+        document.getElementById('planPeriod').innerText = plans[currentPlan].period;
+        document.getElementById('totalPrice').innerText = price.toFixed(2) + ' €';
+    }
+
+    function applyPromo() {
+        const code = document.getElementById('promoCode').value;
+        if (code === 'BIENVENUE10') {
+            currentDiscount = 10;
+            document.getElementById('discountInfo').innerText = '( -10% appliqué )';
+        } else if (code === 'AERO20') {
+            currentDiscount = 20;
+            document.getElementById('discountInfo').innerText = '( -20% appliqué )';
+        } else {
+            currentDiscount = 0;
+            document.getElementById('discountInfo').innerText = '';
+            alert('Code promo invalide');
+        }
+        updatePriceDisplay();
+    }
+
+    async function checkout() {
+        const btn = document.getElementById('checkoutBtn');
+        const errorDiv = document.getElementById('errorMsg');
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirection vers Stripe...';
+        errorDiv.style.display = 'none';
+
+        try {
+            let price = plans[currentPlan].price;
+            if (currentDiscount > 0) {
+                price = price * (1 - currentDiscount / 100);
+            }
+
+            const response = await fetch('{% url "users:create_checkout_session" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ 
+                    plan: currentPlan,
+                    promo_code: document.getElementById('promoCode').value,
+                    discounted_price: price
+                }),
+            });
+            
+            const data = await response.json();
+            
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                throw new Error(data.error || 'Erreur lors de la création de la session.');
+            }
+        } catch (error) {
+            errorDiv.textContent = error.message;
+            errorDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-lock"></i> Payer avec Stripe';
+        }
+    }
+</script>
+
+{% endblock %}

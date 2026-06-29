@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notre Équipe — Direction Générale | {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #0F1C2E; --gold: #D4AF37; --light: #F8F9FA;
+    --shadow: 0 8px 24px rgba(0,0,0,0.08); --radius: 12px;
+}
+.equipe-hero {
+    background: linear-gradient(135deg, #0F1C2E 0%, #1E3A5F 100%);
+    color: white; padding: 3rem 2rem; border-radius: var(--radius);
+    margin-bottom: 2.5rem; text-align: center;
+}
+.equipe-hero h1 { font-family:'Montserrat',sans-serif; font-size:2rem; margin:0 0 0.5rem; }
+.equipe-hero p { opacity:.85; margin:0; }
+.role-section { margin-bottom: 2.5rem; }
+.role-title {
+    font-family:'Montserrat',sans-serif; font-size:1.1rem; font-weight:700;
+    color: var(--primary); padding: 0.5rem 1rem; background: var(--gold);
+    border-radius: 6px; display: inline-block; margin-bottom: 1rem;
+}
+.membres-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 1.2rem;
+}
+.membre-card {
+    background: white; border-radius: var(--radius); padding: 1.5rem;
+    box-shadow: var(--shadow); text-align: center;
+    transition: transform .3s, box-shadow .3s;
+}
+.membre-card:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
+.membre-avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem; font-size: 1.6rem; color: white;
+}
+.membre-name { font-weight:700; color: var(--primary); font-size:1rem; margin-bottom:.3rem; }
+.membre-email { font-size:.8rem; color:#6C757D; margin-bottom:.5rem; }
+.membre-dept {
+    display: inline-block; padding:.2rem .7rem; border-radius:20px;
+    font-size:.75rem; font-weight:600; background:#EFF6FF; color:#2563EB;
+}
+.badge-dg { background:#FEF3C7; color:#92400E; }
+.badge-coordinateur { background:#F0FDF4; color:#166534; }
+.badge-gestionnaire { background:#F3F4F6; color:#374151; }
+.back-btn {
+    display: inline-flex; align-items: center; gap:.5rem;
+    padding:.7rem 1.5rem; background: var(--primary); color: white;
+    border-radius: 8px; text-decoration:none; font-weight:600; margin-bottom:2rem;
+    transition: background .3s;
+}
+.back-btn:hover { background:#1E3A5F; color:white; }
+.stats-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap:1rem; margin-bottom:2rem;
+}
+.stat-item {
+    background:white; border-radius: var(--radius); padding:1rem;
+    text-align:center; box-shadow: var(--shadow);
+}
+.stat-num { font-size:1.8rem; font-weight:700; color: var(--primary); font-family:'Montserrat',sans-serif; }
+.stat-lbl { font-size:.75rem; color:#6C757D; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding:2rem 0;">
+
+    <a href="{% url 'users:dashboard_dg' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Retour DG
+    </a>
+
+    <div class="equipe-hero">
+        <h1><i class="fas fa-users"></i> Notre Équipe Interne</h1>
+        <p>Vue d'ensemble du personnel administratif et de direction — Accès restreint DG</p>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-num">{{ membres.count }}</div>
+            <div class="stat-lbl">Membres totaux</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">{{ membres|length }}</div>
+            <div class="stat-lbl">Actifs</div>
+        </div>
+        {% for role_key, role_lbl in roles %}
+        <div class="stat-item">
+            <div class="stat-num">{{ role_counts|default_if_none:"0" }}</div>
+            <div class="stat-lbl">{{ role_lbl }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% regroup membres by role as role_groups %}
+    {% for group in role_groups %}
+    <div class="role-section">
+        {% if group.grouper == 'dg' %}
+            <div class="role-title"><i class="fas fa-crown"></i> Direction Générale</div>
+        {% elif group.grouper == 'coordinateur' %}
+            <div class="role-title"><i class="fas fa-user-tie"></i> Coordinateurs</div>
+        {% elif group.grouper == 'gestionnaire' %}
+            <div class="role-title"><i class="fas fa-user-cog"></i> Gestionnaires</div>
+        {% else %}
+            <div class="role-title"><i class="fas fa-user"></i> {{ group.grouper|title }}</div>
+        {% endif %}
+
+        <div class="membres-grid">
+            {% for m in group.list %}
+            <div class="membre-card">
+                <div class="membre-avatar">
+                    {{ m.first_name|first|upper }}{{ m.last_name|first|upper }}
+                </div>
+                <div class="membre-name">{{ m.get_full_name|default:m.username }}</div>
+                <div class="membre-email">{{ m.email }}</div>
+                {% if m.departement %}
+                <span class="membre-dept">{{ m.departement|title }}</span>
+                {% endif %}
+                <div style="margin-top:.5rem;">
+                    {% if m.role == 'dg' %}
+                    <span class="membre-dept badge-dg"><i class="fas fa-crown"></i> DG</span>
+                    {% elif m.role == 'coordinateur' %}
+                    <span class="membre-dept badge-coordinateur"><i class="fas fa-star"></i> Coordinateur</span>
+                    {% else %}
+                    <span class="membre-dept badge-gestionnaire"><i class="fas fa-cog"></i> Gestionnaire</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% empty %}
+    <div style="text-align:center; padding:4rem; color:#6C757D;">
+        <i class="fas fa-users" style="font-size:3rem; opacity:.3;"></i>
+        <p style="margin-top:1rem;">Aucun membre du personnel trouvé.</p>
+    </div>
+    {% endregroup %}
+
+</div>
+{% endblock %}

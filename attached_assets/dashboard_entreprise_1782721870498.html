@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Espace Entreprise — {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-entreprise {
+        background: #F8FAFE;
+        min-height: 100vh;
+    }
+    .header-entreprise {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white;
+        padding: 2rem 0;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: -2rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0077B6;
+    }
+    .section-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .team-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .team-table th, .team-table td {
+        padding: 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid #E9ECEF;
+    }
+    .progress-bar {
+        background: #E9ECEF;
+        border-radius: 10px;
+        height: 8px;
+        width: 100%;
+    }
+    .progress-fill {
+        background: #10b981;
+        border-radius: 10px;
+        height: 8px;
+        width: 0%;
+    }
+    .btn-invite {
+        background: #0077B6;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .badge-active {
+        background: #d4edda;
+        color: #155724;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-entreprise">
+    <div class="header-entreprise">
+        <div class="container">
+            <h1><i class="fas fa-building"></i> Espace Entreprise</h1>
+            <p>Bienvenue, {{ company_name }} — {{ plan_name }}</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value">{{ active_users }} / {{ total_seats }}</div><div>Collaborateurs actifs</div></div>
+            <div class="stat-card"><div class="stat-value">{{ completion_rate }}%</div><div>Taux de complétion</div></div>
+            <div class="stat-card"><div class="stat-value">{{ certificates_delivered }}</div><div>Certificats délivrés</div></div>
+            <div class="stat-card"><div class="stat-value">{{ hours_trained }}</div><div>Heures de formation</div></div>
+        </div>
+
+        <div class="section-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3><i class="fas fa-users"></i> Vos collaborateurs</h3>
+                <button class="btn-invite" onclick="openInviteModal()">
+                    <i class="fas fa-user-plus"></i> Inviter
+                </button>
+            </div>
+            <table class="team-table">
+                <thead>
+                    <tr><th>Nom</th><th>Email</th><th>Progression</th><th>Statut</th><th>Certificats</th></tr>
+                </thead>
+                <tbody>
+                    {% for member in team_members %}
+                    <tr>
+                        <td>{{ member.name }}</td>
+                        <td>{{ member.email }}</td>
+                        <td style="width: 150px;">
+                            <div class="progress-bar"><div class="progress-fill" style="width: {{ member.progress }}%;"></div></div>
+                            <small>{{ member.progress }}%</small>
+                        </td>
+                        <td><span class="badge-active">Actif</span></td>
+                        <td>{{ member.certificates_count }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" style="text-align: center;">Aucun collaborateur pour le moment. Invitez vos équipes !</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-card">
+            <h3><i class="fas fa-chart-line"></i> Formations populaires</h3>
+            {% for formation in popular_formations %}
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>{{ formation.name }}</span>
+                    <span>{{ formation.completion_rate }}%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: {{ formation.completion_rate }}%; background:#0077B6;"></div></div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-card">
+            <h3><i class="fas fa-file-invoice"></i> Facturation</h3>
+            <p>Prochaine facturation : <strong>{{ next_billing_date|date:"d/m/Y" }}</strong></p>
+            <p>Montant : <strong>{{ next_billing_amount }} €</strong></p>
+            <a href="#" style="color:#0077B6;">📄 Télécharger les factures →</a>
+        </div>
+    </div>
+</div>
+
+<div id="inviteModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
+    <div style="background:white; border-radius:20px; padding:2rem; max-width:500px; margin:auto;">
+        <h3>Inviter un collaborateur</h3>
+        <form method="post" action="{% url 'entreprises:invite' %}">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Email du collaborateur" required style="width:100%; padding:0.8rem; margin:1rem 0; border-radius:8px; border:1px solid #E9ECEF;">
+            <button type="submit" style="width:100%; padding:0.8rem; background:#0077B6; color:white; border:none; border-radius:8px;">Envoyer l'invitation</button>
+            <button type="button" onclick="closeInviteModal()" style="margin-top:0.5rem; width:100%; padding:0.8rem; background:#E9ECEF; border:none; border-radius:8px;">Fermer</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function openInviteModal() {
+    document.getElementById('inviteModal').style.display = 'flex';
+}
+function closeInviteModal() {
+    document.getElementById('inviteModal').style.display = 'none';
+}
+</script>
+
+{% endblock %}

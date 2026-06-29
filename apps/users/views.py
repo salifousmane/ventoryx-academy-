@@ -14,24 +14,36 @@ def register(request):
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
         email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
+        password = request.POST.get('password1', '')
         password2 = request.POST.get('password2', '')
+        nationality = request.POST.get('nationality', '').strip()
+        date_naissance = request.POST.get('date_naissance', '').strip()
+        role_souhaite = request.POST.get('role_souhaite', '').strip()
+
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': email,
+            'nationality': nationality,
+            'date_naissance': date_naissance,
+            'role_souhaite': role_souhaite,
+        }
 
         if not all([first_name, last_name, email, password]):
-            messages.error(request, 'Tous les champs sont obligatoires.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription'})
+            messages.error(request, 'Tous les champs obligatoires doivent être remplis.')
+            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
+
+        if len(password) < 10:
+            messages.error(request, 'Le mot de passe doit contenir au moins 10 caractères.')
+            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
 
         if password != password2:
             messages.error(request, 'Les mots de passe ne correspondent pas.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription'})
+            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
 
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists() or User.objects.filter(username=email).exists():
             messages.error(request, 'Un compte avec cet email existe déjà.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription'})
-
-        if User.objects.filter(username=email).exists():
-            messages.error(request, 'Un compte avec cet identifiant existe déjà.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription'})
+            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
 
         try:
             user = User.objects.create_user(
@@ -42,13 +54,13 @@ def register(request):
                 last_name=last_name,
             )
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, f'Bienvenue {first_name} ! Votre compte a été créé.')
+            messages.success(request, f'Bienvenue {first_name} ! Votre compte a été créé avec succès.')
             return redirect('core:index')
         except Exception as e:
-            messages.error(request, f'Erreur lors de la création du compte.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription'})
+            messages.error(request, 'Une erreur est survenue lors de la création du compte. Veuillez réessayer.')
+            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
 
-    return render(request, 'auth/register.html', {'page_title': 'Inscription'})
+    return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': {}})
 
 
 @csrf_protect
@@ -89,7 +101,7 @@ def forgot_password(request):
         if email and User.objects.filter(email=email).exists():
             messages.success(request, 'Un email de réinitialisation vous a été envoyé.')
         else:
-            messages.success(request, 'Si un compte existe, un email a été envoyé.')
+            messages.success(request, 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.')
     return render(request, 'auth/forgot_password.html', {'page_title': 'Mot de passe oublié'})
 
 
@@ -134,6 +146,13 @@ def dashboard_dg(request):
     from apps.users.models import User, Subscription
     from apps.messaging.models import MessageContact, Notification
     from apps.institution.models import Candidature, Certificat
+    from apps.gestion.models import Tache, TicketSupport
+    from apps.parcours.models import Parcours
+    from django.utils import timezone
+    from datetime import timedelta
+
+    now = timezone.now()
+    last_30 = now - timedelta(days=30)
 
     context = {
         'page_title': 'Tableau de bord DG',
@@ -141,6 +160,11 @@ def dashboard_dg(request):
         'messages_recents': MessageContact.objects.filter(statut='non_lu').count(),
         'candidatures_recentes': Candidature.objects.filter(statut='soumise').count(),
         'certificats_delivres': Certificat.objects.count(),
+        'candidatures_total': Candidature.objects.count(),
+        'total_parcours': Parcours.objects.count(),
+        'taches_en_cours': Tache.objects.filter(statut='en_cours').count(),
+        'tickets_ouverts': TicketSupport.objects.filter(statut='ouvert').count(),
+        'nouveaux_utilisateurs': User.objects.filter(date_joined__gte=last_30).count(),
     }
     return render(request, 'admin/dg.html', context)
 
@@ -148,11 +172,14 @@ def dashboard_dg(request):
 @login_required
 def dashboard_coordinateur(request, departement):
     from apps.messaging.models import MessageContact
+    from apps.gestion.models import Tache
 
     context = {
         'page_title': f'Dashboard Coordinateur — {departement.title()}',
         'departement': departement,
         'messages_recents': MessageContact.objects.filter(categorie=departement, statut='non_lu').count(),
+        'taches_actives': Tache.objects.filter(departement=departement, statut='en_cours').count(),
+        'taches_terminees': Tache.objects.filter(departement=departement, statut='termine').count(),
     }
 
     templates = {
@@ -170,9 +197,23 @@ def dashboard_coordinateur(request, departement):
 
 @login_required
 def dashboard_gestionnaire(request, departement):
+    from apps.messaging.models import MessageContact
+
+    messages_list = MessageContact.objects.filter(
+        categorie=departement
+    ).order_by('-date_envoi')[:20]
+
+    total = messages_list.count()
+    non_lus = MessageContact.objects.filter(categorie=departement, statut='non_lu').count()
+    traites = MessageContact.objects.filter(categorie=departement, statut='repondu').count()
+
     context = {
         'page_title': f'Dashboard Gestionnaire — {departement.title()}',
         'departement': departement,
+        'messages_list': messages_list,
+        'total_messages': total,
+        'messages_non_lus': non_lus,
+        'messages_traites': traites,
     }
     return render(request, 'admin/gestionnaire.html', context)
 
@@ -228,3 +269,50 @@ def reunion_envoyer_message(request):
     if message_text:
         messages.success(request, 'Message envoyé dans la réunion.')
     return redirect('users:reunion_virtuelle')
+
+
+@login_required
+def page_equipe(request):
+    if request.user.role != 'dg':
+        messages.error(request, "Accès réservé à la Direction Générale.")
+        return redirect('users:dashboard_dg')
+    from apps.users.models import User
+    membres = User.objects.exclude(role='etudiant').order_by('role', 'last_name')
+    context = {
+        'page_title': "Notre Équipe",
+        'membres': membres,
+    }
+    return render(request, 'admin/equipe.html', context)
+
+
+@login_required
+def page_rapports_transparence(request):
+    if request.user.role != 'dg':
+        messages.error(request, "Accès réservé à la Direction Générale.")
+        return redirect('users:dashboard_dg')
+    from apps.audit.models import AuditLog
+    from apps.institution.models import Candidature, Certificat
+    from apps.users.models import User
+    from django.utils import timezone
+    from datetime import timedelta
+
+    now = timezone.now()
+    logs_recents = AuditLog.objects.order_by('-timestamp')[:50]
+
+    context = {
+        'page_title': "Rapports de Transparence",
+        'total_utilisateurs': User.objects.count(),
+        'total_certificats': Certificat.objects.count(),
+        'total_candidatures': Candidature.objects.count(),
+        'logs_recents': logs_recents,
+        'date_rapport': now,
+    }
+    return render(request, 'admin/rapports_transparence.html', context)
+
+
+@login_required
+def documentation(request):
+    context = {
+        'page_title': 'Documentation Technique',
+    }
+    return render(request, 'pages/documentation.html', context)
