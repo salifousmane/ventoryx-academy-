@@ -111,7 +111,7 @@ function signConvention() {
     const btn = document.getElementById('signBtn');
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signature en cours...';
     setTimeout(() => {
-        window.location.href = "{% url 'partners:dashboard' %}";
+        window.location.href = "{% url 'core:partenariats' %}";
     }, 1500);
 }
 </script>

@@ -267,7 +267,7 @@
             Construisons ensemble l'avenir de la formation aéronautique. 
             Rejoignez notre réseau de partenaires.
         </p>
-        <a href="{% url 'partenaires:programme' %}" class="hero-link">
+        <a href="{% url 'core:partenariats' %}" class="hero-link">
             <i class="fas fa-chart-line"></i> Découvrir le programme partenaire →
         </a>
     </div>
@@ -400,7 +400,7 @@
                 {% endfor %}
             {% endif %}
 
-            <form method="post" action="{% url 'partenaires:inscription' %}">
+            <form method="post" action="{% url 'core:contact' %}">
                 {% csrf_token %}
                 <input type="hidden" name="category" value="partenariat">
                 

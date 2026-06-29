@@ -152,7 +152,7 @@
 <div id="inviteModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
     <div style="background:white; border-radius:20px; padding:2rem; max-width:500px; margin:auto;">
         <h3>Inviter un collaborateur</h3>
-        <form method="post" action="{% url 'entreprises:invite' %}">
+        <form method="post" action="{% url 'core:contact' %}">
             {% csrf_token %}
             <input type="email" name="email" placeholder="Email du collaborateur" required style="width:100%; padding:0.8rem; margin:1rem 0; border-radius:8px; border:1px solid #E9ECEF;">
             <button type="submit" style="width:100%; padding:0.8rem; background:#0077B6; color:white; border:none; border-radius:8px;">Envoyer l'invitation</button>

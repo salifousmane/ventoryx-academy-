@@ -1,0 +1,3 @@
+- [Ventoryx URL architecture](ventoryx-url-arch.md) — apps sans namespace propre (entreprises, partenaires, partners) n'existent pas; remplacer par core:/users: équivalents.
+- [Ventoryx admin.py fields](ventoryx-admin-fields.md) — PageStatique utilise `derniere_modification` (pas `date_modification`); toujours vérifier les champs réels avant d'écrire list_display/ordering dans l'admin.
+- [Ventoryx coordinator templates](ventoryx-coord-templates.md) — 7 coordinateurs mappés dans users/views.py dashboard_coordinateur; operations utilise `coordonnateur_` (double n) par cohérence avec le fichier existant.

@@ -211,3 +211,20 @@ def payment_cancel(request):
 @csrf_protect
 def stripe_webhook(request):
     return HttpResponse(status=200)
+
+
+@login_required
+def reunion_virtuelle(request):
+    context = {
+        'page_title': 'Réunion virtuelle',
+    }
+    return render(request, 'admin/reunion.html', context)
+
+
+@login_required
+@require_POST
+def reunion_envoyer_message(request):
+    message_text = request.POST.get('message', '').strip()
+    if message_text:
+        messages.success(request, 'Message envoyé dans la réunion.')
+    return redirect('users:reunion_virtuelle')
