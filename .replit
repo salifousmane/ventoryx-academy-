@@ -10,7 +10,6 @@ packages = ["freetype", "glibcLocales", "lcms2", "libimagequant", "libjpeg", "li
 [userenv]
 
 [userenv.shared]
-DJANGO_SECRET_KEY = "ventoryx-dev-secret-key-mm0giouh27k"
 DJANGO_DEBUG = "True"
 ALLOWED_HOSTS = "localhost,127.0.0.1,0.0.0.0,.replit.dev,.repl.co,.replit.app"
 CSRF_TRUSTED_ORIGINS = "https://*.replit.dev,https://*.repl.co,https://*.replit.app"
@@ -18,6 +17,12 @@ USE_SQLITE = "True"
 SECURE_SSL_REDIRECT = "False"
 SESSION_COOKIE_SECURE = "False"
 CSRF_COOKIE_SECURE = "False"
+
+[userenv.development]
+DJANGO_SECRET_KEY = "ventoryx-dev-secret-key-mm0giouh27k"
+
+[userenv.production]
+DJANGO_SECRET_KEY = "ventoryx-dev-secret-key-mm0giouh27k"
 
 [workflows]
 runButton = "Project"
