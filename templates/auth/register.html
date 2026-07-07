@@ -1,12 +1,8 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Inscription - {{ site_name }}{% endblock %}
-
-{% block extra_css %}
+{% extends "base.html" %} {% load static %} {% block title %}Inscription - {{
+site_name }}{% endblock %} {% block extra_css %}
 <style>
     .auth-wrapper {
-        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        background: linear-gradient(135deg, #0f1c2e, #1e3a5f);
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -19,24 +15,24 @@
         padding: 2.5rem;
         max-width: 550px;
         width: 100%;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
     .auth-brand {
         text-align: center;
         margin-bottom: 1.5rem;
     }
     .auth-brand h1 {
-        font-family: 'Montserrat', sans-serif;
+        font-family: "Montserrat", sans-serif;
         font-size: 1.4rem;
-        color: #0F1C2E;
+        color: #0f1c2e;
         margin: 0;
     }
     .auth-brand h1 span {
-        color: #D4AF37;
+        color: #d4af37;
     }
     .auth-subtitle {
         text-align: center;
-        color: #6C757D;
+        color: #6c757d;
         font-size: 0.9rem;
         margin: 0.5rem 0 1.5rem;
     }
@@ -47,7 +43,7 @@
     .auth-form-group label {
         font-weight: 600;
         font-size: 0.85rem;
-        color: #0F1C2E;
+        color: #0f1c2e;
         display: block;
         margin-bottom: 0.3rem;
     }
@@ -55,17 +51,17 @@
     .auth-form-group select {
         width: 100%;
         padding: 0.8rem;
-        border: 1px solid #E9ECEF;
+        border: 1px solid #e9ecef;
         border-radius: 8px;
         font-size: 0.95rem;
-        font-family: 'Open Sans', sans-serif;
+        font-family: "Open Sans", sans-serif;
         transition: all 0.3s ease;
     }
     .auth-form-group input:focus,
     .auth-form-group select:focus {
         outline: none;
-        border-color: #0077B6;
-        box-shadow: 0 0 0 3px rgba(0,119,182,0.1);
+        border-color: #0077b6;
+        box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
     }
     .auth-form-row {
         display: grid;
@@ -85,12 +81,12 @@
     }
     .auth-checkbox-group label {
         font-size: 0.8rem;
-        color: #6C757D;
+        color: #6c757d;
         font-weight: normal;
         cursor: pointer;
     }
     .auth-checkbox-group a {
-        color: #0077B6;
+        color: #0077b6;
         text-decoration: none;
         font-weight: 500;
     }
@@ -101,19 +97,19 @@
     .btn-auth {
         width: 100%;
         padding: 0.9rem;
-        background: #0077B6;
+        background: #0077b6;
         color: white;
         border: none;
         border-radius: 50px;
         font-weight: 700;
         font-size: 1rem;
         cursor: pointer;
-        font-family: 'Montserrat', sans-serif;
+        font-family: "Montserrat", sans-serif;
         transition: all 0.3s ease;
         margin-top: 0.8rem;
     }
     .btn-auth:hover {
-        background: #0F1C2E;
+        background: #0f1c2e;
         transform: translateY(-2px);
     }
 
@@ -121,10 +117,10 @@
         text-align: center;
         margin-top: 1.5rem;
         font-size: 0.85rem;
-        color: #6C757D;
+        color: #6c757d;
     }
     .auth-footer-link a {
-        color: #0077B6;
+        color: #0077b6;
         font-weight: 600;
         text-decoration: none;
     }
@@ -146,13 +142,13 @@
 
     .required:after {
         content: "*";
-        color: #FF6B35;
+        color: #ff6b35;
         margin-left: 4px;
     }
 
     .password-hint {
         font-size: 0.7rem;
-        color: #ADB5BD;
+        color: #adb5bd;
         margin-top: 0.2rem;
     }
 
@@ -162,169 +158,199 @@
         flex-wrap: wrap;
         justify-content: center;
         font-size: 0.75rem;
-        color: #ADB5BD;
+        color: #adb5bd;
         margin-top: 1.5rem;
     }
     .legal-links-inline a {
-        color: #ADB5BD;
+        color: #adb5bd;
         text-decoration: none;
     }
     .legal-links-inline a:hover {
-        color: #0077B6;
+        color: #0077b6;
     }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="auth-wrapper">
     <div class="auth-card">
-        
         <div class="auth-brand">
             <h1>Ventoryx <span>Academy</span></h1>
         </div>
-        
+
         <p class="auth-subtitle">Créez votre compte</p>
 
         {% if form.errors %}
         <div class="auth-alert auth-alert-error">
-            <i class="fas fa-exclamation-triangle"></i> Veuillez corriger les erreurs ci-dessous.
+            <i class="fas fa-exclamation-triangle"></i> Veuillez corriger les
+            erreurs ci-dessous.
         </div>
-        {% endif %}
-
-        {% if messages %}
-            {% for message in messages %}
-            <div class="auth-alert {% if message.tags == 'error' %}auth-alert-error{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        {% endif %}
+        {% endif %} {% if messages %} {% for message in messages %}
+        <div
+            class="auth-alert {% if message.tags == 'error' %}auth-alert-error{% endif %}"
+        >
+            {{ message }}
+        </div>
+        {% endfor %} {% endif %}
 
         <form method="post" action="{% url 'users:register' %}">
-            {% csrf_token %}
-
-            {# Honeypot anti-bot #}
-            <div style="position:absolute;left:-9999px;" aria-hidden="true">
-                <input type="text" name="website" tabindex="-1" autocomplete="off">
+            {% csrf_token %} {# Honeypot anti-bot #}
+            <div style="position: absolute; left: -9999px" aria-hidden="true">
+                <input
+                    type="text"
+                    name="website"
+                    tabindex="-1"
+                    autocomplete="off"
+                />
             </div>
 
             <div class="auth-form-row">
                 <div class="auth-form-group">
                     <label class="required">Prénom</label>
-                    <input type="text" name="first_name" required 
-                           placeholder="Jean"
-                           value="{{ form.first_name.value|default:'' }}">
+                    <input
+                        type="text"
+                        name="first_name"
+                        required
+                        placeholder="Jean"
+                        value="{{ form.first_name.value|default:'' }}"
+                    />
                 </div>
                 <div class="auth-form-group">
                     <label class="required">Nom</label>
-                    <input type="text" name="last_name" required 
-                           placeholder="Dupont"
-                           value="{{ form.last_name.value|default:'' }}">
+                    <input
+                        type="text"
+                        name="last_name"
+                        required
+                        placeholder="Dupont"
+                        value="{{ form.last_name.value|default:'' }}"
+                    />
                 </div>
             </div>
 
             <div class="auth-form-group">
                 <label class="required">Adresse email</label>
-                <input type="email" name="email" required 
-                       placeholder="jean.dupont@email.com"
-                       autocomplete="email"
-                       value="{{ form.email.value|default:'' }}">
+                <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="jean.dupont@email.com"
+                    autocomplete="email"
+                    value="{{ form.email.value|default:'' }}"
+                />
             </div>
 
             <div class="auth-form-row">
                 <div class="auth-form-group">
                     <label class="required">Nationalité</label>
-                    <input type="text" name="nationality" required 
-                           placeholder="Tapez votre pays..."
-                           list="nationalites-list"
-                           autocomplete="off"
-                           value="{{ form.nationality.value|default:'' }}">
+                    <input
+                        type="text"
+                        name="nationality"
+                        required
+                        placeholder="Tapez votre pays..."
+                        list="nationalites-list"
+                        autocomplete="off"
+                        value="{{ form.nationality.value|default:'' }}"
+                    />
                     <datalist id="nationalites-list">
-                        <option value="Afghane">
-                        <option value="Albanaise">
-                        <option value="Algérienne">
-                        <option value="Allemande">
-                        <option value="Américaine">
-                        <option value="Angolaise">
-                        <option value="Argentine">
-                        <option value="Australienne">
-                        <option value="Autrichienne">
-                        <option value="Belge">
-                        <option value="Béninoise">
-                        <option value="Brésilienne">
-                        <option value="Britannique">
-                        <option value="Burkinabée">
-                        <option value="Camerounaise">
-                        <option value="Canadienne">
-                        <option value="Chilienne">
-                        <option value="Chinoise">
-                        <option value="Colombienne">
-                        <option value="Congolaise">
-                        <option value="Coréenne">
-                        <option value="Croate">
-                        <option value="Danoise">
-                        <option value="Égyptienne">
-                        <option value="Espagnole">
-                        <option value="Française">
-                        <option value="Gabonaise">
-                        <option value="Grecque">
-                        <option value="Guinéenne">
-                        <option value="Haïtienne">
-                        <option value="Indienne">
-                        <option value="Irakienne">
-                        <option value="Iranienne">
-                        <option value="Irlandaise">
-                        <option value="Italienne">
-                        <option value="Ivoirienne">
-                        <option value="Japonaise">
-                        <option value="Libanaise">
-                        <option value="Malgache">
-                        <option value="Malienne">
-                        <option value="Marocaine">
-                        <option value="Mauricienne">
-                        <option value="Mexicaine">
-                        <option value="Nigériane">
-                        <option value="Néerlandaise">
-                        <option value="Pakistanaise">
-                        <option value="Péruvienne">
-                        <option value="Polonaise">
-                        <option value="Portugaise">
-                        <option value="Roumaine">
-                        <option value="Russe">
-                        <option value="Sénégalaise">
-                        <option value="Serbe">
-                        <option value="Sud-Africaine">
-                        <option value="Suédoise">
-                        <option value="Suisse">
-                        <option value="Tchadienne">
-                        <option value="Thaïlandaise">
-                        <option value="Togolaise">
-                        <option value="Tunisienne">
-                        <option value="Turque">
-                        <option value="Ukrainienne">
-                        <option value="Vietnamienne">
-                        <option value="Autre">
+                        <option value="Afghane"></option>
+                        <option value="Albanaise"></option>
+                        <option value="Algérienne"></option>
+                        <option value="Allemande"></option>
+                        <option value="Américaine"></option>
+                        <option value="Angolaise"></option>
+                        <option value="Argentine"></option>
+                        <option value="Australienne"></option>
+                        <option value="Autrichienne"></option>
+                        <option value="Belge"></option>
+                        <option value="Béninoise"></option>
+                        <option value="Brésilienne"></option>
+                        <option value="Britannique"></option>
+                        <option value="Burkinabée"></option>
+                        <option value="Camerounaise"></option>
+                        <option value="Canadienne"></option>
+                        <option value="Chilienne"></option>
+                        <option value="Chinoise"></option>
+                        <option value="Colombienne"></option>
+                        <option value="Congolaise"></option>
+                        <option value="Coréenne"></option>
+                        <option value="Croate"></option>
+                        <option value="Danoise"></option>
+                        <option value="Égyptienne"></option>
+                        <option value="Espagnole"></option>
+                        <option value="Française"></option>
+                        <option value="Gabonaise"></option>
+                        <option value="Grecque"></option>
+                        <option value="Guinéenne"></option>
+                        <option value="Haïtienne"></option>
+                        <option value="Indienne"></option>
+                        <option value="Irakienne"></option>
+                        <option value="Iranienne"></option>
+                        <option value="Irlandaise"></option>
+                        <option value="Italienne"></option>
+                        <option value="Ivoirienne"></option>
+                        <option value="Japonaise"></option>
+                        <option value="Libanaise"></option>
+                        <option value="Malgache"></option>
+                        <option value="Malienne"></option>
+                        <option value="Marocaine"></option>
+                        <option value="Mauricienne"></option>
+                        <option value="Mexicaine"></option>
+                        <option value="Nigériane"></option>
+                        <option value="Néerlandaise"></option>
+                        <option value="Pakistanaise"></option>
+                        <option value="Péruvienne"></option>
+                        <option value="Polonaise"></option>
+                        <option value="Portugaise"></option>
+                        <option value="Roumaine"></option>
+                        <option value="Russe"></option>
+                        <option value="Sénégalaise"></option>
+                        <option value="Serbe"></option>
+                        <option value="Sud-Africaine"></option>
+                        <option value="Suédoise"></option>
+                        <option value="Suisse"></option>
+                        <option value="Tchadienne"></option>
+                        <option value="Thaïlandaise"></option>
+                        <option value="Togolaise"></option>
+                        <option value="Tunisienne"></option>
+                        <option value="Turque"></option>
+                        <option value="Ukrainienne"></option>
+                        <option value="Vietnamienne"></option>
+                        <option value="Autre"></option>
                     </datalist>
                 </div>
                 <div class="auth-form-group">
                     <label class="required">Date de naissance</label>
-                    <input type="date" name="date_naissance" required
-                           value="{{ form.date_naissance.value|default:'' }}">
+                    <input
+                        type="date"
+                        name="date_naissance"
+                        required
+                        value="{{ form.date_naissance.value|default:'' }}"
+                    />
                 </div>
             </div>
 
             <div class="auth-form-row">
                 <div class="auth-form-group">
                     <label class="required">Mot de passe</label>
-                    <input type="password" name="password1" required 
-                           placeholder="10 caractères minimum"
-                           autocomplete="new-password">
-                    <p class="password-hint">Min. 10 caractères : majuscule, minuscule, chiffre, spécial</p>
+                    <input
+                        type="password"
+                        name="password1"
+                        required
+                        placeholder="10 caractères minimum"
+                        autocomplete="new-password"
+                    />
+                    <p class="password-hint">
+                        Min. 10 caractères : majuscule, minuscule, chiffre,
+                        spécial
+                    </p>
                 </div>
                 <div class="auth-form-group">
                     <label class="required">Confirmer</label>
-                    <input type="password" name="password2" required 
-                           placeholder="••••••••"
-                           autocomplete="new-password">
+                    <input
+                        type="password"
+                        name="password2"
+                        required
+                        placeholder="••••••••"
+                        autocomplete="new-password"
+                    />
                 </div>
             </div>
 
@@ -345,21 +371,54 @@
 
             <!-- Cases à cocher légales -->
             <div class="auth-checkbox-group">
-                <input type="checkbox" name="accepte_cgu" id="id_accepte_cgu" required>
+                <input
+                    type="checkbox"
+                    name="accepte_cgu"
+                    id="id_accepte_cgu"
+                    required
+                />
                 <label for="id_accepte_cgu">
-                    J'accepte les <a href="{% url 'core:page_legale' type_page='cgu' %}" target="_blank">Conditions Générales d'Utilisation</a> *
+                    J'accepte les
+                    <a
+                        href="{% url 'core:page_legale' type_page='cgu' %}"
+                        target="_blank"
+                        >Conditions Générales d'Utilisation</a
+                    >
+                    *
                 </label>
             </div>
             <div class="auth-checkbox-group">
-                <input type="checkbox" name="accepte_confidentialite" id="id_accepte_confidentialite" required>
+                <input
+                    type="checkbox"
+                    name="accepte_confidentialite"
+                    id="id_accepte_confidentialite"
+                    required
+                />
                 <label for="id_accepte_confidentialite">
-                    J'accepte la <a href="{% url 'core:page_legale' type_page='confidentialite' %}" target="_blank">Politique de confidentialité</a> *
+                    J'accepte la
+                    <a
+                        href="{% url 'core:page_legale' type_page='confidentialite' %}"
+                        target="_blank"
+                        >Politique de confidentialité</a
+                    >
+                    *
                 </label>
             </div>
             <div class="auth-checkbox-group">
-                <input type="checkbox" name="accepte_mentions" id="id_accepte_mentions" required>
+                <input
+                    type="checkbox"
+                    name="accepte_mentions"
+                    id="id_accepte_mentions"
+                    required
+                />
                 <label for="id_accepte_mentions">
-                    J'ai pris connaissance des <a href="{% url 'core:page_legale' type_page='mentions_legales' %}" target="_blank">Mentions légales</a> *
+                    J'ai pris connaissance des
+                    <a
+                        href="{% url 'core:page_legale' type_page='mentions_legales' %}"
+                        target="_blank"
+                        >Mentions légales</a
+                    >
+                    *
                 </label>
             </div>
 
@@ -369,16 +428,20 @@
         </form>
 
         <p class="auth-footer-link">
-            Déjà un compte ? 
+            Déjà un compte ?
             <a href="{% url 'users:login' %}">Se connecter</a>
         </p>
 
         <div class="legal-links-inline">
             <a href="{% url 'core:page_legale' type_page='cgu' %}">CGU</a>
             <span>·</span>
-            <a href="{% url 'core:page_legale' type_page='confidentialite' %}">Confidentialité</a>
+            <a href="{% url 'core:page_legale' type_page='confidentialite' %}"
+                >Confidentialité</a
+            >
             <span>·</span>
-            <a href="{% url 'core:page_legale' type_page='mentions_legales' %}">Mentions légales</a>
+            <a href="{% url 'core:page_legale' type_page='mentions_legales' %}"
+                >Mentions légales</a
+            >
         </div>
     </div>
 </div>
