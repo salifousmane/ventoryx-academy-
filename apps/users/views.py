@@ -10,40 +10,63 @@ from .models import User, Subscription
 
 @csrf_protect
 def register(request):
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password1', '')
-        password2 = request.POST.get('password2', '')
-        nationality = request.POST.get('nationality', '').strip()
-        date_naissance = request.POST.get('date_naissance', '').strip()
-        role_souhaite = request.POST.get('role_souhaite', '').strip()
+    if request.method == "POST":
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password1", "")
+        password2 = request.POST.get("password2", "")
+        nationality = request.POST.get("nationality", "").strip()
+        date_naissance = request.POST.get("date_naissance", "").strip()
+        role_souhaite = request.POST.get("role_souhaite", "").strip()
 
         form_data = {
-            'first_name': first_name,
-            'last_name': last_name,
-            'email': email,
-            'nationality': nationality,
-            'date_naissance': date_naissance,
-            'role_souhaite': role_souhaite,
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "nationality": nationality,
+            "date_naissance": date_naissance,
+            "role_souhaite": role_souhaite,
         }
 
         if not all([first_name, last_name, email, password]):
-            messages.error(request, 'Tous les champs obligatoires doivent être remplis.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
+            messages.error(
+                request, "Tous les champs obligatoires doivent être remplis."
+            )
+            return render(
+                request,
+                "auth/register.html",
+                {"page_title": "Inscription", "form_data": form_data},
+            )
 
         if len(password) < 10:
-            messages.error(request, 'Le mot de passe doit contenir au moins 10 caractères.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
+            messages.error(
+                request, "Le mot de passe doit contenir au moins 10 caractères."
+            )
+            return render(
+                request,
+                "auth/register.html",
+                {"page_title": "Inscription", "form_data": form_data},
+            )
 
         if password != password2:
-            messages.error(request, 'Les mots de passe ne correspondent pas.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
+            messages.error(request, "Les mots de passe ne correspondent pas.")
+            return render(
+                request,
+                "auth/register.html",
+                {"page_title": "Inscription", "form_data": form_data},
+            )
 
-        if User.objects.filter(email=email).exists() or User.objects.filter(username=email).exists():
-            messages.error(request, 'Un compte avec cet email existe déjà.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
+        if (
+            User.objects.filter(email=email).exists()
+            or User.objects.filter(username=email).exists()
+        ):
+            messages.error(request, "Un compte avec cet email existe déjà.")
+            return render(
+                request,
+                "auth/register.html",
+                {"page_title": "Inscription", "form_data": form_data},
+            )
 
         try:
             user = User.objects.create_user(
@@ -53,92 +76,123 @@ def register(request):
                 first_name=first_name,
                 last_name=last_name,
             )
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, f'Bienvenue {first_name} ! Votre compte a été créé avec succès.')
-            return redirect('core:index')
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+            messages.success(
+                request,
+                f"Bienvenue {first_name} ! Votre compte a été créé avec succès.",
+            )
+            return redirect("core:index")
         except Exception as e:
-            messages.error(request, 'Une erreur est survenue lors de la création du compte. Veuillez réessayer.')
-            return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': form_data})
+            messages.error(
+                request,
+                "Une erreur est survenue lors de la création du compte. Veuillez réessayer.",
+            )
+            return render(
+                request,
+                "auth/register.html",
+                {"page_title": "Inscription", "form_data": form_data},
+            )
 
-    return render(request, 'auth/register.html', {'page_title': 'Inscription', 'form_data': {}})
+    return render(
+        request, "auth/register.html", {"page_title": "Inscription", "form_data": {}}
+    )
 
 
 @csrf_protect
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('core:index')
+        return redirect("core:index")
 
-    if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "")
 
         user = authenticate(request, username=email, password=password)
         if user is None:
             user = authenticate(request, username=email, email=email, password=password)
 
         if user is not None and user.is_active:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            next_url = request.GET.get('next', '')
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+            next_url = request.GET.get("next", "")
             if next_url:
                 return redirect(next_url)
-            return redirect('core:tableau_de_bord')
+            return redirect("core:tableau_de_bord")
         else:
-            messages.error(request, 'Email ou mot de passe incorrect.')
+            messages.error(request, "Email ou mot de passe incorrect.")
 
-    return render(request, 'auth/login.html', {'page_title': 'Connexion'})
+    return render(request, "auth/login.html", {"page_title": "Connexion"})
 
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'Vous avez été déconnecté.')
-    return redirect('core:index')
+    messages.success(request, "Vous avez été déconnecté.")
+    return redirect("core:index")
 
 
 @csrf_protect
 def forgot_password(request):
-    if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip()
         if email and User.objects.filter(email=email).exists():
-            messages.success(request, 'Un email de réinitialisation vous a été envoyé.')
+            messages.success(request, "Un email de réinitialisation vous a été envoyé.")
         else:
-            messages.success(request, 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.')
-    return render(request, 'auth/forgot_password.html', {'page_title': 'Mot de passe oublié'})
+            messages.success(
+                request,
+                "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.",
+            )
+    return render(
+        request, "auth/forgot_password.html", {"page_title": "Mot de passe oublié"}
+    )
 
 
 @csrf_protect
 def reset_password(request, uidb64, token):
-    return render(request, 'auth/reset_password.html', {'page_title': 'Réinitialiser le mot de passe'})
+    return render(
+        request,
+        "auth/reset_password.html",
+        {"page_title": "Réinitialiser le mot de passe"},
+    )
 
 
 def otp_verify(request):
-    return render(request, 'auth/opt.html', {'page_title': 'Vérification OTP'})
+    return render(request, "auth/opt.html", {"page_title": "Vérification OTP"})
 
 
 def validation_secondaire(request):
-    return render(request, 'auth/validation_secondaire.html', {'page_title': 'Validation secondaire'})
+    return render(
+        request,
+        "auth/validation_secondaire.html",
+        {"page_title": "Validation secondaire"},
+    )
 
 
 def google_login(request):
     try:
         from allauth.socialaccount.providers.google.views import oauth2_login
+
         return oauth2_login(request)
     except Exception:
         from django.contrib import messages
-        messages.error(request, "La connexion Google n'est pas encore configurée. Veuillez utiliser email + mot de passe.")
-        return redirect('users:login')
+
+        messages.error(
+            request,
+            "La connexion Google n'est pas encore configurée. Veuillez utiliser email + mot de passe.",
+        )
+        return redirect("users:login")
 
 
 def google_callback(request):
     try:
         from allauth.socialaccount.providers.google.views import oauth2_callback
+
         return oauth2_callback(request)
     except Exception:
-        return redirect('users:login')
+        return redirect("users:login")
 
 
 @login_required
 def dashboard_redirect(request):
-    return redirect('core:tableau_de_bord')
+    return redirect("core:tableau_de_bord")
 
 
 @login_required
@@ -155,18 +209,18 @@ def dashboard_dg(request):
     last_30 = now - timedelta(days=30)
 
     context = {
-        'page_title': 'Tableau de bord DG',
-        'total_utilisateurs': User.objects.count(),
-        'messages_recents': MessageContact.objects.filter(statut='non_lu').count(),
-        'candidatures_recentes': Candidature.objects.filter(statut='soumise').count(),
-        'certificats_delivres': Certificat.objects.count(),
-        'candidatures_total': Candidature.objects.count(),
-        'total_parcours': Parcours.objects.count(),
-        'taches_en_cours': Tache.objects.filter(statut='en_cours').count(),
-        'tickets_ouverts': TicketSupport.objects.filter(statut='ouvert').count(),
-        'nouveaux_utilisateurs': User.objects.filter(date_joined__gte=last_30).count(),
+        "page_title": "Tableau de bord DG",
+        "total_utilisateurs": User.objects.count(),
+        "messages_recents": MessageContact.objects.filter(statut="non_lu").count(),
+        "candidatures_recentes": Candidature.objects.filter(statut="soumise").count(),
+        "certificats_delivres": Certificat.objects.count(),
+        "candidatures_total": Candidature.objects.count(),
+        "total_parcours": Parcours.objects.count(),
+        "taches_en_cours": Tache.objects.filter(statut="en_cours").count(),
+        "tickets_ouverts": TicketSupport.objects.filter(statut="ouvert").count(),
+        "nouveaux_utilisateurs": User.objects.filter(date_joined__gte=last_30).count(),
     }
-    return render(request, 'admin/dg.html', context)
+    return render(request, "admin/dg.html", context)
 
 
 @login_required
@@ -175,23 +229,29 @@ def dashboard_coordinateur(request, departement):
     from apps.gestion.models import Tache
 
     context = {
-        'page_title': f'Dashboard Coordinateur — {departement.title()}',
-        'departement': departement,
-        'messages_recents': MessageContact.objects.filter(categorie=departement, statut='non_lu').count(),
-        'taches_actives': Tache.objects.filter(departement=departement, statut='en_cours').count(),
-        'taches_terminees': Tache.objects.filter(departement=departement, statut='termine').count(),
+        "page_title": f"Dashboard Coordinateur — {departement.title()}",
+        "departement": departement,
+        "messages_recents": MessageContact.objects.filter(
+            categorie=departement, statut="non_lu"
+        ).count(),
+        "taches_actives": Tache.objects.filter(
+            departement=departement, statut="en_cours"
+        ).count(),
+        "taches_terminees": Tache.objects.filter(
+            departement=departement, statut="termine"
+        ).count(),
     }
 
     templates = {
-        'pedagogie': 'admin/coordinateur_pedagogie.html',
-        'marketing': 'admin/coordinateur_marketing.html',
-        'technique': 'admin/coordinateur_technique.html',
-        'operations': 'admin/coordonnateur_operations.html',
-        'qualite': 'admin/coordinateur_qualite.html',
-        'support': 'admin/coordinateur_support.html',
-        'design': 'admin/coordinateur_design.html',
+        "pedagogie": "admin/coordinateur_pedagogie.html",
+        "marketing": "admin/coordinateur_marketing.html",
+        "technique": "admin/coordinateur_technique.html",
+        "operations": "admin/coordonnateur_operations.html",
+        "qualite": "admin/coordinateur_qualite.html",
+        "support": "admin/coordinateur_support.html",
+        "design": "admin/coordinateur_design.html",
     }
-    template = templates.get(departement, 'admin/gestionnaire.html')
+    template = templates.get(departement, "admin/gestionnaire.html")
     return render(request, template, context)
 
 
@@ -199,54 +259,71 @@ def dashboard_coordinateur(request, departement):
 def dashboard_gestionnaire(request, departement):
     from apps.messaging.models import MessageContact
 
-    messages_list = MessageContact.objects.filter(
-        categorie=departement
-    ).order_by('-date_envoi')[:20]
+    messages_list = MessageContact.objects.filter(categorie=departement).order_by(
+        "-date_envoi"
+    )[:20]
 
     total = messages_list.count()
-    non_lus = MessageContact.objects.filter(categorie=departement, statut='non_lu').count()
-    traites = MessageContact.objects.filter(categorie=departement, statut='repondu').count()
+    non_lus = MessageContact.objects.filter(
+        categorie=departement, statut="non_lu"
+    ).count()
+    traites = MessageContact.objects.filter(
+        categorie=departement, statut="repondu"
+    ).count()
 
     context = {
-        'page_title': f'Dashboard Gestionnaire — {departement.title()}',
-        'departement': departement,
-        'messages_list': messages_list,
-        'total_messages': total,
-        'messages_non_lus': non_lus,
-        'messages_traites': traites,
+        "page_title": f"Dashboard Gestionnaire — {departement.title()}",
+        "departement": departement,
+        "messages_list": messages_list,
+        "total_messages": total,
+        "messages_non_lus": non_lus,
+        "messages_traites": traites,
     }
-    return render(request, 'admin/gestionnaire.html', context)
+    return render(request, "admin/gestionnaire.html", context)
 
 
 @login_required
 def dashboard_etudiant(request):
     from apps.parcours.models import ProgressionUtilisateur
-    progressions = ProgressionUtilisateur.objects.filter(user=request.user).select_related('parcours')
+
+    progressions = ProgressionUtilisateur.objects.filter(
+        user=request.user
+    ).select_related("parcours")
     context = {
-        'page_title': 'Mon tableau de bord',
-        'progressions': progressions,
+        "page_title": "Mon tableau de bord",
+        "progressions": progressions,
     }
-    return render(request, 'admin/gestionnaire.html', context)
+    return render(request, "utilisateur/dashboard_etudiant.html", context)
 
 
 @login_required
 def checkout(request):
-    return render(request, 'pages/entreprise/checkout.html', {'page_title': 'Abonnement'})
+    return render(
+        request, "pages/entreprise/checkout.html", {"page_title": "Abonnement"}
+    )
 
 
 @login_required
 def create_checkout_session(request):
-    return JsonResponse({'error': 'Stripe non configuré'}, status=400)
+    return JsonResponse({"error": "Stripe non configuré"}, status=400)
 
 
 @login_required
 def payment_success(request):
-    return render(request, 'pages/entreprise/paiement_success.html', {'page_title': 'Paiement réussi'})
+    return render(
+        request,
+        "pages/entreprise/paiement_success.html",
+        {"page_title": "Paiement réussi"},
+    )
 
 
 @login_required
 def payment_cancel(request):
-    return render(request, 'pages/entreprise/paiment_cancel.html', {'page_title': 'Paiement annulé'})
+    return render(
+        request,
+        "pages/entreprise/paiment_cancel.html",
+        {"page_title": "Paiement annulé"},
+    )
 
 
 @csrf_protect
@@ -257,39 +334,40 @@ def stripe_webhook(request):
 @login_required
 def reunion_virtuelle(request):
     context = {
-        'page_title': 'Réunion virtuelle',
+        "page_title": "Réunion virtuelle",
     }
-    return render(request, 'admin/reunion.html', context)
+    return render(request, "admin/reunion.html", context)
 
 
 @login_required
 @require_POST
 def reunion_envoyer_message(request):
-    message_text = request.POST.get('message', '').strip()
+    message_text = request.POST.get("message", "").strip()
     if message_text:
-        messages.success(request, 'Message envoyé dans la réunion.')
-    return redirect('users:reunion_virtuelle')
+        messages.success(request, "Message envoyé dans la réunion.")
+    return redirect("users:reunion_virtuelle")
 
 
 @login_required
 def page_equipe(request):
-    if request.user.role != 'dg':
+    if request.user.role != "dg":
         messages.error(request, "Accès réservé à la Direction Générale.")
-        return redirect('users:dashboard_dg')
+        return redirect("users:dashboard_dg")
     from apps.users.models import User
-    membres = User.objects.exclude(role='etudiant').order_by('role', 'last_name')
+
+    membres = User.objects.exclude(role="etudiant").order_by("role", "last_name")
     context = {
-        'page_title': "Notre Équipe",
-        'membres': membres,
+        "page_title": "Notre Équipe",
+        "membres": membres,
     }
-    return render(request, 'admin/equipe.html', context)
+    return render(request, "admin/equipe.html", context)
 
 
 @login_required
 def page_rapports_transparence(request):
-    if request.user.role != 'dg':
+    if request.user.role != "dg":
         messages.error(request, "Accès réservé à la Direction Générale.")
-        return redirect('users:dashboard_dg')
+        return redirect("users:dashboard_dg")
     from apps.audit.models import AuditLog
     from apps.institution.models import Candidature, Certificat
     from apps.users.models import User
@@ -297,22 +375,22 @@ def page_rapports_transparence(request):
     from datetime import timedelta
 
     now = timezone.now()
-    logs_recents = AuditLog.objects.order_by('-timestamp')[:50]
+    logs_recents = AuditLog.objects.order_by("-timestamp")[:50]
 
     context = {
-        'page_title': "Rapports de Transparence",
-        'total_utilisateurs': User.objects.count(),
-        'total_certificats': Certificat.objects.count(),
-        'total_candidatures': Candidature.objects.count(),
-        'logs_recents': logs_recents,
-        'date_rapport': now,
+        "page_title": "Rapports de Transparence",
+        "total_utilisateurs": User.objects.count(),
+        "total_certificats": Certificat.objects.count(),
+        "total_candidatures": Candidature.objects.count(),
+        "logs_recents": logs_recents,
+        "date_rapport": now,
     }
-    return render(request, 'admin/rapports_transparence.html', context)
+    return render(request, "admin/rapports_transparence.html", context)
 
 
 @login_required
 def documentation(request):
     context = {
-        'page_title': 'Documentation Technique',
+        "page_title": "Documentation Technique",
     }
-    return render(request, 'pages/documentation.html', context)
+    return render(request, "pages/documentation.html", context)
