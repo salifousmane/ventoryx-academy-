@@ -4,7 +4,15 @@ Version corrigée et stabilisée.
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
+
+BASE_DIR = Path(__file__).resolve().parent
+
+load_dotenv(BASE_DIR / ".env")
+
+INSTANCE_DIR = BASE_DIR / "instance"
+INSTANCE_DIR.mkdir(exist_ok=True)
 
 # ============================================================
 # CHEMINS DE BASE
