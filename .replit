@@ -17,7 +17,7 @@ USE_SQLITE = "True"
 SECURE_SSL_REDIRECT = "False"
 SESSION_COOKIE_SECURE = "False"
 CSRF_COOKIE_SECURE = "False"
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = "your_openai_api_key_here"
 
 [userenv.development]
 DJANGO_SECRET_KEY = "ventoryx-dev-secret-key-mm0giouh27k"
