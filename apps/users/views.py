@@ -192,7 +192,7 @@ def google_callback(request):
 
 @login_required
 def dashboard_redirect(request):
-    return redirect("core:tableau_de_bord")
+    return redirect("users:dashboard_etudiant")
 
 
 @login_required
