@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Documentation Technique | {{ site_name }}{% endblock %}
+
+{% block content %}
+<div style="max-width:900px;margin:3rem auto;padding:0 1rem;">
+    <div style="background:linear-gradient(135deg,#0F1C2E,#1E3A5F);color:white;border-radius:16px;padding:2.5rem;margin-bottom:2rem;">
+        <h1 style="font-family:'Montserrat',sans-serif;font-size:2rem;margin:0 0 0.5rem;">
+            <i class="fas fa-book" style="margin-right:0.6rem;"></i>Documentation Technique
+        </h1>
+        <p style="opacity:0.8;margin:0;">Ressources et guides pour l'équipe Ventoryx Academy</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;">
+        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #0077B6;">
+            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
+                <i class="fas fa-cogs" style="color:#0077B6;margin-right:0.5rem;"></i>Architecture
+            </h3>
+            <p style="color:#6C757D;font-size:0.9rem;margin:0;">Django 6 · SQLite/PostgreSQL · Whitenoise · Celery · Redis</p>
+        </div>
+        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #10b981;">
+            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
+                <i class="fas fa-shield-alt" style="color:#10b981;margin-right:0.5rem;"></i>Sécurité
+            </h3>
+            <p style="color:#6C757D;font-size:0.9rem;margin:0;">CSRF · Axes · CSP · Argon2 · Audit logs · Rate limiting</p>
+        </div>
+        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #D4AF37;">
+            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
+                <i class="fas fa-robot" style="color:#D4AF37;margin-right:0.5rem;"></i>Assistant IA
+            </h3>
+            <p style="color:#6C757D;font-size:0.9rem;margin:0;">OpenAI GPT-4o-mini · Quota 10 questions/jour (gratuit) · Filtre de contenu</p>
+        </div>
+        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #8B5CF6;">
+            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
+                <i class="fas fa-credit-card" style="color:#8B5CF6;margin-right:0.5rem;"></i>Paiements
+            </h3>
+            <p style="color:#6C757D;font-size:0.9rem;margin:0;">Stripe Checkout · Webhooks · Abonnements mensuel / annuel</p>
+        </div>
+        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #FF6B35;">
+            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
+                <i class="fas fa-envelope" style="color:#FF6B35;margin-right:0.5rem;"></i>Emails
+            </h3>
+            <p style="color:#6C757D;font-size:0.9rem;margin:0;">SendGrid (prod) · Console backend (dev) · Anymail</p>
+        </div>
+        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #ef4444;">
+            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
+                <i class="fas fa-tasks" style="color:#ef4444;margin-right:0.5rem;"></i>Tâches asynchrones
+            </h3>
+            <p style="color:#6C757D;font-size:0.9rem;margin:0;">Celery Beat · Backup quotidien · Nettoyage comptes · Relances</p>
+        </div>
+    </div>
+
+    <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-top:1.5rem;">
+        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1rem;">
+            <i class="fas fa-terminal" style="color:#0077B6;margin-right:0.5rem;"></i>Commandes utiles
+        </h3>
+        <pre style="background:#F8F9FA;padding:1rem;border-radius:8px;font-size:0.82rem;overflow-x:auto;color:#0F1C2E;margin:0;"><code>python manage.py migrate          # Appliquer les migrations
+python manage.py createsuperuser   # Créer un administrateur
+python manage.py collectstatic     # Collecter les fichiers statiques
+python manage.py shell             # Shell Django interactif</code></pre>
+    </div>
+</div>
+{% endblock %}

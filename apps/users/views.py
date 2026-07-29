@@ -1,11 +1,15 @@
+import logging
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.conf import settings
 from .models import User, Subscription
+
+logger = logging.getLogger(__name__)
 
 
 @csrf_protect
@@ -293,7 +297,7 @@ def dashboard_etudiant(request):
         "page_title": "Mon tableau de bord",
         "progressions": progressions,
     }
-    return render(request, "utilisateur/dashboard_etudiant.html", context)
+    return render(request, "pages/utilisateur/dashboard_etudiant.html", context)
 
 
 @login_required
@@ -304,8 +308,64 @@ def checkout(request):
 
 
 @login_required
+@require_POST
 def create_checkout_session(request):
-    return JsonResponse({"error": "Stripe non configuré"}, status=400)
+    stripe_secret = getattr(settings, 'STRIPE_SECRET_KEY', '')
+    if not stripe_secret:
+        return JsonResponse(
+            {"error": "Le paiement en ligne n'est pas encore disponible. Contactez-nous à contact@ventoryx-academy.com pour souscrire."},
+            status=503,
+        )
+
+    try:
+        import stripe, json as _json
+        stripe.api_key = stripe_secret
+
+        body = _json.loads(request.body)
+        plan = body.get('plan', 'annuel')
+        promo_code = body.get('promo_code', '').strip()
+
+        prices = {
+            'mensuel': {'unit_amount': 3900, 'name': 'Abonnement Mensuel Ventoryx Academy'},
+            'annuel': {'unit_amount': 32900, 'name': 'Abonnement Annuel Ventoryx Academy'},
+        }
+        price_data = prices.get(plan, prices['annuel'])
+
+        success_url = request.build_absolute_uri('/auth/paiement/succes/')
+        cancel_url = request.build_absolute_uri('/auth/paiement/annulation/')
+
+        session_params = {
+            'payment_method_types': ['card'],
+            'line_items': [{
+                'price_data': {
+                    'currency': 'eur',
+                    'product_data': {'name': price_data['name']},
+                    'unit_amount': price_data['unit_amount'],
+                    'recurring': {'interval': 'month' if plan == 'mensuel' else 'year'},
+                },
+                'quantity': 1,
+            }],
+            'mode': 'subscription',
+            'success_url': success_url + '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url': cancel_url,
+            'customer_email': request.user.email,
+            'metadata': {'user_id': request.user.id, 'plan': plan},
+        }
+
+        if promo_code:
+            try:
+                coupons = stripe.PromotionCode.list(code=promo_code, active=True, limit=1)
+                if coupons.data:
+                    session_params['discounts'] = [{'promotion_code': coupons.data[0].id}]
+            except Exception:
+                pass
+
+        session = stripe.checkout.Session.create(**session_params)
+        return JsonResponse({'url': session.url})
+
+    except Exception as e:
+        logger.error(f"Stripe checkout error: {e}")
+        return JsonResponse({"error": "Une erreur est survenue lors de la création de la session de paiement."}, status=500)
 
 
 @login_required
@@ -326,8 +386,51 @@ def payment_cancel(request):
     )
 
 
-@csrf_protect
+@csrf_exempt
 def stripe_webhook(request):
+    stripe_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', '')
+    if not stripe_secret:
+        return HttpResponse(status=200)
+
+    try:
+        import stripe
+        stripe.api_key = getattr(settings, 'STRIPE_SECRET_KEY', '')
+        payload = request.body
+        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
+        event = stripe.Webhook.construct_event(payload, sig_header, stripe_secret)
+
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            user_id = session.get('metadata', {}).get('user_id')
+            plan = session.get('metadata', {}).get('plan', 'mensuel')
+            stripe_customer_id = session.get('customer', '')
+            stripe_subscription_id = session.get('subscription', '')
+
+            if user_id:
+                from apps.users.models import User, Subscription
+                from django.utils import timezone
+                from datetime import timedelta
+                try:
+                    user = User.objects.get(id=user_id)
+                    sub, _ = Subscription.objects.get_or_create(user=user)
+                    sub.plan_type = plan
+                    sub.statut = 'active'
+                    sub.stripe_customer_id = stripe_customer_id or ''
+                    sub.stripe_subscription_id = stripe_subscription_id or ''
+                    sub.date_debut = timezone.now()
+                    sub.date_fin = timezone.now() + (timedelta(days=365) if plan == 'annuel' else timedelta(days=30))
+                    sub.save()
+                    user.abonnement_actif = True
+                    user.save(update_fields=['abonnement_actif'])
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).error(f"Webhook user update error: {e}")
+
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Stripe webhook error: {e}")
+        return HttpResponse(status=400)
+
     return HttpResponse(status=200)
 
 

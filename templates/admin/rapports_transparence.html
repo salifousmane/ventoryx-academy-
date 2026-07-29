@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Rapports de Transparence | {{ site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rapport-container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+    .rapport-header {
+        background: linear-gradient(135deg, #0F1C2E, #1E3A5F);
+        color: white; border-radius: 16px; padding: 2rem; margin-bottom: 2rem;
+    }
+    .rapport-header h1 { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; margin: 0 0 0.5rem; }
+    .rapport-header p { opacity: 0.8; margin: 0; font-size: 0.95rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card {
+        background: white; border-radius: 12px; padding: 1.5rem; text-align: center;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06); border-top: 4px solid #0077B6;
+    }
+    .stat-card .stat-value { font-size: 2.2rem; font-weight: 800; color: #0F1C2E; }
+    .stat-card .stat-label { font-size: 0.85rem; color: #6C757D; margin-top: 0.3rem; }
+    .logs-card {
+        background: white; border-radius: 16px; padding: 2rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .logs-card h2 { font-family: 'Montserrat', sans-serif; font-size: 1.3rem; color: #0F1C2E; margin-bottom: 1.5rem; }
+    .log-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .log-table th { background: #F8F9FA; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #0F1C2E; border-bottom: 2px solid #E9ECEF; }
+    .log-table td { padding: 0.65rem 1rem; border-bottom: 1px solid #F0F0F0; color: #495057; vertical-align: middle; }
+    .log-table tr:hover td { background: #F8FAFE; }
+    .badge-gravite {
+        display: inline-block; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.72rem; font-weight: 600;
+    }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+    .badge-alerte { background: #fef3c7; color: #92400e; }
+    .badge-critique { background: #fee2e2; color: #991b1b; }
+    .rapport-date { font-size: 0.8rem; color: #6C757D; text-align: right; margin-top: 1rem; }
+    .empty-logs { text-align: center; padding: 2rem; color: #6C757D; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rapport-container">
+    <div class="rapport-header">
+        <h1><i class="fas fa-chart-bar" style="margin-right:0.5rem;"></i>Rapports de Transparence</h1>
+        <p>Vue d'ensemble de l'activité de la plateforme Ventoryx Academy</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_utilisateurs }}</div>
+            <div class="stat-label"><i class="fas fa-users"></i> Utilisateurs inscrits</div>
+        </div>
+        <div class="stat-card" style="border-top-color:#10b981;">
+            <div class="stat-value">{{ total_certificats }}</div>
+            <div class="stat-label"><i class="fas fa-certificate"></i> Certificats délivrés</div>
+        </div>
+        <div class="stat-card" style="border-top-color:#D4AF37;">
+            <div class="stat-value">{{ total_candidatures }}</div>
+            <div class="stat-label"><i class="fas fa-file-alt"></i> Candidatures reçues</div>
+        </div>
+        <div class="stat-card" style="border-top-color:#FF6B35;">
+            <div class="stat-value">{{ logs_recents|length }}</div>
+            <div class="stat-label"><i class="fas fa-history"></i> Événements récents</div>
+        </div>
+    </div>
+
+    <div class="logs-card">
+        <h2><i class="fas fa-history" style="margin-right:0.5rem;"></i>Journal d'activité récent</h2>
+        {% if logs_recents %}
+        <div style="overflow-x:auto;">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Utilisateur</th>
+                        <th>Action</th>
+                        <th>Objet</th>
+                        <th>Gravité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs_recents %}
+                    <tr>
+                        <td>{{ log.timestamp|date:"d/m/Y H:i" }}</td>
+                        <td>{{ log.utilisateur|default:"—" }}</td>
+                        <td>{{ log.action }}</td>
+                        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            {{ log.objet|default:"—" }}
+                        </td>
+                        <td>
+                            <span class="badge-gravite {% if log.gravite == 'critique' %}badge-critique{% elif log.gravite == 'alerte' %}badge-alerte{% else %}badge-info{% endif %}">
+                                {{ log.gravite|default:"info" }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-logs">
+            <i class="fas fa-check-circle" style="font-size:2rem;color:#10b981;"></i>
+            <p style="margin-top:0.5rem;">Aucun événement récent.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <p class="rapport-date">Rapport généré le {{ date_rapport|date:"d/m/Y à H:i" }}</p>
+</div>
+{% endblock %}

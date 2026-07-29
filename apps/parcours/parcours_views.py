@@ -23,7 +23,7 @@ def selection_metier(request):
         metier.total_cours = total
         metier.total_tests = metier.total_quiz
 
-    return render(request, 'parcours/selection_metier.html', {
+    return render(request, 'pages/parcours/selection_metier.html', {
         'page_title': 'Sélection du parcours',
         'metiers': metiers,
     })
@@ -59,7 +59,7 @@ def accueil_parcours(request, metier):
 
     test_global_debloque = all(m.progression >= 100 for m in modules)
 
-    return render(request, 'parcours/accueil_parcours.html', {
+    return render(request, 'pages/parcours/accueil_parcours.html', {
         'page_title': parcours.nom,
         'metier': metier,
         'parcours': parcours,
@@ -100,7 +100,7 @@ def cours(request, metier, module_num, cours_num):
             module=module, type='test', actif=True
         ).order_by('numero').first()
 
-    return render(request, 'parcours/cours.html', {
+    return render(request, 'pages/parcours/cours.html', {
         'page_title': cours_item.titre,
         'metier': metier,
         'parcours': parcours,
@@ -200,7 +200,7 @@ def test(request, metier, module_num, test_num):
                 'bonnes_reponses': score,
             })
 
-    return render(request, 'parcours/test.html', {
+    return render(request, 'pages/parcours/test.html', {
         'page_title': test_item.titre,
         'metier': metier,
         'parcours': parcours,
@@ -321,7 +321,7 @@ def test_global(request, metier):
                     'bonnes_reponses': score,
                 })
 
-    return render(request, 'parcours/test_global.html', {
+    return render(request, 'pages/parcours/test_global.html', {
         'page_title': f'Test Global — {parcours.nom}',
         'metier': metier,
         'parcours': parcours,

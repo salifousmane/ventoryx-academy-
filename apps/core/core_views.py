@@ -128,7 +128,10 @@ def blog(request):
 @login_required
 @require_http_methods(["POST"])
 def chatbot_api(request):
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'reponse': 'Requête invalide.'}, status=400)
     question = data.get('question', '').strip()
     cours = data.get('cours', '')
 
