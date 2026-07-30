@@ -110,7 +110,7 @@ python manage.py runserver 0.0.0.0:5000
 
 > ⚠️ **Ces comptes sont à supprimer avant la mise en production.**
 
-Mot de passe commun : `ChangeMe2026!`
+Mot de passe commun : `ChangeMe2026ChangeMe2026!`
 
 | Rôle | Email |
 |------|-------|

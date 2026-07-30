@@ -488,11 +488,14 @@ document.addEventListener('click', function(e) {
 });
 
 function markAllRead() {
+    /*
     fetch("{% url 'messaging:marquer_tout_lu' %}", { 
         method: 'POST', 
         headers: { 'X-CSRFToken': '{{ csrf_token }}' } 
     }).then(() => location.reload());
-}
+    */
+    console.log("Fonction marquer tout lu désactivée");
+    }
 </script>
 
 <style>
