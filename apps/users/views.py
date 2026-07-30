@@ -7,6 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.conf import settings
+from django.db import models
 from .models import User, Subscription
 
 logger = logging.getLogger(__name__)
@@ -85,7 +86,7 @@ def register(request):
                 request,
                 f"Bienvenue {first_name} ! Votre compte a été créé avec succès.",
             )
-            return redirect("core:index")
+            return redirect("core:tableau_de_bord")
         except Exception as e:
             messages.error(
                 request,
@@ -242,7 +243,7 @@ def dashboard_coordinateur(request, departement):
             departement=departement, statut="en_cours"
         ).count(),
         "taches_terminees": Tache.objects.filter(
-            departement=departement, statut="termine"
+            departement=departement, statut="terminee"
         ).count(),
     }
 
@@ -288,14 +289,147 @@ def dashboard_gestionnaire(request, departement):
 
 @login_required
 def dashboard_etudiant(request):
-    from apps.parcours.models import ProgressionUtilisateur
+    from apps.parcours.models import ProgressionUtilisateur, Parcours, CoursItem
+    from apps.messaging.models import Notification
+    from django.utils import timezone
 
-    progressions = ProgressionUtilisateur.objects.filter(
-        user=request.user
-    ).select_related("parcours")
+    user = request.user
+    all_prog = ProgressionUtilisateur.objects.filter(user=user).select_related(
+        'parcours', 'module', 'item'
+    )
+
+    # Agréger par parcours
+    parcours_stats = {}
+    derniere_date = None
+    dernier_item = None
+
+    for prog in all_prog:
+        pk = prog.parcours_id
+        if pk not in parcours_stats:
+            parcours_stats[pk] = {
+                'parcours': prog.parcours,
+                'cours_termines': 0,
+                'total_cours_vus': 0,
+                'tests_reussis': 0,
+                'total_tests_vus': 0,
+                'scores': [],
+                'last_date': prog.date_modification,
+            }
+        s = parcours_stats[pk]
+        if prog.item:
+            if prog.item.type == 'cours':
+                s['total_cours_vus'] += 1
+                if prog.termine:
+                    s['cours_termines'] += 1
+            elif prog.item.type == 'test':
+                s['total_tests_vus'] += 1
+                if prog.score >= 70:
+                    s['tests_reussis'] += 1
+                if prog.score:
+                    s['scores'].append(prog.score)
+        if prog.date_modification > s['last_date']:
+            s['last_date'] = prog.date_modification
+        if derniere_date is None or prog.date_modification > derniere_date:
+            derniere_date = prog.date_modification
+            dernier_item = prog.item
+
+    # Construire la liste de progressions pour le template
+    progressions_list = []
+    for stat in sorted(parcours_stats.values(), key=lambda x: x['last_date'], reverse=True):
+        parc = stat['parcours']
+        total_cours_parc = max(parc.total_cours, stat['total_cours_vus']) or 1
+        total_tests_parc = max(parc.total_quiz, stat['total_tests_vus'])
+        cours_t = stat['cours_termines']
+        pourcentage = min(100, int(cours_t / total_cours_parc * 100))
+        progressions_list.append({
+            'metier': parc.nom,
+            'slug': parc.metier,
+            'module_actuel': 1,
+            'total_modules': parc.modules.count(),
+            'pourcentage': pourcentage,
+            'cours_termines': cours_t,
+            'total_cours': total_cours_parc,
+            'tests_reussis': stat['tests_reussis'],
+            'total_tests': total_tests_parc,
+        })
+
+    # Stats globales
+    cours_total_global = sum(s['total_cours_vus'] for s in parcours_stats.values())
+    cours_termines_global = sum(s['cours_termines'] for s in parcours_stats.values())
+    tests_reussis_global = sum(s['tests_reussis'] for s in parcours_stats.values())
+    tests_total_global = sum(s['total_tests_vus'] for s in parcours_stats.values())
+    all_scores = [sc for s in parcours_stats.values() for sc in s['scores']]
+    moyenne = int(sum(all_scores) / len(all_scores)) if all_scores else 0
+
+    # Parcours actif principal (le plus récent)
+    parcours_actif = None
+    if progressions_list:
+        try:
+            parcours_actif = Parcours.objects.get(metier=progressions_list[0]['slug'])
+        except Parcours.DoesNotExist:
+            pass
+
+    # Certificats
+    try:
+        certificats = user.certificats.filter(statut='valide').order_by('-date_delivrance')
+    except Exception:
+        certificats = []
+
+    # Notifications
+    try:
+        notifications = Notification.objects.filter(destinataire=user).order_by('-date_creation')[:10]
+        notifications_non_lues = Notification.objects.filter(destinataire=user, lue=False).count()
+    except Exception:
+        notifications = []
+        notifications_non_lues = 0
+
+    # Abonnement
+    abonnement_actif = False
+    plan_type = None
+    date_fin_abonnement = None
+    try:
+        sub = user.subscription
+        abonnement_actif = sub.est_active()
+        plan_type = sub.plan_type
+        date_fin_abonnement = sub.date_fin
+    except Exception:
+        pass
+
+    # Heures de formation (estimation : 30 min par cours terminé)
+    heures_formation = int(cours_termines_global * 0.5)
+
+    # Classement (simplifié : position par cours terminés)
+    rang_global = ProgressionUtilisateur.objects.filter(
+        termine=True
+    ).values('user').distinct().count()
+    ma_position = ProgressionUtilisateur.objects.filter(
+        termine=True
+    ).values('user').annotate(
+        nb=models.Count('id')
+    ).filter(nb__gt=cours_termines_global).count() + 1 if cours_termines_global > 0 else '-'
+
     context = {
-        "page_title": "Mon tableau de bord",
-        "progressions": progressions,
+        "page_title": "Mon espace",
+        "progressions": progressions_list,
+        "parcours_actif": parcours_actif,
+        "module_actuel": None,
+        "cours_termines": cours_termines_global,
+        "cours_total": cours_total_global,
+        "tests_reussis": tests_reussis_global,
+        "tests_total": tests_total_global,
+        "moyenne_generale": moyenne,
+        "heures_formation": heures_formation,
+        "rang_classement": f"#{ma_position}" if isinstance(ma_position, int) else "-",
+        "parcours_actifs": len(parcours_stats),
+        "notifications": notifications,
+        "notifications_non_lues": notifications_non_lues,
+        "messages_non_lus": 0,
+        "dernier_cours": dernier_item,
+        "prochains_tests": [],
+        "certificats": certificats,
+        "abonnement_actif": abonnement_actif,
+        "plan_type": plan_type,
+        "date_fin_abonnement": date_fin_abonnement,
     }
     return render(request, "pages/utilisateur/dashboard_etudiant.html", context)
 

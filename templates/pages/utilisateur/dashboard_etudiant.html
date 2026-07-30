@@ -224,8 +224,8 @@
                 {% endif %}
             </div>
             {% for notif in notifications %}
-            <div style="padding: 0.8rem 1rem; border-bottom: 1px solid #E9ECEF; {% if not notif.est_lue %}background: rgba(0,119,182,0.03); border-left: 3px solid #0077B6;{% endif %}">
-                <div style="font-size: 0.85rem; {% if not notif.est_lue %}font-weight: 600;{% endif %}">{{ notif.titre }}</div>
+            <div style="padding: 0.8rem 1rem; border-bottom: 1px solid #E9ECEF; {% if not notif.lue %}background: rgba(0,119,182,0.03); border-left: 3px solid #0077B6;{% endif %}">
+                <div style="font-size: 0.85rem; {% if not notif.lue %}font-weight: 600;{% endif %}">{{ notif.titre }}</div>
                 <div style="font-size: 0.75rem; color: #6C757D;">{{ notif.message }}</div>
                 <div style="font-size: 0.65rem; color: #ADB5BD;">{{ notif.date_creation|date:"d/m/Y H:i" }}</div>
             </div>
@@ -288,7 +288,7 @@
                             {{ dernier_cours.titre }}
                         </p>
                     </div>
-                    <a href="{% url 'parcours:cours' metier=parcours_actif.slug module=dernier_cours.module.ordre cours=dernier_cours.ordre %}" 
+                    <a href="{% url 'parcours:cours' metier=parcours_actif.metier module=dernier_cours.module.numero cours=dernier_cours.numero %}" 
                        class="btn-quick-action" 
                        style="background: #D4AF37; color: #0F1C2E; padding: 0.7rem 1.5rem;">
                         <i class="fas fa-play"></i> Continuer

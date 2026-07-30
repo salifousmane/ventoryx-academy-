@@ -152,21 +152,34 @@ def _ensure_user(email, full_name, role, department=None):
     """Crée un utilisateur s'il n'existe pas."""
     user = User.objects.filter(email=email).first()
     if user:
+        # Mettre à jour le rôle si nécessaire
+        changed = False
+        if user.role != role:
+            user.role = role
+            changed = True
+        if department and user.departement != department:
+            user.departement = department
+            changed = True
+        if changed:
+            user.save(update_fields=['role', 'departement'])
         return user
     parts = full_name.split()
     first = parts[0] if parts else ''
-    last = parts[-1] if len(parts) > 1 else ''
-    user = User.objects.create_user(email=email, password=DEFAULT_PASSWORD, first_name=first, last_name=last)
+    last = ' '.join(parts[1:]) if len(parts) > 1 else ''
+    user = User.objects.create_user(
+        username=email,
+        email=email,
+        password=DEFAULT_PASSWORD,
+        first_name=first,
+        last_name=last,
+    )
     user.role = role
-    user.departement = department
-    if role == 'dg':
-        user.is_dg = True
-        user.is_staff = True
-    elif role == 'coordinateur':
-        user.is_coordinateur = True
-    elif role == 'gestionnaire':
-        user.is_gestionnaire = True
+    if department:
+        user.departement = department
     user.is_active = True
+    if role == 'dg':
+        user.is_staff = True
+        user.is_superuser = False
     user.save()
     return user
 
@@ -210,7 +223,6 @@ def seed_parcours():
             metier=metier_key,
             defaults={
                 'nom': data['nom'],
-                'icone': data['icone'],
                 'gratuit': data.get('gratuit', False),
                 'premium': data.get('premium', False),
                 'ordre': list(METIERS.keys()).index(metier_key) + 1,
@@ -289,15 +301,54 @@ def seed_forums():
     print(f'✅ {Forum.objects.count()} forums créés')
 
 
+def seed_test_etudiant():
+    """Crée l'utilisateur de test SOW Salif Ousmane avec abonnement annuel et certificat."""
+    from apps.users.models import Subscription
+    from apps.institution.models import Certificat
+    import hashlib, uuid
+    from django.utils import timezone
+    from datetime import timedelta
+
+    email = 'salifousmanesow4@gmail.com'
+    user = _ensure_user(email, 'Salif Ousmane SOW', 'etudiant')
+
+    # Date de naissance : 19 ans (née en 2006)
+    from datetime import date
+    user.date_naissance = date(2006, 7, 15)
+    user.telephone = '+221771234567'
+    user.bio = 'Passionné par l\'aéronautique, futur pilote de ligne.'
+    user.abonnement_actif = True
+    user.save()
+
+    # Abonnement annuel actif
+    sub, _ = Subscription.objects.get_or_create(user=user)
+    sub.plan_type = 'annuel'
+    sub.statut = 'active'
+    sub.date_debut = timezone.now() - timedelta(days=30)
+    sub.date_fin = timezone.now() + timedelta(days=335)
+    sub.save()
+
+    # Certificat dans le parcours Contrôleur Aérien (gratuit - accessible)
+    numero = f'CERT-VA-2026-{user.id:04d}'
+    if not Certificat.objects.filter(user=user).exists():
+        hash_val = hashlib.sha256(f'{email}{numero}{uuid.uuid4()}'.encode()).hexdigest()
+        Certificat.objects.create(
+            numero_serie=numero,
+            full_name='Salif Ousmane SOW',
+            parcours='Contrôleur Aérien',
+            user=user,
+            hash_verification=hash_val,
+            statut='valide',
+        )
+    print(f'✅ Étudiant test créé : {email} / mot de passe : {DEFAULT_PASSWORD}')
+    return user
+
+
 def seed_defaults():
-    """Fonction principale de seed."""
-    if User.objects.count() > 0:
-        print('ℹ️  Utilisateurs déjà existants, seed ignoré.')
-        print('   Pour forcer le seed, supprimez la base de données.')
-        return
-    
+    """Fonction principale de seed — peut être relancée sans perte de données."""
     print('🌱 Démarrage du seed...')
     seed_utilisateurs()
+    seed_test_etudiant()
     seed_parcours()
     seed_forums()
     print('🎉 Seed terminé !')

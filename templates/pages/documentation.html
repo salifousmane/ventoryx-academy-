@@ -1,64 +1,431 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Documentation Technique | {{ site_name }}{% endblock %}
+{% block title %}Documentation complète — {{ site_name }}{% endblock %}
 
 {% block content %}
-<div style="max-width:900px;margin:3rem auto;padding:0 1rem;">
-    <div style="background:linear-gradient(135deg,#0F1C2E,#1E3A5F);color:white;border-radius:16px;padding:2.5rem;margin-bottom:2rem;">
-        <h1 style="font-family:'Montserrat',sans-serif;font-size:2rem;margin:0 0 0.5rem;">
-            <i class="fas fa-book" style="margin-right:0.6rem;"></i>Documentation Technique
+<div style="max-width:960px;margin:0 auto;padding:3rem 1rem 4rem;">
+
+    <!-- En-tête -->
+    <div style="background:linear-gradient(135deg,#0F1C2E,#1E3A5F);color:white;border-radius:20px;padding:3rem;margin-bottom:2.5rem;">
+        <h1 style="font-family:'Montserrat',sans-serif;font-size:2.2rem;margin:0 0 0.5rem;">
+            <i class="fas fa-book-open" style="margin-right:0.8rem;color:#D4AF37;"></i>Documentation Ventoryx Academy
         </h1>
-        <p style="opacity:0.8;margin:0;">Ressources et guides pour l'équipe Ventoryx Academy</p>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;">
-        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #0077B6;">
-            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
-                <i class="fas fa-cogs" style="color:#0077B6;margin-right:0.5rem;"></i>Architecture
-            </h3>
-            <p style="color:#6C757D;font-size:0.9rem;margin:0;">Django 6 · SQLite/PostgreSQL · Whitenoise · Celery · Redis</p>
-        </div>
-        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #10b981;">
-            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
-                <i class="fas fa-shield-alt" style="color:#10b981;margin-right:0.5rem;"></i>Sécurité
-            </h3>
-            <p style="color:#6C757D;font-size:0.9rem;margin:0;">CSRF · Axes · CSP · Argon2 · Audit logs · Rate limiting</p>
-        </div>
-        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #D4AF37;">
-            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
-                <i class="fas fa-robot" style="color:#D4AF37;margin-right:0.5rem;"></i>Assistant IA
-            </h3>
-            <p style="color:#6C757D;font-size:0.9rem;margin:0;">OpenAI GPT-4o-mini · Quota 10 questions/jour (gratuit) · Filtre de contenu</p>
-        </div>
-        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #8B5CF6;">
-            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
-                <i class="fas fa-credit-card" style="color:#8B5CF6;margin-right:0.5rem;"></i>Paiements
-            </h3>
-            <p style="color:#6C757D;font-size:0.9rem;margin:0;">Stripe Checkout · Webhooks · Abonnements mensuel / annuel</p>
-        </div>
-        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #FF6B35;">
-            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
-                <i class="fas fa-envelope" style="color:#FF6B35;margin-right:0.5rem;"></i>Emails
-            </h3>
-            <p style="color:#6C757D;font-size:0.9rem;margin:0;">SendGrid (prod) · Console backend (dev) · Anymail</p>
-        </div>
-        <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-top:4px solid #ef4444;">
-            <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 0.8rem;">
-                <i class="fas fa-tasks" style="color:#ef4444;margin-right:0.5rem;"></i>Tâches asynchrones
-            </h3>
-            <p style="color:#6C757D;font-size:0.9rem;margin:0;">Celery Beat · Backup quotidien · Nettoyage comptes · Relances</p>
+        <p style="opacity:0.85;margin:0;font-size:1.05rem;">Guide complet pour les utilisateurs et les développeurs</p>
+        <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;">
+            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-code-branch"></i> Django 6.0.7</span>
+            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-shield-alt"></i> Production-ready</span>
+            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-robot"></i> IA GPT-4o-mini</span>
+            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-mobile-alt"></i> PWA</span>
         </div>
     </div>
 
-    <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-top:1.5rem;">
-        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1rem;">
-            <i class="fas fa-terminal" style="color:#0077B6;margin-right:0.5rem;"></i>Commandes utiles
-        </h3>
-        <pre style="background:#F8F9FA;padding:1rem;border-radius:8px;font-size:0.82rem;overflow-x:auto;color:#0F1C2E;margin:0;"><code>python manage.py migrate          # Appliquer les migrations
-python manage.py createsuperuser   # Créer un administrateur
-python manage.py collectstatic     # Collecter les fichiers statiques
-python manage.py shell             # Shell Django interactif</code></pre>
+    <!-- Table des matières -->
+    <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-left:4px solid #D4AF37;margin-bottom:2rem;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;font-size:1.1rem;margin:0 0 1rem;">📋 Table des matières</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.4rem;">
+            <a href="#utilisateurs" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">1. Guide utilisateur (apprenant)</a>
+            <a href="#gestionnaires" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">2. Guide gestionnaires</a>
+            <a href="#coordinateurs" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">3. Guide coordinateurs</a>
+            <a href="#dg" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">4. Guide Directeur Général</a>
+            <a href="#architecture" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">5. Architecture technique</a>
+            <a href="#securite" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">6. Sécurité</a>
+            <a href="#ia" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">7. Assistant IA</a>
+            <a href="#paiements" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">8. Paiements Stripe</a>
+            <a href="#pwa" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">9. Application PWA</a>
+            <a href="#developpeurs" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">10. Guide développeurs</a>
+            <a href="#roles" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">11. Rôles & permissions</a>
+            <a href="#deploiement" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">12. Déploiement</a>
+        </div>
     </div>
+
+    <!-- Section 1 : Guide utilisateur -->
+    <div id="utilisateurs" class="doc-section" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #0077B6;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-user-graduate" style="color:#0077B6;margin-right:0.6rem;"></i>1. Guide Utilisateur (Apprenant)</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;">
+            <div>
+                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Inscription & Connexion</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Créer un compte depuis la page <a href="{% url 'users:register' %}" style="color:#0077B6;">/auth/register/</a></li>
+                    <li>Se connecter via <a href="{% url 'users:login' %}" style="color:#0077B6;">/auth/login/</a></li>
+                    <li>Connexion Google disponible (si configurée)</li>
+                    <li>Mot de passe oublié : réinitialisation par email</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Parcours de formation</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>8 métiers aéronautiques disponibles</li>
+                    <li>Contrôleur aérien & Technicien : accès gratuit</li>
+                    <li>Autres parcours : abonnement requis</li>
+                    <li>Formation avancée : abonnement Premium annuel</li>
+                    <li>20 cours par module + 4 quiz par module</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Mon espace (tableau de bord)</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Progression détaillée par parcours</li>
+                    <li>Statistiques : cours, tests, moyenne, heures</li>
+                    <li>Certificats obtenus</li>
+                    <li>Notifications et messagerie</li>
+                    <li>Statut de l'abonnement</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Assistant IA</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Disponible <strong>uniquement pendant les cours</strong></li>
+                    <li>Quota : 10 questions/jour (gratuit)</li>
+                    <li>Illimité pour les abonnés annuels</li>
+                    <li>Spécialisé en aéronautique</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Abonnements</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Mensuel : 39 €/mois</li>
+                    <li>Annuel : 329 €/an (économisez 29%)</li>
+                    <li>Paiement sécurisé via Stripe</li>
+                    <li>Acceptation des CGV obligatoire</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Certificats</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Certificats numériques vérifiables</li>
+                    <li>Numéro de série unique par certificat</li>
+                    <li>Vérification publique sur <a href="{% url 'core:verification_certificat' %}" style="color:#0077B6;">/verification-certificat/</a></li>
+                    <li>Hash cryptographique d'authenticité</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2 : Gestionnaires -->
+    <div id="gestionnaires" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #10b981;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-users-cog" style="color:#10b981;margin-right:0.6rem;"></i>2. Guide Gestionnaires</h2>
+        <p style="color:#495057;font-size:0.9rem;margin-bottom:1rem;">Les gestionnaires gèrent les messages entrants et les tâches de leur département. Ils accèdent à leur espace via <strong>/auth/dashboard/gestionnaire/[département]/</strong></p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;margin-bottom:1rem;">
+            {% for dept in "pedagogie,technique,marketing,operations,qualite,support,design"|split:"," %}
+            <div style="background:#F8FAFE;border-radius:8px;padding:0.8rem;font-size:0.85rem;">
+                <strong style="color:#0F1C2E;text-transform:capitalize;">{{ dept }}</strong><br>
+                <span style="color:#6C757D;">gest.{{ dept }}@ventoryx-academy.com</span>
+            </div>
+            {% endfor %}
+        </div>
+        <p style="color:#6C757D;font-size:0.85rem;background:#FFF3CD;padding:0.8rem;border-radius:8px;margin:0;">
+            <i class="fas fa-key"></i> Mot de passe de test : <strong>ChangeMe2026!</strong> — À changer dès la mise en production.
+        </p>
+    </div>
+
+    <!-- Section 3 : Coordinateurs -->
+    <div id="coordinateurs" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #8B5CF6;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-sitemap" style="color:#8B5CF6;margin-right:0.6rem;"></i>3. Guide Coordinateurs</h2>
+        <p style="color:#495057;font-size:0.9rem;margin-bottom:1rem;">Les coordinateurs supervisent leur département et ont accès à une vue synthétique des métriques. Accès : <strong>/auth/dashboard/coordinateur/[département]/</strong></p>
+        <p style="color:#6C757D;font-size:0.85rem;background:#E8F4F8;padding:0.8rem;border-radius:8px;margin:0;">
+            <i class="fas fa-info-circle"></i> Les coordinateurs sont nommés après évaluation de leur candidature sur la plateforme. Leurs identifiants sont générés automatiquement et sont temporaires (changement lors d'une prise de poste).
+        </p>
+    </div>
+
+    <!-- Section 4 : DG -->
+    <div id="dg" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #D4AF37;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-crown" style="color:#D4AF37;margin-right:0.6rem;"></i>4. Guide Directeur Général</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;flex-wrap:wrap;">
+            <div>
+                <h3 style="color:#D4AF37;font-size:1rem;margin-bottom:0.5rem;">Accès</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Email test : <strong>dg@ventoryx-academy.com</strong></li>
+                    <li>Dashboard : <a href="{% url 'users:dashboard_dg' %}" style="color:#0077B6;">/auth/dashboard/dg/</a></li>
+                    <li>Admin Django : <a href="/admin/" style="color:#0077B6;">/admin/</a></li>
+                    <li>Rapports transparence : /auth/rapports-transparence/</li>
+                    <li>Équipe : /auth/equipe/</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color:#D4AF37;font-size:1rem;margin-bottom:0.5rem;">Fonctionnalités exclusives</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Vue globale de tous les utilisateurs</li>
+                    <li>Gestion des candidatures</li>
+                    <li>Audit logs complets</li>
+                    <li>Rapports de transparence</li>
+                    <li>Gestion des certificats</li>
+                    <li>Réunions virtuelles d'équipe</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5 : Architecture -->
+    <div id="architecture" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #0077B6;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-cogs" style="color:#0077B6;margin-right:0.6rem;"></i>5. Architecture Technique</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Stack principal</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li><strong>Framework :</strong> Django 6.0.7</li>
+                    <li><strong>BDD :</strong> SQLite (dev) / PostgreSQL (prod)</li>
+                    <li><strong>Cache :</strong> LocMemCache (dev) / Redis (prod)</li>
+                    <li><strong>Tâches :</strong> Celery + Celery Beat</li>
+                    <li><strong>Fichiers statiques :</strong> WhiteNoise</li>
+                    <li><strong>Images :</strong> Pillow 12.3.0</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Applications Django</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li><strong>core</strong> : pages publiques, IA, vault</li>
+                    <li><strong>users</strong> : authentification, dashboards</li>
+                    <li><strong>parcours</strong> : formations et progression</li>
+                    <li><strong>blog</strong> : articles et contenu</li>
+                    <li><strong>institution</strong> : certificats, candidatures</li>
+                    <li><strong>messaging</strong> : messages et notifications</li>
+                    <li><strong>audit</strong> : logs immutables</li>
+                    <li><strong>forum</strong> : communauté</li>
+                    <li><strong>gestion</strong> : tâches, campagnes, tickets</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Variables d'environnement</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li><code>DJANGO_SECRET_KEY</code> — obligatoire</li>
+                    <li><code>OPENAI_API_KEY</code> — assistant IA</li>
+                    <li><code>STRIPE_PUBLIC_KEY</code> — paiements</li>
+                    <li><code>STRIPE_SECRET_KEY</code> — paiements</li>
+                    <li><code>STRIPE_WEBHOOK_SECRET</code> — webhooks</li>
+                    <li><code>REDIS_URL</code> — cache/Celery (optionnel)</li>
+                    <li><code>SENDGRID_API_KEY</code> — emails prod</li>
+                    <li><code>SENTRY_DSN</code> — monitoring (optionnel)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 6 : Sécurité -->
+    <div id="securite" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #ef4444;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-shield-alt" style="color:#ef4444;margin-right:0.6rem;"></i>6. Sécurité</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.8rem;">
+            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
+                <strong style="color:#DC2626;">Authentification</strong>
+                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
+                    <li>Argon2 (hash de mots de passe)</li>
+                    <li>CSRF protection sur tous les formulaires</li>
+                    <li>Axes : blocage après 5 tentatives</li>
+                    <li>Session sécurisée (HTTPOnly, SameSite)</li>
+                </ul>
+            </div>
+            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
+                <strong style="color:#DC2626;">Réseau & Contenu</strong>
+                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
+                    <li>CSP (Content Security Policy)</li>
+                    <li>X-Frame-Options: DENY</li>
+                    <li>XSS protection activée</li>
+                    <li>HTTPS obligatoire en production</li>
+                </ul>
+            </div>
+            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
+                <strong style="color:#DC2626;">Audit & Monitoring</strong>
+                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
+                    <li>Audit logs immutables (AuditLog)</li>
+                    <li>Filtrage de l'IA (questions et réponses)</li>
+                    <li>Rate limiting sur les APIs publiques</li>
+                    <li>Honeypot anti-bot sur les formulaires</li>
+                </ul>
+            </div>
+            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
+                <strong style="color:#DC2626;">Données sensibles</strong>
+                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
+                    <li>Clés API dans Replit Secrets (jamais en dur)</li>
+                    <li>RGPD : consentement tracé</li>
+                    <li>Données cryptées en transit (SSL)</li>
+                    <li>Sentry DSN pour le monitoring d'erreurs</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 7 : IA -->
+    <div id="ia" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #D4AF37;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-robot" style="color:#D4AF37;margin-right:0.6rem;"></i>7. Assistant IA</h2>
+        <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;">
+            <li>Modèle : GPT-4o-mini (OpenAI)</li>
+            <li><strong>Accessible uniquement pendant les cours</strong> (contexte de cours requis)</li>
+            <li>Quota : 10 questions/jour pour les utilisateurs gratuits, illimité en Premium annuel</li>
+            <li>Filtre de contenu double (questions et réponses)</li>
+            <li>Logs d'audit de chaque interaction</li>
+            <li>Endpoint : <code>POST /api/chatbot/</code> avec <code>{ "question": "...", "cours": "contexte du cours" }</code></li>
+            <li>Configuration : variable <code>OPENAI_API_KEY</code> dans Replit Secrets</li>
+        </ul>
+    </div>
+
+    <!-- Section 8 : Paiements -->
+    <div id="paiements" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #635BFF;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fab fa-stripe" style="color:#635BFF;margin-right:0.6rem;"></i>8. Paiements Stripe</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Flux de paiement</h3>
+                <ol style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Utilisateur choisit son plan (mensuel/annuel)</li>
+                    <li>Accepte les CGV (case obligatoire)</li>
+                    <li>Redirection vers Stripe Checkout</li>
+                    <li>Paiement sécurisé chez Stripe</li>
+                    <li>Webhook <code>checkout.session.completed</code></li>
+                    <li>Activation automatique de l'abonnement</li>
+                </ol>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Configuration</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li><code>STRIPE_PUBLIC_KEY</code> : clé publique</li>
+                    <li><code>STRIPE_SECRET_KEY</code> : clé secrète</li>
+                    <li><code>STRIPE_WEBHOOK_SECRET</code> : secret webhook</li>
+                    <li>URL webhook : <code>/auth/paiement/webhook/</code></li>
+                    <li>Sans clés : message d'information affiché</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 9 : PWA -->
+    <div id="pwa" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #10b981;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-mobile-alt" style="color:#10b981;margin-right:0.6rem;"></i>9. Application PWA (Progressive Web App)</h2>
+        <p style="color:#495057;font-size:0.9rem;margin-bottom:1rem;">Ventoryx Academy est installable comme application sur tous les appareils.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;">
+            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
+                <strong style="color:#10b981;">📱 Android / Chrome</strong><br>
+                Bouton "Ajouter à l'écran d'accueil" dans le menu du navigateur
+            </div>
+            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
+                <strong style="color:#10b981;">🍎 iOS / Safari</strong><br>
+                Bouton Partager → "Sur l'écran d'accueil"
+            </div>
+            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
+                <strong style="color:#10b981;">💻 Desktop / Chrome</strong><br>
+                Icône d'installation dans la barre d'adresse
+            </div>
+            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
+                <strong style="color:#10b981;">✈️ Mode hors ligne</strong><br>
+                Service worker actif pour la continuité de service
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 10 : Développeurs -->
+    <div id="developpeurs" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #0F1C2E;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-terminal" style="color:#0F1C2E;margin-right:0.6rem;"></i>10. Guide Développeurs</h2>
+        <pre style="background:#1E3A5F;color:#E0E0E0;padding:1.5rem;border-radius:12px;font-size:0.82rem;overflow-x:auto;margin:0 0 1rem;"><code># Installation et démarrage
+git clone [repo]
+pip install -r requirements.txt
+cp .env.example .env        # configurer les variables
+python manage.py migrate
+python manage.py init_test_data   # crée les utilisateurs de test
+python manage.py runserver 0.0.0.0:5000
+
+# Commandes utiles
+python manage.py createsuperuser      # admin Django
+python manage.py collectstatic        # fichiers statiques
+python manage.py makemigrations       # créer les migrations
+python manage.py shell                # shell interactif
+python manage.py init_test_data       # données de test</code></pre>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Structure des templates</h3>
+                <pre style="background:#F8F9FA;padding:1rem;border-radius:8px;font-size:0.78rem;margin:0;overflow-x:auto;"><code>templates/
+├── base.html           # Template de base
+├── index.html          # Page d'accueil
+├── auth/               # Authentification
+├── admin/              # Dashboards admin/gestionnaire
+├── pages/
+│   ├── utilisateur/    # Dashboard étudiant
+│   ├── entreprise/     # Premium, checkout
+│   ├── support/        # FAQ, contact, blog
+│   ├── parcours/       # Formations
+│   └── legal/          # CGU, confidentialité
+└── errors/             # Pages d'erreur 403/404/500</code></pre>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Conventions importantes</h3>
+                <ul style="color:#495057;font-size:0.85rem;padding-left:1.2rem;margin:0;">
+                    <li>Templates app-specific sous <code>pages/&lt;app&gt;/</code></li>
+                    <li>Templates admin sous <code>admin/</code></li>
+                    <li>Templates auth sous <code>auth/</code></li>
+                    <li>Données sensibles : Replit Secrets uniquement</li>
+                    <li>Rôles : etudiant, gestionnaire, coordinateur, dg</li>
+                    <li>Toujours vérifier <code>est_active()</code> sur l'abonnement</li>
+                    <li>L'IA nécessite le contexte du cours (<code>cours</code>)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 11 : Rôles -->
+    <div id="roles" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #f59e0b;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-users" style="color:#f59e0b;margin-right:0.6rem;"></i>11. Rôles & Permissions</h2>
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                <thead>
+                    <tr style="background:#0F1C2E;color:white;">
+                        <th style="padding:0.8rem;text-align:left;">Fonctionnalité</th>
+                        <th style="padding:0.8rem;text-align:center;">Apprenant</th>
+                        <th style="padding:0.8rem;text-align:center;">Gestionnaire</th>
+                        <th style="padding:0.8rem;text-align:center;">Coordinateur</th>
+                        <th style="padding:0.8rem;text-align:center;">DG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in "Voir les cours gratuits,Accéder aux parcours premium,Assistant IA (pendant cours),Tableau de bord personnel,Gestion des messages département,Vue métriques département,Vue globale plateforme,Audit logs complets,Gestion candidatures,Admin Django"|split:"," %}
+                    <tr style="border-bottom:1px solid #E9ECEF;">
+                        <td style="padding:0.6rem 0.8rem;color:#495057;">{{ row }}</td>
+                        <td style="padding:0.6rem;text-align:center;">{% if forloop.counter <= 4 %}✅{% else %}❌{% endif %}</td>
+                        <td style="padding:0.6rem;text-align:center;">{% if forloop.counter <= 5 %}✅{% else %}❌{% endif %}</td>
+                        <td style="padding:0.6rem;text-align:center;">{% if forloop.counter <= 6 %}✅{% else %}❌{% endif %}</td>
+                        <td style="padding:0.6rem;text-align:center;">✅</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Section 12 : Déploiement -->
+    <div id="deploiement" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #FF6B35;">
+        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-rocket" style="color:#FF6B35;margin-right:0.6rem;"></i>12. Déploiement</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Avant la mise en production</h3>
+                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
+                    <li>Définir <code>DJANGO_DEBUG=False</code></li>
+                    <li>Configurer PostgreSQL (remplacer SQLite)</li>
+                    <li>Ajouter les vraies clés Stripe</li>
+                    <li>Configurer SendGrid pour les emails</li>
+                    <li>Activer Redis pour Celery</li>
+                    <li>Supprimer les données et comptes de test</li>
+                    <li>Configurer ALLOWED_HOSTS avec le domaine réel</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Variables Replit Secrets</h3>
+                <p style="color:#495057;font-size:0.85rem;margin:0 0 0.5rem;">Toutes les clés sensibles doivent être dans Replit Secrets (jamais dans .env) :</p>
+                <ul style="color:#495057;font-size:0.85rem;padding-left:1.2rem;margin:0;">
+                    <li>SESSION_SECRET</li>
+                    <li>OPENAI_API_KEY</li>
+                    <li>STRIPE_PUBLIC_KEY / STRIPE_SECRET_KEY</li>
+                    <li>STRIPE_WEBHOOK_SECRET</li>
+                    <li>SENDGRID_API_KEY</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact développeur -->
+    <div style="background:linear-gradient(135deg,#0F1C2E,#1E3A5F);color:white;border-radius:12px;padding:1.5rem;text-align:center;">
+        <p style="margin:0;font-size:0.9rem;opacity:0.9;">
+            <i class="fas fa-envelope" style="margin-right:0.5rem;"></i>
+            Pour toute question technique : <a href="{% url 'core:contact' %}" style="color:#D4AF37;font-weight:600;">formulaire de contact</a>
+            &nbsp;·&nbsp;
+            <a href="{% url 'core:support_technique' %}" style="color:#D4AF37;font-weight:600;">support technique</a>
+        </p>
+    </div>
+
 </div>
 {% endblock %}

@@ -1,421 +1,184 @@
-# ventoryx-academy- Version Django
+# Ventoryx Academy — Plateforme de Formation Aéronautique
 
-Architecture
+**Version Django 6.0.7 · Python 3.12 · SQLite / PostgreSQL**
 
-· Framework : Django 6.0.6
-· Base de données : SQLite (développement) — PostgreSQL recommandé en production
-· Frontend : Templates Django + CSS/JS statique
-· Sécurité : Argon2, CSRF, CSP, rate limiting, audit immutable
-· IA : Assistant GPT-4o intégré, traduction 15 langues, Text-to-Speech
-· PWA : Application installable sur tous les appareils (iOS, Android, desktop)
+Ventoryx Academy est une application web de formation professionnelle aux métiers de l'aéronautique. Elle combine des parcours pédagogiques complets, un assistant IA spécialisé, un système de certification numérique et un tableau de bord complet pour chaque rôle.
 
-Rôles RBAC (3 niveaux)
+---
 
-Rôle Accès
-DG (dashboard + admin + audit)
-Coordinateur Son département uniquement
-Gestionnaire Ses propres pages et contenus
+## 🚀 Fonctionnalités principales
 
-7 départements : pedagogie, technique, marketing, operations, qualite, support, design
+- **8 parcours aéronautiques** : Pilote de ligne, PNC, Ingénieur, Contrôleur aérien, Technicien, Mécanicien, Agent d'escale, Formation avancée
+- **Assistant IA** (GPT-4o-mini) — accessible uniquement pendant les cours
+- **Certification numérique** avec vérification publique par numéro de série ou hash
+- **Paiements Stripe** (abonnements mensuel/annuel avec CGV obligatoires)
+- **PWA** : installable sur iOS, Android et desktop
+- **Tableau de bord** adapté à chaque rôle (apprenant, gestionnaire, coordinateur, DG)
+- **Sécurité** : Argon2, CSRF, CSP, Axes, audit logs immutables
 
-Prérequis système
+---
 
-· Python 3.10 ou supérieur
-· SQLite (inclus) — ou PostgreSQL 14+ en production
-· 1GB RAM minimum (2GB recommandé)
+## 🏗️ Architecture
 
-Installation
-
-```bash
-pip install -r requirements.txt
-python manage.py migrate
-python seed.py
-python manage.py createsuperuser
-python manage.py runserver
+```
+Framework    : Django 6.0.7
+Base de données : SQLite (développement) · PostgreSQL (production)
+Cache        : LocMemCache (dev) · Redis (prod)
+Tâches async : Celery + Celery Beat
+Statiques    : WhiteNoise
+IA           : OpenAI GPT-4o-mini
+Paiements    : Stripe Checkout + Webhooks
+Auth         : django-allauth + Axes (brute-force protection)
+Hachage      : Argon2
 ```
 
-Variables d'environnement
+### Applications
 
-Copiez .env.example vers .env et configurez :
+| App | Rôle |
+|-----|------|
+| `core` | Pages publiques, chatbot IA, vault de documents |
+| `users` | Authentification, dashboards par rôle, paiements |
+| `parcours` | Formations : parcours, modules, cours, quiz |
+| `blog` | Articles et actualités |
+| `institution` | Candidatures, offres d'emploi, certificats |
+| `messaging` | Messages de contact, notifications |
+| `audit` | Logs d'audit immutables |
+| `forum` | Forum communautaire par métier |
+| `gestion` | Tâches, campagnes marketing, tickets support |
 
-```env
-# Django
-SECRET_KEY=votre_cle_secrete
-DEBUG=False
-ALLOWED_HOSTS=ventoryx-academy.com,www.ventoryx-academy.com
+---
+
+## 🔐 Rôles utilisateurs
+
+| Rôle | Description | Dashboard |
+|------|-------------|-----------|
+| `etudiant` | Apprenant (rôle par défaut) | `/auth/dashboard/etudiant/` |
+| `gestionnaire` | Gère son département | `/auth/dashboard/gestionnaire/<dept>/` |
+| `coordinateur` | Supervise son département | `/auth/dashboard/coordinateur/<dept>/` |
+| `dg` | Directeur Général (accès complet) | `/auth/dashboard/dg/` |
+
+Départements : `pedagogie`, `technique`, `marketing`, `operations`, `qualite`, `support`, `design`
+
+---
+
+## ⚙️ Installation
+
+```bash
+# Cloner le projet
+git clone <url-du-repo>
+cd ventoryx-academy
+
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Configuration
+cp .env.example .env
+# → Remplir les variables dans Replit Secrets (jamais en dur dans .env)
 
 # Base de données
-DATABASE_URL=postgresql://user:password@localhost/ventoryx
+python manage.py migrate
 
-# Stripe
-STRIPE_PUBLIC_KEY=pk_xxx
-STRIPE_SECRET_KEY=sk_xxx
-STRIPE_WEBHOOK_SECRET=whsec_xxx
+# Données initiales (utilisateurs de test + parcours + forums)
+python manage.py init_test_data
 
-# Email
-EMAIL_HOST=smtp.gmail.com
-EMAIL_HOST_USER=votre@email.com
-EMAIL_HOST_PASSWORD=votre_mot_de_passe
-DEFAULT_FROM_EMAIL=noreply@ventoryx-academy.com
-
-# Celery
-REDIS_URL=redis://localhost:6379
-
-# OpenAI (Assistant IA)
-OPENAI_API_KEY=
+# Lancer l'application
+python manage.py runserver 0.0.0.0:5000
 ```
 
-Utilisateurs par défaut
+---
 
-Mot de passe : ChangeMe!2026 (modifiable via VENTORYX_DEFAULT_PWD)
+## 🔑 Variables d'environnement
 
-Rôle Email
-DG dg@ventoryx-academy.com
-Coordinateur coord.<dept>@ventoryx-academy.com
+> ⚠️ **Important** : toutes les clés sensibles doivent être dans **Replit Secrets**, jamais dans le fichier `.env`.
 
-Structure du projet
+| Variable | Obligatoire | Description |
+|----------|-------------|-------------|
+| `DJANGO_SECRET_KEY` | ✅ | Clé secrète Django |
+| `OPENAI_API_KEY` | ✅ | Clé API OpenAI (assistant IA) |
+| `STRIPE_PUBLIC_KEY` | ✅ (prod) | Clé publique Stripe |
+| `STRIPE_SECRET_KEY` | ✅ (prod) | Clé secrète Stripe |
+| `STRIPE_WEBHOOK_SECRET` | ✅ (prod) | Secret webhook Stripe |
+| `SENDGRID_API_KEY` | prod | Email transactionnel |
+| `REDIS_URL` | prod | Cache + Celery |
+| `SENTRY_DSN` | optionnel | Monitoring d'erreurs |
+| `USE_SQLITE` | dev | `True` pour SQLite, `False` pour PostgreSQL |
+| `DJANGO_DEBUG` | dev | `True` en développement |
 
-```
-ventoryx_academy/
-├── manage.py
-├── settings.py
-├── urls.py
-├── wsgi.py
-├── asgi.py
-├── celery.py
-├── requirements.txt
-├── seed.py
-├── .env
-├── .env.example
-├── .bandit
-├── .gitignore
-├── Dockerfile
-├── docker-compose.yml
-├── README.md
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-│
-├── apps/
-│   ├── core/              # Accueil, support, légal, chatbot IA, traduction, TTS
-│   ├── users/             # Authentification, RBAC, abonnements, Stripe
-│   ├── parcours/          # Modules, cours, tests, progression
-│   ├── blog/              # Blog et centre d'aide
-│   ├── institution/       # Pages institutionnelles, carrières, recrutement, certificats
-│   ├── messaging/         # Messages, notifications, newsletter
-│   ├── audit/             # Journal d'audit immutable (131 actions tracées)
-│   ├── forum/             # Forums communautaires
-│   └── gestion/           # Gestion des départements (tâches, campagnes, tickets...)
-│
-├── templates/
-│   ├── base.html
-│   ├── index.html
-│   ├── offline.html
-│   ├── sitemap.xml
-│   ├── robots.txt
-│   │
-│   ├── auth/
-│   │   ├── login.html
-│   │   ├── register.html
-│   │   ├── forgot_password.html
-│   │   ├── reset_password.html
-│   │   ├── otp.html
-│   │   ├── validation_secondaire.html
-│   │   └── delete_account.html
-│   │
-│   ├── admin/
-│   │   ├── dg.html
-│   │   ├── administration_Candidatures.html
-│   │   ├── coordinateur_pedagogie.html
-│   │   ├── coordinateur_technique.html
-│   │   ├── coordinateur_marketing.html
-│   │   ├── coordinateur_operations.html
-│   │   ├── gestionnaire.html
-│   │   └── reunion.html
-│   │
-│   ├── parcours/
-│   │   ├── selection_metier.html
-│   │   ├── accueil_parcours.html
-│   │   ├── cours.html
-│   │   ├── test.html
-│   │   └── test_global.html
-│   │
-│   ├── pages/
-│   │   ├── a_propos.html
-│   │   ├── accessibilite.html
-│   │   ├── plan_du_site.html
-│   │   ├── remboursement.html
-│   │   ├── statut_plateforme.html
-│   │   ├── financement_formation.html
-│   │   ├── comparez_ventoryx.html
-│   │   ├── certificats_blockchain.html
-│   │   ├── newsletter_confirmation.html
-│   │   ├── newsletter_desabonnement.html
-│   │   │
-│   │   ├── academie/
-│   │   │   ├── programme_pnc.html
-│   │   │   ├── programme_pilote_de_ligne.html
-│   │   │   ├── programme_controleur_aerien.html
-│   │   │   ├── programme_technicien_aeronautique.html
-│   │   │   ├── programme_mecanicien_avion.html
-│   │   │   ├── programme_agent_escale.html
-│   │   │   ├── programme_ingenieur_aeronautique.html
-│   │   │   └── programme_formation_avancee.html
-│   │   │
-│   │   ├── support/
-│   │   │   ├── blog.html
-│   │   │   ├── blog_detail.html
-│   │   │   ├── centre_aide.html
-│   │   │   ├── contact.html
-│   │   │   ├── faq.html
-│   │   │   ├── support_technique.html
-│   │   │   ├── telechargement.html
-│   │   │   └── temoignages.html
-│   │   │
-│   │   ├── entreprise/
-│   │   │   ├── premium.html
-│   │   │   ├── inscription_entreprise.html
-│   │   │   ├── checkout.html
-│   │   │   ├── payment_success.html
-│   │   │   ├── payment_cancel.html
-│   │   │   ├── offre_entreprise.html
-│   │   │   ├── dashboard_entreprise.html
-│   │   │   ├── payment_success_entreprise.html
-│   │   │   └── payment_cancel_entreprise.html
-│   │   │
-│   │   ├── legal/
-│   │   │   ├── cgu.html
-│   │   │   ├── cgv.html
-│   │   │   ├── confidentialite.html
-│   │   │   └── mentions_legales.html
-│   │   │
-│   │   ├── institution/
-│   │   │   ├── support_administration.html
-│   │   │   ├── qualite_innovation.html
-│   │   │   ├── pedagogie_contenu.html
-│   │   │   ├── design_experience_utilisateur.html
-│   │   │   ├── developpement_technique.html
-│   │   │   ├── marketing_communication.html
-│   │   │   └── operations_logistique.html
-│   │   │
-│   │   ├── recrutement/
-│   │   │   ├── carriere.html
-│   │   │   ├── postuler.html
-│   │   │   └── espace_candidat.html
-│   │   │
-│   │   └── utilisateur/
-│   │       ├── tableau_de_bord.html
-│   │       ├── verification_certificat.html
-│   │       ├── profil.html
-│   │       ├── parametres_compte.html
-│   │       ├── historique_commandes.html
-│   │       ├── mes_certificats.html
-│   │       ├── parrainage.html
-│   │       ├── devis.html
-│   │       └── notifications.html
-│   │
-│   ├── entreprises/
-│   │   ├── offre_entreprise.html
-│   │   ├── dashboard_entreprise.html
-│   │   ├── payment_success_entreprise.html
-│   │   └── payment_cancel_entreprise.html
-│   │
-│   ├── partenaires/
-│   │   ├── partenariats.html
-│   │   ├── inscription_partenaire.html
-│   │   ├── programme_partenaire.html
-│   │   ├── dashboard_partenaire.html
-│   │   └── convention_partenaire.html
-│   │
-│   ├── forum/
-│   │   ├── forum_principal.html
-│   │   ├── forum_metier.html
-│   │   ├── nouveau_sujet.html
-│   │   ├── sous_forum.html
-│   │   └── sujet.html
-│   │
-│   ├── messaging/
-│   │   ├── contact_list.html
-│   │   └── inbox.html
-│   │
-│   ├── audit/
-│   │   └── journal.html
-│   │
-│   └── errors/
-│       ├── 403.html
-│       ├── 404.html
-│       ├── 429.html
-│       ├── 500.html
-│       └── maintenance.html
-│
-├── static/
-│   ├── css/
-│   │   ├── style.css
-│   │   └── parcours.css
-│   ├── js/
-│   │   ├── site.js
-│   │   ├── parcours.js
-│   │   └── sw.js
-│   ├── images/
-│   │   ├── logo.png
-│   │   ├── icon-192.png
-│   │   ├── icon-512.png
-│   │   ├── program-pilote.jpg
-│   │   ├── program-pnc.jpg
-│   │   ├── program-ingenieur.jpg
-│   │   ├── program-controleur.jpg
-│   │   ├── program-technicien.jpg
-│   │   ├── program-mecanicien.jpg
-│   │   ├── program-agent.jpg
-│   │   └── program-premium.jpg
-│   └── manifest.json
-│
-├── tests/
-│   ├── __init__.py
-│   └── test_core.py
-│
-├── locale/
-│   ├── fr/LC_MESSAGES/
-│   ├── en/LC_MESSAGES/
-│   ├── es/LC_MESSAGES/
-│   ├── pt/LC_MESSAGES/
-│   ├── ar/LC_MESSAGES/
-│   ├── zh/LC_MESSAGES/
-│   ├── ru/LC_MESSAGES/
-│   ├── de/LC_MESSAGES/
-│   ├── it/LC_MESSAGES/
-│   ├── ja/LC_MESSAGES/
-│   ├── ko/LC_MESSAGES/
-│   ├── hi/LC_MESSAGES/
-│   ├── tr/LC_MESSAGES/
-│   ├── nl/LC_MESSAGES/
-│   └── sv/LC_MESSAGES/
-│
-├── media/
-│   ├── vault/           # Documents sensibles (accès restreint)
-│   └── audio/           # Cours en version audio (TTS)
-│
-└── backups/             # Sauvegardes quotidiennes (rotation 7 jours)
-```
+---
 
-Parcours disponibles
+## 👥 Comptes de test
 
-Métier Modules Cours Tests Prix
-PNC 4 80 16 29€/mois
-Pilote de Ligne 4 80 16 29€/mois
-Ingénieur Aéronautique 4 80 16 29€/mois
-Contrôleur Aérien 4 80 16 Gratuit
-Technicien Aéronautique 4 80 16 Gratuit
-Mécanicien Avion 4 80 16 29€/mois
-Agent d'Escale 4 80 16 29€/mois
-Formation Avancée (Premium) 6 90 0 Abonnement Annuel
+> ⚠️ **Ces comptes sont à supprimer avant la mise en production.**
 
-Fonctionnalités
+Mot de passe commun : `ChangeMe2026!`
 
-· Assistant IA (GPT-4o) accessible sur toutes les pages de cours
-· 15 langues : FR, EN, ES, PT, AR, ZH, RU, DE, IT, JA, KO, HI, TR, NL, SV
-· Traduction automatique du contenu des cours
-· Audio des cours (Text-to-Speech) dans la langue choisie
-· PWA installable sur téléphone, tablette et ordinateur
-· Mode hors-ligne pour les cours déjà chargés
-· Certificats SHA-256 vérifiables publiquement
-· Paiement Stripe (PCI-DSS)
-· Journal d'audit immutable avec chaîne de hachage
-· 6 tâches automatisées (Celery Beat) : backups, nettoyage, relances, rapports
+| Rôle | Email |
+|------|-------|
+| **DG** | `dg@ventoryx-academy.com` |
+| **Coord. Pédagogie** | `coord.pedagogie@ventoryx-academy.com` |
+| **Coord. Technique** | `coord.technique@ventoryx-academy.com` |
+| **Coord. Marketing** | `coord.marketing@ventoryx-academy.com` |
+| **Coord. Opérations** | `coord.operations@ventoryx-academy.com` |
+| **Coord. Qualité** | `coord.qualite@ventoryx-academy.com` |
+| **Coord. Support** | `coord.support@ventoryx-academy.com` |
+| **Coord. Design** | `coord.design@ventoryx-academy.com` |
+| **Gest. Pédagogie** | `gest.pedagogie@ventoryx-academy.com` |
+| **Gest. Technique** | `gest.technique@ventoryx-academy.com` |
+| **Gest. Marketing** | `gest.marketing@ventoryx-academy.com` |
+| **Gest. Opérations** | `gest.operations@ventoryx-academy.com` |
+| **Gest. Qualité** | `gest.qualite@ventoryx-academy.com` |
+| **Gest. Support** | `gest.support@ventoryx-academy.com` |
+| **Gest. Design** | `gest.design@ventoryx-academy.com` |
+| **Étudiant test** | `salifousmanesow4@gmail.com` |
 
-Sécurité
+---
 
-· Argon2id pour les mots de passe
-· Protection CSRF sur tous les formulaires
-· Rate limiting sur login/register/contact
-· Verrouillage compte après 5 échecs (15 min)
-· Journal d'audit immutable (131 actions tracées)
-· Vault sécurisé pour documents sensibles
-· En-têtes de sécurité (CSP, X-Frame-Options, Referrer-Policy)
-· Protection anti-bot (honeypot, time-trap)
-· MFA contextuel : validation OTP (DG) et validation secondaire (coordinateurs)
-· Health check : endpoint /health/ pour monitoring
-· Paiement sécurisé : Stripe Checkout avec webhooks
+## 🛡️ Sécurité
 
-Commandes utiles
+- **Mots de passe** : Argon2 (résistant aux attaques brute-force)
+- **Formulaires** : Protection CSRF + honeypot anti-bot
+- **Accès** : Blocage après 5 tentatives (django-axes)
+- **Contenu** : CSP (Content Security Policy) + X-Frame-Options: DENY
+- **Audit** : Logs immutables de toutes les actions sensibles
+- **IA** : Filtre de contenu sur questions ET réponses
+- **Rate limiting** : Sur les APIs publiques (contact, chatbot)
 
-Lancer Celery
+---
+
+## 📦 Déploiement production
 
 ```bash
-celery -A ventoryx_academy worker -l info
-celery -A ventoryx_academy beat -l info
+# Avant de déployer :
+# 1. DJANGO_DEBUG=False dans Replit Secrets
+# 2. Configurer PostgreSQL (USE_SQLITE=False)
+# 3. Ajouter les vraies clés Stripe et OpenAI
+# 4. Configurer ALLOWED_HOSTS avec votre domaine
+# 5. Supprimer les données de test (python manage.py flush --no-input)
+# 6. Configurer Redis pour Celery
+
+python manage.py collectstatic --noinput
+python manage.py migrate --noinput
+gunicorn wsgi:application --bind 0.0.0.0:5000
 ```
 
-Générer les icônes PWA
+---
 
-```bash
-python generate_icons.py
-```
+## 📋 Pages et URLs principales
 
-Lancer les tests
+| URL | Description |
+|-----|-------------|
+| `/` | Page d'accueil |
+| `/parcours/` | Sélection du parcours |
+| `/auth/login/` | Connexion |
+| `/auth/register/` | Inscription |
+| `/auth/dashboard/etudiant/` | Espace apprenant |
+| `/auth/dashboard/dg/` | Dashboard DG |
+| `/auth/checkout/` | Page d'abonnement |
+| `/verification-certificat/` | Vérification de certificat |
+| `/api/chatbot/` | API assistant IA (POST) |
+| `/admin/` | Administration Django |
+| `/auth/documentation/` | Cette documentation |
 
-```bash
-python manage.py test apps/
-bandit -r apps/
-safety check
-```
+---
 
-Sauvegarde manuelle
-
-```bash
-python manage.py dbbackup
-python manage.py mediabackup
-```
-
-CI/CD
-
-Tests automatisés, analyse de sécurité (bandit + safety) et vérification des migrations via GitHub Actions (.github/workflows/ci.yml).
-
-Lancement production
-
-```bash
-gunicorn wsgi:application -w 4 -b 0.0.0.0:5000
-```
-
-Déploiement Docker
-
-```bash
-docker build -t ventoryx-academy .
-docker-compose up -d
-```
-
-SSL / HTTPS
-
-```bash
-certbot --nginx -d ventoryx-academy.com
-```
-
-Monitoring
-
-· Health check : https://ventoryx-academy.com/health/
-· Logs : logs/ventoryx.log
-· Statut plateforme : /statut/
-
-Licence
-
-Propriétaire — Tous droits réservés. © Ventoryx Academy
-
-Contribution
-
-Les pull requests sont les bienvenues. Merci de suivre :
-
-1. Fork le projet
-2. Créer une branche (git checkout -b feature/ma-fonctionnalite)
-3. Commit (git commit -m 'Ajout fonctionnalité')
-4. Push (git push origin feature/ma-fonctionnalite)
-5. Ouvrir une Pull Request
-
-Feuille de route
-
-· Contenu vidéo + sous-titres
-· Badges Open Badges + partage LinkedIn
-· Simulateurs interactifs (horizon artificiel, anémomètre)
-· Parrainage (1 mois offert)
-· Partenariats avec écoles aéronautiques
-· Application mobile native (iOS/Android)
+*Ventoryx Academy — Protocole d'excellence aéronautique*

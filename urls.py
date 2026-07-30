@@ -19,6 +19,12 @@ urlpatterns = [
     path('sw.js', serve, {'path': 'js/sw.js', 'document_root': settings.BASE_DIR / 'static'}),
 ]
 
+# Gestionnaires d'erreurs personnalisés
+handler404 = 'apps.core.core_views.erreur_404'
+handler500 = 'apps.core.core_views.erreur_500'
+handler403 = 'apps.core.core_views.erreur_403'
+handler429 = 'apps.core.core_views.erreur_429'
+
 urlpatterns += i18n_patterns(
     path('', include('apps.core.urls')),
     path('auth/', include('apps.users.urls')),

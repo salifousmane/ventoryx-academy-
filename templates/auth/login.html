@@ -204,11 +204,11 @@
             {% csrf_token %}
             
             <div class="auth-form-group">
-                <label for="id_username">Email</label>
-                <input type="email" name="username" id="id_username" 
+                <label for="id_email">Email</label>
+                <input type="email" name="email" id="id_email" 
                        required autocomplete="email" 
                        placeholder="vous@exemple.com"
-                       value="{{ form.username.value|default:'' }}">
+                       value="{{ form.email.value|default:'' }}">
             </div>
 
             <div class="auth-form-group">

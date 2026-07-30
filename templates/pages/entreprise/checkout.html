@@ -144,14 +144,28 @@
             Total : <span id="totalPrice">329 €</span> <span id="discountInfo" style="font-size:0.8rem;color:#10b981;"></span>
         </div>
 
-        <button id="checkoutBtn" class="btn-stripe" onclick="checkout()">
+        <!-- Case à cocher CGV obligatoire -->
+        <div style="margin: 1.2rem 0; padding: 1rem; background: #F8FAFE; border-radius: 8px; border: 1px solid #E9ECEF;">
+            <label style="display: flex; align-items: flex-start; gap: 0.8rem; cursor: pointer; font-size: 0.85rem; color: #495057;">
+                <input type="checkbox" id="cgvCheckbox" style="width: auto; margin-top: 3px; flex-shrink: 0;" onchange="updateCheckoutBtn()">
+                <span>
+                    J'ai lu et j'accepte les 
+                    <a href="{% url 'core:page_legale' 'cgu' %}" target="_blank" style="color: #0077B6; font-weight: 600;">Conditions Générales de Vente (CGV)</a>
+                    et la 
+                    <a href="{% url 'core:page_legale' 'confidentialite' %}" target="_blank" style="color: #0077B6; font-weight: 600;">Politique de confidentialité</a>.
+                    <strong style="color: #dc3545;">*</strong>
+                </span>
+            </label>
+        </div>
+
+        <button id="checkoutBtn" class="btn-stripe" onclick="checkout()" disabled style="opacity: 0.6; cursor: not-allowed;">
             <i class="fas fa-lock"></i> Payer avec Stripe
         </button>
 
         <div id="errorMsg" class="error-message"></div>
 
         <p class="cgv-link">
-            En payant, vous acceptez nos <a href="{% url 'core:page_legale' 'cgu' %}">Conditions Générales de Vente</a>
+            Paiement sécurisé par Stripe · Données chiffrées SSL
         </p>
     </div>
 </div>
@@ -159,6 +173,20 @@
 <script>
     let currentPlan = 'annuel';
     let currentDiscount = 0;
+
+    function updateCheckoutBtn() {
+        const cb = document.getElementById('cgvCheckbox');
+        const btn = document.getElementById('checkoutBtn');
+        if (cb.checked) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+        } else {
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'not-allowed';
+        }
+    }
 
     const plans = {
         mensuel: { name: 'Abonnement Mensuel', price: 39, period: 'par mois — sans engagement' },

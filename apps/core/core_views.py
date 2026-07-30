@@ -128,12 +128,20 @@ def blog(request):
 @login_required
 @require_http_methods(["POST"])
 def chatbot_api(request):
+    # L'IA n'est accessible que pendant les cours (le client doit envoyer un contexte de cours)
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({'reponse': 'Requête invalide.'}, status=400)
     question = data.get('question', '').strip()
-    cours = data.get('cours', '')
+    cours = data.get('cours', '').strip()
+
+    # Vérifier que la requête provient d'un contexte de cours
+    if not cours:
+        return JsonResponse({
+            'reponse': "L'assistant IA est uniquement disponible pendant les cours. Accédez à un cours pour utiliser l'assistant.",
+            'restricted': True,
+        }, status=403)
 
     if not question:
         return JsonResponse({'reponse': 'Veuillez poser une question.'})
@@ -166,6 +174,9 @@ def chatbot_api(request):
 
     langue = request.session.get('langue', 'fr')
     reponse, erreur = chatbot(question, langue, cours)
+
+    if erreur and not reponse:
+        reponse = "Désolé, l'assistant IA est temporairement indisponible. Veuillez réessayer dans quelques instants."
 
     reponse_bloquee, reponse_finale = _filtrer_reponse(reponse)
     if reponse_bloquee:
@@ -426,6 +437,22 @@ def recherche(request):
 
 def offline(request):
     return render(request, 'offline.html', {'page_title': 'Hors ligne'})
+
+
+def erreur_404(request, exception=None):
+    return render(request, 'errors/404.html', {'page_title': 'Page introuvable'}, status=404)
+
+
+def erreur_500(request):
+    return render(request, 'errors/500.html', {'page_title': 'Erreur serveur'}, status=500)
+
+
+def erreur_403(request, exception=None):
+    return render(request, 'errors/403.html', {'page_title': 'Accès refusé'}, status=403)
+
+
+def erreur_429(request, exception=None):
+    return render(request, 'errors/429.html', {'page_title': 'Trop de requêtes'}, status=429)
 
 
 def api_blog_recent(request):

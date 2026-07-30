@@ -1,448 +1,445 @@
-{% extends "base.html" %} {% load static %} {% block title %}Inscription - {{
-site_name }}{% endblock %} {% block extra_css %}
+{% extends "base.html" %} {% load static %} {% block title %}Inscription — {{ site_name }}{% endblock %}
+{% block extra_css %}
 <style>
-    .auth-wrapper {
-        background: linear-gradient(135deg, #0f1c2e, #1e3a5f);
+    .register-page {
         min-height: 100vh;
+        display: flex;
+        align-items: stretch;
+    }
+    .register-left {
+        flex: 1;
+        background: linear-gradient(135deg, #0F1C2E 0%, #1E3A5F 50%, #0077B6 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    .register-left::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 60%);
+        animation: pulse 8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.7; }
+    }
+    .register-left-content { position: relative; z-index: 1; text-align: center; max-width: 380px; }
+    .register-left h1 { font-family: 'Montserrat', sans-serif; font-size: 2rem; margin: 0 0 0.5rem; }
+    .register-left h1 span { color: #D4AF37; }
+    .register-left p { opacity: 0.85; margin: 0 0 2rem; line-height: 1.6; }
+
+    .feature-list { list-style: none; padding: 0; margin: 0; text-align: left; }
+    .feature-list li { display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 0; font-size: 0.9rem; opacity: 0.9; }
+    .feature-list li i { color: #D4AF37; font-size: 1rem; width: 20px; flex-shrink: 0; }
+
+    .register-right {
+        flex: 1;
+        background: #F8FAFE;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem;
+        overflow-y: auto;
+    }
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        max-width: 520px;
+        width: 100%;
+        margin: 0 auto;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+    .register-header { text-align: center; margin-bottom: 2rem; }
+    .register-header h2 { font-family: 'Montserrat', sans-serif; color: #0F1C2E; font-size: 1.6rem; margin: 0 0 0.3rem; }
+    .register-header p { color: #6C757D; font-size: 0.9rem; margin: 0; }
+
+    /* Steps indicator */
+    .steps-indicator {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
+        gap: 0;
+        margin-bottom: 2rem;
     }
-    .auth-card {
-        background: white;
-        border-radius: 16px;
-        padding: 2.5rem;
-        max-width: 550px;
-        width: 100%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-    .auth-brand {
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-    .auth-brand h1 {
-        font-family: "Montserrat", sans-serif;
-        font-size: 1.4rem;
-        color: #0f1c2e;
-        margin: 0;
-    }
-    .auth-brand h1 span {
-        color: #d4af37;
-    }
-    .auth-subtitle {
-        text-align: center;
-        color: #6c757d;
-        font-size: 0.9rem;
-        margin: 0.5rem 0 1.5rem;
-    }
-
-    .auth-form-group {
-        margin-bottom: 1rem;
-    }
-    .auth-form-group label {
-        font-weight: 600;
-        font-size: 0.85rem;
-        color: #0f1c2e;
-        display: block;
-        margin-bottom: 0.3rem;
-    }
-    .auth-form-group input,
-    .auth-form-group select {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-family: "Open Sans", sans-serif;
+    .step-dot {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: #E9ECEF;
+        color: #ADB5BD;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; font-weight: 700;
+        font-family: 'Montserrat', sans-serif;
         transition: all 0.3s ease;
     }
-    .auth-form-group input:focus,
-    .auth-form-group select:focus {
-        outline: none;
-        border-color: #0077b6;
-        box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
-    }
-    .auth-form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.8rem;
-    }
+    .step-dot.active { background: #0077B6; color: white; }
+    .step-dot.done { background: #10b981; color: white; }
+    .step-line { flex: 1; height: 2px; background: #E9ECEF; max-width: 60px; }
+    .step-line.done { background: #10b981; }
 
-    .auth-checkbox-group {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-        margin-bottom: 0.6rem;
-    }
-    .auth-checkbox-group input[type="checkbox"] {
-        width: auto;
-        margin-top: 0.2rem;
-    }
-    .auth-checkbox-group label {
-        font-size: 0.8rem;
-        color: #6c757d;
-        font-weight: normal;
-        cursor: pointer;
-    }
-    .auth-checkbox-group a {
-        color: #0077b6;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    .auth-checkbox-group a:hover {
-        text-decoration: underline;
-    }
-
-    .btn-auth {
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { font-weight: 600; font-size: 0.83rem; color: #0F1C2E; display: block; margin-bottom: 0.3rem; }
+    .form-group label .required { color: #ef4444; margin-left: 2px; }
+    .form-group input, .form-group select {
         width: 100%;
-        padding: 0.9rem;
-        background: #0077b6;
+        padding: 0.75rem 0.9rem;
+        border: 1.5px solid #E9ECEF;
+        border-radius: 10px;
+        font-size: 0.93rem;
+        font-family: 'Open Sans', sans-serif;
+        transition: all 0.2s ease;
+        background: #FAFBFC;
+        box-sizing: border-box;
+    }
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: #0077B6;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.08);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .form-hint { font-size: 0.72rem; color: #ADB5BD; margin-top: 0.25rem; }
+
+    .btn-submit {
+        width: 100%;
+        padding: 0.95rem;
+        background: linear-gradient(135deg, #0077B6, #005A8E);
         color: white;
         border: none;
         border-radius: 50px;
         font-weight: 700;
         font-size: 1rem;
         cursor: pointer;
-        font-family: "Montserrat", sans-serif;
+        font-family: 'Montserrat', sans-serif;
         transition: all 0.3s ease;
-        margin-top: 0.8rem;
+        margin-top: 1rem;
     }
-    .btn-auth:hover {
-        background: #0f1c2e;
-        transform: translateY(-2px);
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,119,182,0.4); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .register-footer { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: #6C757D; }
+    .register-footer a { color: #0077B6; font-weight: 600; text-decoration: none; }
+
+    .alert { padding: 0.8rem 1rem; border-radius: 10px; margin-bottom: 1rem; font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem; }
+    .alert-error { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+    .alert-success { background: #F0FDF4; color: #16a34a; border: 1px solid #BBF7D0; }
+
+    .checkbox-group {
+        display: flex; align-items: flex-start; gap: 0.6rem;
+        margin: 0.5rem 0;
+        font-size: 0.82rem; color: #6C757D;
+    }
+    .checkbox-group input[type="checkbox"] { width: auto; margin-top: 2px; flex-shrink: 0; }
+    .checkbox-group a { color: #0077B6; font-weight: 500; text-decoration: none; }
+
+    .password-strength {
+        height: 4px; border-radius: 4px; margin-top: 6px;
+        background: #E9ECEF; overflow: hidden;
+    }
+    .strength-bar {
+        height: 100%; border-radius: 4px;
+        transition: all 0.4s ease;
     }
 
-    .auth-footer-link {
-        text-align: center;
-        margin-top: 1.5rem;
-        font-size: 0.85rem;
-        color: #6c757d;
-    }
-    .auth-footer-link a {
-        color: #0077b6;
-        font-weight: 600;
-        text-decoration: none;
-    }
-    .auth-footer-link a:hover {
-        text-decoration: underline;
-    }
-
-    .auth-alert {
-        padding: 0.8rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        font-size: 0.85rem;
-    }
-    .auth-alert-error {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-
-    .required:after {
-        content: "*";
-        color: #ff6b35;
-        margin-left: 4px;
-    }
-
-    .password-hint {
-        font-size: 0.7rem;
-        color: #adb5bd;
-        margin-top: 0.2rem;
-    }
-
-    .legal-links-inline {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        justify-content: center;
-        font-size: 0.75rem;
-        color: #adb5bd;
-        margin-top: 1.5rem;
-    }
-    .legal-links-inline a {
-        color: #adb5bd;
-        text-decoration: none;
-    }
-    .legal-links-inline a:hover {
-        color: #0077b6;
+    @media (max-width: 768px) {
+        .register-page { flex-direction: column; }
+        .register-left { padding: 2rem 1.5rem; min-height: 200px; }
+        .register-left h1 { font-size: 1.5rem; }
+        .feature-list { display: none; }
+        .register-right { padding: 1.5rem 1rem; }
+        .register-card { padding: 1.5rem; }
+        .form-row { grid-template-columns: 1fr; }
     }
 </style>
-{% endblock %} {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-card">
-        <div class="auth-brand">
+{% endblock %}
+
+{% block content %}
+<div class="register-page">
+
+    <!-- Panneau gauche : branding -->
+    <div class="register-left">
+        <div class="register-left-content">
             <h1>Ventoryx <span>Academy</span></h1>
+            <p>Rejoignez l'académie d'excellence aéronautique et démarrez votre formation dès aujourd'hui.</p>
+            <ul class="feature-list">
+                <li><i class="fas fa-plane"></i> 8 parcours aéronautiques complets</li>
+                <li><i class="fas fa-robot"></i> Assistant IA spécialisé pendant les cours</li>
+                <li><i class="fas fa-certificate"></i> Certificats numériques vérifiables</li>
+                <li><i class="fas fa-users"></i> Communauté de professionnels</li>
+                <li><i class="fas fa-mobile-alt"></i> Accessible sur tous vos appareils (PWA)</li>
+                <li><i class="fas fa-shield-alt"></i> Données sécurisées et confidentielles</li>
+            </ul>
+            <div style="margin-top: 2rem; padding: 1rem; background: rgba(212,175,55,0.15); border-radius: 12px; border: 1px solid rgba(212,175,55,0.3);">
+                <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">
+                    <i class="fas fa-gift" style="color: #D4AF37; margin-right: 0.4rem;"></i>
+                    Contrôleur aérien & Technicien aéronautique — <strong>accès gratuit</strong>
+                </p>
+            </div>
         </div>
+    </div>
 
-        <p class="auth-subtitle">Créez votre compte</p>
-
-        {% if form.errors %}
-        <div class="auth-alert auth-alert-error">
-            <i class="fas fa-exclamation-triangle"></i> Veuillez corriger les
-            erreurs ci-dessous.
-        </div>
-        {% endif %} {% if messages %} {% for message in messages %}
-        <div
-            class="auth-alert {% if message.tags == 'error' %}auth-alert-error{% endif %}"
-        >
-            {{ message }}
-        </div>
-        {% endfor %} {% endif %}
-
-        <form method="post" action="{% url 'users:register' %}">
-            {% csrf_token %} {# Honeypot anti-bot #}
-            <div style="position: absolute; left: -9999px" aria-hidden="true">
-                <input
-                    type="text"
-                    name="website"
-                    tabindex="-1"
-                    autocomplete="off"
-                />
+    <!-- Panneau droit : formulaire -->
+    <div class="register-right">
+        <div class="register-card">
+            <div class="register-header">
+                <h2>Créer mon compte</h2>
+                <p>Quelques secondes suffisent pour commencer</p>
             </div>
 
-            <div class="auth-form-row">
-                <div class="auth-form-group">
-                    <label class="required">Prénom</label>
-                    <input
-                        type="text"
-                        name="first_name"
-                        required
-                        placeholder="Jean"
-                        value="{{ form.first_name.value|default:'' }}"
-                    />
+            <!-- Indicateur d'étapes -->
+            <div class="steps-indicator">
+                <div class="step-dot active" id="step1">1</div>
+                <div class="step-line" id="line1"></div>
+                <div class="step-dot" id="step2">2</div>
+                <div class="step-line" id="line2"></div>
+                <div class="step-dot" id="step3">3</div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                    {{ message }}
                 </div>
-                <div class="auth-form-group">
-                    <label class="required">Nom</label>
-                    <input
-                        type="text"
-                        name="last_name"
-                        required
-                        placeholder="Dupont"
-                        value="{{ form.last_name.value|default:'' }}"
-                    />
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'users:register' %}" id="registerForm" novalidate>
+                {% csrf_token %}
+                <!-- Honeypot anti-bot -->
+                <div style="position: absolute; left: -9999px;" aria-hidden="true">
+                    <input type="text" name="website" tabindex="-1" autocomplete="off">
                 </div>
-            </div>
 
-            <div class="auth-form-group">
-                <label class="required">Adresse email</label>
-                <input
-                    type="email"
-                    name="email"
-                    required
-                    placeholder="jean.dupont@email.com"
-                    autocomplete="email"
-                    value="{{ form.email.value|default:'' }}"
-                />
-            </div>
+                <!-- Étape 1 : Identité -->
+                <div id="formStep1">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Prénom <span class="required">*</span></label>
+                            <input type="text" name="first_name" required placeholder="Salif" 
+                                   value="{{ form_data.first_name|default:'' }}" autocomplete="given-name">
+                        </div>
+                        <div class="form-group">
+                            <label>Nom <span class="required">*</span></label>
+                            <input type="text" name="last_name" required placeholder="SOW"
+                                   value="{{ form_data.last_name|default:'' }}" autocomplete="family-name">
+                        </div>
+                    </div>
 
-            <div class="auth-form-row">
-                <div class="auth-form-group">
-                    <label class="required">Nationalité</label>
-                    <input
-                        type="text"
-                        name="nationality"
-                        required
-                        placeholder="Tapez votre pays..."
-                        list="nationalites-list"
-                        autocomplete="off"
-                        value="{{ form.nationality.value|default:'' }}"
-                    />
-                    <datalist id="nationalites-list">
-                        <option value="Afghane"></option>
-                        <option value="Albanaise"></option>
-                        <option value="Algérienne"></option>
-                        <option value="Allemande"></option>
-                        <option value="Américaine"></option>
-                        <option value="Angolaise"></option>
-                        <option value="Argentine"></option>
-                        <option value="Australienne"></option>
-                        <option value="Autrichienne"></option>
-                        <option value="Belge"></option>
-                        <option value="Béninoise"></option>
-                        <option value="Brésilienne"></option>
-                        <option value="Britannique"></option>
-                        <option value="Burkinabée"></option>
-                        <option value="Camerounaise"></option>
-                        <option value="Canadienne"></option>
-                        <option value="Chilienne"></option>
-                        <option value="Chinoise"></option>
-                        <option value="Colombienne"></option>
-                        <option value="Congolaise"></option>
-                        <option value="Coréenne"></option>
-                        <option value="Croate"></option>
-                        <option value="Danoise"></option>
-                        <option value="Égyptienne"></option>
-                        <option value="Espagnole"></option>
-                        <option value="Française"></option>
-                        <option value="Gabonaise"></option>
-                        <option value="Grecque"></option>
-                        <option value="Guinéenne"></option>
-                        <option value="Haïtienne"></option>
-                        <option value="Indienne"></option>
-                        <option value="Irakienne"></option>
-                        <option value="Iranienne"></option>
-                        <option value="Irlandaise"></option>
-                        <option value="Italienne"></option>
-                        <option value="Ivoirienne"></option>
-                        <option value="Japonaise"></option>
-                        <option value="Libanaise"></option>
-                        <option value="Malgache"></option>
-                        <option value="Malienne"></option>
-                        <option value="Marocaine"></option>
-                        <option value="Mauricienne"></option>
-                        <option value="Mexicaine"></option>
-                        <option value="Nigériane"></option>
-                        <option value="Néerlandaise"></option>
-                        <option value="Pakistanaise"></option>
-                        <option value="Péruvienne"></option>
-                        <option value="Polonaise"></option>
-                        <option value="Portugaise"></option>
-                        <option value="Roumaine"></option>
-                        <option value="Russe"></option>
-                        <option value="Sénégalaise"></option>
-                        <option value="Serbe"></option>
-                        <option value="Sud-Africaine"></option>
-                        <option value="Suédoise"></option>
-                        <option value="Suisse"></option>
-                        <option value="Tchadienne"></option>
-                        <option value="Thaïlandaise"></option>
-                        <option value="Togolaise"></option>
-                        <option value="Tunisienne"></option>
-                        <option value="Turque"></option>
-                        <option value="Ukrainienne"></option>
-                        <option value="Vietnamienne"></option>
-                        <option value="Autre"></option>
-                    </datalist>
+                    <div class="form-group">
+                        <label>Adresse email <span class="required">*</span></label>
+                        <input type="email" name="email" required placeholder="vous@exemple.com"
+                               value="{{ form_data.email|default:'' }}" autocomplete="email">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nationalité <span class="required">*</span></label>
+                            <input type="text" name="nationality" required placeholder="Ex : Sénégalaise"
+                                   list="nationalites-list" autocomplete="off"
+                                   value="{{ form_data.nationality|default:'' }}">
+                            <datalist id="nationalites-list">
+                                <option value="Sénégalaise"></option><option value="Française"></option>
+                                <option value="Guinéenne"></option><option value="Ivoirienne"></option>
+                                <option value="Malienne"></option><option value="Burkinabée"></option>
+                                <option value="Camerounaise"></option><option value="Congolaise"></option>
+                                <option value="Algérienne"></option><option value="Marocaine"></option>
+                                <option value="Tunisienne"></option><option value="Égyptienne"></option>
+                                <option value="Nigériane"></option><option value="Gabonaise"></option>
+                                <option value="Togolaise"></option><option value="Béninoise"></option>
+                                <option value="Malgache"></option><option value="Mauricienne"></option>
+                                <option value="Tchadienne"></option><option value="Haïtienne"></option>
+                                <option value="Allemande"></option><option value="Belge"></option>
+                                <option value="Britannique"></option><option value="Espagnole"></option>
+                                <option value="Italienne"></option><option value="Suisse"></option>
+                                <option value="Américaine"></option><option value="Canadienne"></option>
+                                <option value="Brésilienne"></option><option value="Chinoise"></option>
+                                <option value="Indienne"></option><option value="Japonaise"></option>
+                                <option value="Autre"></option>
+                            </datalist>
+                        </div>
+                        <div class="form-group">
+                            <label>Date de naissance <span class="required">*</span></label>
+                            <input type="date" name="date_naissance" required
+                                   value="{{ form_data.date_naissance|default:'' }}">
+                            <p class="form-hint">Âge minimum : 16 ans</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Métier qui vous intéresse</label>
+                        <select name="role_souhaite">
+                            <option value="">— Sélectionnez un métier —</option>
+                            <option value="pilote">✈️ Pilote de ligne</option>
+                            <option value="pnc">👥 Personnel navigant (PNC)</option>
+                            <option value="technicien">🔧 Technicien aéronautique</option>
+                            <option value="controleur">📡 Contrôleur aérien</option>
+                            <option value="ingenieur">⚙️ Ingénieur aéronautique</option>
+                            <option value="mecanicien">🔩 Mécanicien avion</option>
+                            <option value="agent">🧳 Agent d'escale</option>
+                            <option value="autre">🌟 Autre / Pas encore décidé</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="auth-form-group">
-                    <label class="required">Date de naissance</label>
-                    <input
-                        type="date"
-                        name="date_naissance"
-                        required
-                        value="{{ form.date_naissance.value|default:'' }}"
-                    />
+
+                <!-- Étape 2 : Sécurité -->
+                <div id="formStep2" style="display:none;">
+                    <div class="form-group">
+                        <label>Mot de passe <span class="required">*</span></label>
+                        <input type="password" name="password1" id="password1" required
+                               placeholder="10 caractères minimum" autocomplete="new-password"
+                               oninput="checkStrength(this.value)">
+                        <div class="password-strength">
+                            <div class="strength-bar" id="strengthBar" style="width:0;background:#ef4444;"></div>
+                        </div>
+                        <p class="form-hint" id="strengthText">Min. 10 caractères · majuscule · minuscule · chiffre · symbole</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmer le mot de passe <span class="required">*</span></label>
+                        <input type="password" name="password2" id="password2" required
+                               placeholder="••••••••" autocomplete="new-password">
+                    </div>
                 </div>
-            </div>
 
-            <div class="auth-form-row">
-                <div class="auth-form-group">
-                    <label class="required">Mot de passe</label>
-                    <input
-                        type="password"
-                        name="password1"
-                        required
-                        placeholder="10 caractères minimum"
-                        autocomplete="new-password"
-                    />
-                    <p class="password-hint">
-                        Min. 10 caractères : majuscule, minuscule, chiffre,
-                        spécial
-                    </p>
+                <!-- Étape 3 : Consentements -->
+                <div id="formStep3" style="display:none;">
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="rgpd" id="rgpd" required>
+                        <label for="rgpd">
+                            J'accepte les <a href="{% url 'core:page_legale' 'cgu' %}" target="_blank">Conditions Générales d'Utilisation</a> 
+                            et la <a href="{% url 'core:page_legale' 'confidentialite' %}" target="_blank">Politique de confidentialité</a>. <strong style="color:#ef4444;">*</strong>
+                        </label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="newsletter" id="newsletter">
+                        <label for="newsletter">
+                            Je souhaite recevoir les actualités et conseils de Ventoryx Academy (facultatif).
+                        </label>
+                    </div>
+                    <div style="background:#F0F9FF;border-radius:10px;padding:1rem;margin-top:1rem;font-size:0.82rem;color:#0369A1;">
+                        <i class="fas fa-shield-alt" style="margin-right:0.4rem;"></i>
+                        Vos données sont protégées. Nous n'utilisons aucun cookie publicitaire et ne revendons aucune donnée.
+                    </div>
                 </div>
-                <div class="auth-form-group">
-                    <label class="required">Confirmer</label>
-                    <input
-                        type="password"
-                        name="password2"
-                        required
-                        placeholder="••••••••"
-                        autocomplete="new-password"
-                    />
+
+                <!-- Boutons de navigation -->
+                <div style="display:flex;gap:0.8rem;margin-top:1.2rem;" id="btnContainer">
+                    <button type="button" id="btnPrev" onclick="prevStep()" 
+                            style="flex:1;padding:0.85rem;background:#F8F9FA;color:#0F1C2E;border:1.5px solid #E9ECEF;border-radius:50px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;display:none;">
+                        ← Retour
+                    </button>
+                    <button type="button" id="btnNext" onclick="nextStep()" 
+                            class="btn-submit" style="flex:1;margin-top:0;">
+                        Suivant →
+                    </button>
+                    <button type="submit" id="btnSubmit" class="btn-submit" style="flex:1;margin-top:0;display:none;">
+                        <i class="fas fa-user-plus"></i> Créer mon compte
+                    </button>
                 </div>
-            </div>
+            </form>
 
-            <div class="auth-form-group">
-                <label>Métier qui vous intéresse</label>
-                <select name="role_souhaite">
-                    <option value="">Sélectionnez</option>
-                    <option value="pilote">Pilote de ligne</option>
-                    <option value="pnc">Personnel navigant (PNC)</option>
-                    <option value="technicien">Technicien aéronautique</option>
-                    <option value="controleur">Contrôleur aérien</option>
-                    <option value="ingenieur">Ingénieur aéronautique</option>
-                    <option value="mecanicien">Mécanicien avion</option>
-                    <option value="agent">Agent d'escale</option>
-                    <option value="autre">Autre / Indécis</option>
-                </select>
-            </div>
-
-            <!-- Cases à cocher légales -->
-            <div class="auth-checkbox-group">
-                <input
-                    type="checkbox"
-                    name="accepte_cgu"
-                    id="id_accepte_cgu"
-                    required
-                />
-                <label for="id_accepte_cgu">
-                    J'accepte les
-                    <a
-                        href="{% url 'core:page_legale' type_page='cgu' %}"
-                        target="_blank"
-                        >Conditions Générales d'Utilisation</a
-                    >
-                    *
-                </label>
-            </div>
-            <div class="auth-checkbox-group">
-                <input
-                    type="checkbox"
-                    name="accepte_confidentialite"
-                    id="id_accepte_confidentialite"
-                    required
-                />
-                <label for="id_accepte_confidentialite">
-                    J'accepte la
-                    <a
-                        href="{% url 'core:page_legale' type_page='confidentialite' %}"
-                        target="_blank"
-                        >Politique de confidentialité</a
-                    >
-                    *
-                </label>
-            </div>
-            <div class="auth-checkbox-group">
-                <input
-                    type="checkbox"
-                    name="accepte_mentions"
-                    id="id_accepte_mentions"
-                    required
-                />
-                <label for="id_accepte_mentions">
-                    J'ai pris connaissance des
-                    <a
-                        href="{% url 'core:page_legale' type_page='mentions_legales' %}"
-                        target="_blank"
-                        >Mentions légales</a
-                    >
-                    *
-                </label>
-            </div>
-
-            <button type="submit" class="btn-auth">
-                <i class="fas fa-user-plus"></i> Créer mon compte
-            </button>
-        </form>
-
-        <p class="auth-footer-link">
-            Déjà un compte ?
-            <a href="{% url 'users:login' %}">Se connecter</a>
-        </p>
-
-        <div class="legal-links-inline">
-            <a href="{% url 'core:page_legale' type_page='cgu' %}">CGU</a>
-            <span>·</span>
-            <a href="{% url 'core:page_legale' type_page='confidentialite' %}"
-                >Confidentialité</a
-            >
-            <span>·</span>
-            <a href="{% url 'core:page_legale' type_page='mentions_legales' %}"
-                >Mentions légales</a
-            >
+            <p class="register-footer">
+                Déjà inscrit ? <a href="{% url 'users:login' %}">Se connecter</a>
+            </p>
         </div>
     </div>
 </div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 3;
+
+function updateSteps() {
+    for (let i = 1; i <= totalSteps; i++) {
+        const dot = document.getElementById('step' + i);
+        if (i < currentStep) { dot.className = 'step-dot done'; dot.innerHTML = '✓'; }
+        else if (i === currentStep) { dot.className = 'step-dot active'; dot.innerHTML = i; }
+        else { dot.className = 'step-dot'; dot.innerHTML = i; }
+    }
+    for (let i = 1; i < totalSteps; i++) {
+        const line = document.getElementById('line' + i);
+        line.className = i < currentStep ? 'step-line done' : 'step-line';
+    }
+    document.getElementById('formStep1').style.display = currentStep === 1 ? 'block' : 'none';
+    document.getElementById('formStep2').style.display = currentStep === 2 ? 'block' : 'none';
+    document.getElementById('formStep3').style.display = currentStep === 3 ? 'block' : 'none';
+    document.getElementById('btnPrev').style.display = currentStep > 1 ? 'flex' : 'none';
+    document.getElementById('btnNext').style.display = currentStep < totalSteps ? 'flex' : 'none';
+    document.getElementById('btnSubmit').style.display = currentStep === totalSteps ? 'flex' : 'none';
+}
+
+function validateStep(step) {
+    if (step === 1) {
+        const fn = document.querySelector('[name=first_name]').value.trim();
+        const ln = document.querySelector('[name=last_name]').value.trim();
+        const em = document.querySelector('[name=email]').value.trim();
+        const nat = document.querySelector('[name=nationality]').value.trim();
+        const dob = document.querySelector('[name=date_naissance]').value;
+        if (!fn || !ln || !em || !nat || !dob) { alert('Veuillez remplir tous les champs obligatoires.'); return false; }
+        if (!em.includes('@')) { alert('Adresse email invalide.'); return false; }
+        const age = (new Date() - new Date(dob)) / (365.25 * 24 * 3600 * 1000);
+        if (age < 16) { alert('Vous devez avoir au moins 16 ans pour vous inscrire.'); return false; }
+    }
+    if (step === 2) {
+        const p1 = document.getElementById('password1').value;
+        const p2 = document.getElementById('password2').value;
+        if (p1.length < 10) { alert('Le mot de passe doit contenir au moins 10 caractères.'); return false; }
+        if (p1 !== p2) { alert('Les mots de passe ne correspondent pas.'); return false; }
+    }
+    return true;
+}
+
+function nextStep() {
+    if (!validateStep(currentStep)) return;
+    if (currentStep < totalSteps) { currentStep++; updateSteps(); }
+}
+function prevStep() {
+    if (currentStep > 1) { currentStep--; updateSteps(); }
+}
+
+function checkStrength(pwd) {
+    let score = 0;
+    if (pwd.length >= 10) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[a-z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+    const bar = document.getElementById('strengthBar');
+    const text = document.getElementById('strengthText');
+    const levels = [
+        { w: '20%', c: '#ef4444', t: 'Très faible' },
+        { w: '40%', c: '#f59e0b', t: 'Faible' },
+        { w: '60%', c: '#f59e0b', t: 'Moyen' },
+        { w: '80%', c: '#10b981', t: 'Bon' },
+        { w: '100%', c: '#10b981', t: 'Excellent ✓' },
+    ];
+    if (pwd.length === 0) { bar.style.width = '0'; text.textContent = 'Min. 10 caractères · majuscule · minuscule · chiffre · symbole'; return; }
+    const l = levels[Math.min(score - 1, 4)] || levels[0];
+    bar.style.width = l.w; bar.style.background = l.c;
+    text.textContent = 'Force : ' + l.t;
+}
+
+// Si formulaire POST échoue et revient avec erreur, afficher toutes les étapes
+{% if messages %}
+document.querySelectorAll('.alert-error').forEach(() => {
+    currentStep = 1;
+    document.getElementById('formStep1').style.display = 'block';
+    document.getElementById('formStep2').style.display = 'block';
+    document.getElementById('formStep3').style.display = 'block';
+    document.getElementById('btnNext').style.display = 'none';
+    document.getElementById('btnSubmit').style.display = 'flex';
+    document.getElementById('btnPrev').style.display = 'none';
+    document.querySelectorAll('.steps-indicator').forEach(el => el.style.display = 'none');
+});
+{% endif %}
+</script>
 {% endblock %}
