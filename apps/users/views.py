@@ -408,6 +408,33 @@ def dashboard_etudiant(request):
         nb=models.Count('id')
     ).filter(nb__gt=cours_termines_global).count() + 1 if cours_termines_global > 0 else '-'
 
+    # Activité récente : les 10 dernières progressions terminées
+    try:
+        activites_recentes_qs = ProgressionUtilisateur.objects.filter(
+            user=user, termine=True
+        ).select_related('item', 'parcours').order_by('-date_modification')[:10]
+        activites_recentes = [
+            {
+                'type': p.item.type if p.item else 'cours',
+                'description': f"{p.item.titre} — {p.parcours.nom}" if p.item else p.parcours.nom,
+                'date': p.date_modification,
+            }
+            for p in activites_recentes_qs
+        ]
+    except Exception:
+        activites_recentes = []
+
+    # Métiers disponibles pour la sidebar
+    try:
+        from apps.parcours.models import Parcours as ParcoursModel
+        prog_par_slug = {p['slug']: p['pourcentage'] for p in progressions_list}
+        metiers_disponibles = [
+            {'nom': parc.nom, 'slug': parc.metier, 'progression': prog_par_slug.get(parc.metier, 0)}
+            for parc in ParcoursModel.objects.all().order_by('nom')
+        ]
+    except Exception:
+        metiers_disponibles = []
+
     context = {
         "page_title": "Mon espace",
         "progressions": progressions_list,
@@ -430,6 +457,10 @@ def dashboard_etudiant(request):
         "abonnement_actif": abonnement_actif,
         "plan_type": plan_type,
         "date_fin_abonnement": date_fin_abonnement,
+        "activites_recentes": activites_recentes,
+        "metiers_disponibles": metiers_disponibles,
+        "discussions_recentes": [],
+        "recommandations": [],
     }
     return render(request, "pages/utilisateur/dashboard_etudiant.html", context)
 

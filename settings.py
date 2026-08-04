@@ -371,16 +371,20 @@ DEPARTMENTS = ['pedagogie', 'technique', 'marketing', 'operations', 'qualite', '
 # SENTRY
 # ============================================================
 sentry_dsn = os.getenv('SENTRY_DSN', '')
-if sentry_dsn:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-    sentry_sdk.init(
-        dsn=sentry_dsn,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.1,
-        send_default_pii=False,
-        environment=os.getenv('DJANGO_ENV', 'development'),
-    )
+# Skip placeholder / invalid DSN values so a misconfigured env never crashes startup
+if sentry_dsn and 'xxxxxx' not in sentry_dsn:
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.django import DjangoIntegration
+        sentry_sdk.init(
+            dsn=sentry_dsn,
+            integrations=[DjangoIntegration()],
+            traces_sample_rate=0.1,
+            send_default_pii=False,
+            environment=os.getenv('DJANGO_ENV', 'development'),
+        )
+    except Exception:
+        pass  # Bad DSN — monitoring disabled, app continues normally
 
 # ============================================================
 # DIVERS

@@ -288,7 +288,7 @@
                             {{ dernier_cours.titre }}
                         </p>
                     </div>
-                    <a href="{% url 'parcours:cours' metier=parcours_actif.metier module=dernier_cours.module.numero cours=dernier_cours.numero %}" 
+                    <a href="{% url 'parcours:cours' parcours_actif.metier dernier_cours.module.numero dernier_cours.numero %}" 
                        class="btn-quick-action" 
                        style="background: #D4AF37; color: #0F1C2E; padding: 0.7rem 1.5rem;">
                         <i class="fas fa-play"></i> Continuer
@@ -435,7 +435,7 @@
                     <i class="fas fa-comments"></i> Accéder au forum général
                 </a>
                 {% if parcours_actif %}
-                <a href="{% url 'forum:metier' metier=parcours_actif.slug %}" class="btn-quick-action" style="background: #f0f0f0; color: #8B5CF6;">
+                <a href="{% url 'forum:metier' metier=parcours_actif.metier %}" class="btn-quick-action" style="background: #f0f0f0; color: #8B5CF6;">
                     <i class="fas fa-users"></i> Forum {{ parcours_actif.nom }}
                 </a>
                 {% endif %}
@@ -487,15 +487,7 @@ document.addEventListener('click', function(e) {
     }
 });
 
-function markAllRead() {
-    /*
-    fetch("{% url 'messaging:marquer_tout_lu' %}", { 
-        method: 'POST', 
-        headers: { 'X-CSRFToken': '{{ csrf_token }}' } 
-    }).then(() => location.reload());
-    */
-    console.log("Fonction marquer tout lu désactivée");
-    }
+// Fonction markAllRead supprimée temporairement
 </script>
 
 <style>
