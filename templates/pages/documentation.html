@@ -1,431 +1,925 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}Documentation complète — {{ site_name }}{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ── Layout ───────────────────────────────────────── */
+.doc-page { display: flex; gap: 0; min-height: 100vh; }
+
+.doc-sidebar {
+    width: 280px; flex-shrink: 0;
+    background: #0F1C2E; color: white;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto; padding: 1.5rem 0;
+    scrollbar-width: thin;
+}
+.doc-sidebar::-webkit-scrollbar { width: 4px; }
+.doc-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+.sidebar-brand {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 1rem;
+}
+.sidebar-brand h2 { font-family: 'Montserrat', sans-serif; font-size: 1rem; margin: 0; color: #D4AF37; }
+.sidebar-brand p { margin: 0.2rem 0 0; font-size: 0.75rem; opacity: 0.6; }
+
+.sidebar-section { margin-bottom: 0.5rem; }
+.sidebar-section-title {
+    padding: 0.4rem 1.5rem;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #D4AF37; opacity: 0.9;
+}
+.sidebar-link {
+    display: block; padding: 0.45rem 1.5rem 0.45rem 2rem;
+    font-size: 0.82rem; color: rgba(255,255,255,0.75);
+    text-decoration: none; transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+.sidebar-link:hover, .sidebar-link.active {
+    color: white; background: rgba(255,255,255,0.06);
+    border-left-color: #D4AF37;
+}
+
+.doc-main { flex: 1; padding: 2.5rem 3rem; max-width: 900px; min-width: 0; }
+
+/* ── Sections ─────────────────────────────────────── */
+.doc-section { margin-bottom: 3.5rem; scroll-margin-top: 1rem; }
+.section-header {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #E9ECEF;
+    margin-bottom: 1.5rem;
+}
+.section-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+}
+.section-header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.4rem; color: #0F1C2E; margin: 0;
+}
+
+/* ── Cards & Tables ───────────────────────────────── */
+.info-card {
+    background: #F8FAFE; border: 1px solid #E9ECEF;
+    border-radius: 12px; padding: 1.2rem 1.4rem; margin-bottom: 1rem;
+}
+.info-card.accent-blue { border-left: 4px solid #0077B6; }
+.info-card.accent-gold { border-left: 4px solid #D4AF37; }
+.info-card.accent-green { border-left: 4px solid #10b981; }
+.info-card.accent-red  { border-left: 4px solid #ef4444; }
+.info-card.accent-purple { border-left: 4px solid #8B5CF6; }
+.info-card h3 {
+    font-family: 'Montserrat', sans-serif; font-size: 1rem;
+    color: #0F1C2E; margin: 0 0 0.7rem;
+}
+
+.role-badge {
+    display: inline-block; padding: 0.25rem 0.75rem;
+    border-radius: 50px; font-size: 0.75rem; font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+}
+.badge-dg { background: #FFF3CD; color: #D4AF37; }
+.badge-coord { background: #EDE9FE; color: #7C3AED; }
+.badge-gest { background: #DBEAFE; color: #1D4ED8; }
+.badge-etudiant { background: #DCFCE7; color: #16a34a; }
+
+.url-block {
+    background: #0F1C2E; color: #D4AF37;
+    border-radius: 8px; padding: 0.6rem 1rem;
+    font-family: monospace; font-size: 0.88rem;
+    margin: 0.4rem 0; display: flex; align-items: center; gap: 0.8rem;
+    overflow-x: auto;
+}
+.url-block .method {
+    background: #0077B6; color: white;
+    padding: 0.1rem 0.5rem; border-radius: 4px;
+    font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+}
+.url-block .method.get { background: #10b981; }
+.url-block .method.post { background: #f59e0b; color: #0F1C2E; }
+
+table.doc-table {
+    width: 100%; border-collapse: collapse; font-size: 0.88rem;
+    margin: 0.5rem 0 1.5rem;
+}
+table.doc-table th {
+    background: #0F1C2E; color: white; padding: 0.6rem 0.9rem;
+    text-align: left; font-family: 'Montserrat', sans-serif; font-size: 0.8rem;
+}
+table.doc-table td {
+    padding: 0.55rem 0.9rem; border-bottom: 1px solid #E9ECEF;
+    vertical-align: top;
+}
+table.doc-table tr:hover td { background: #F8FAFE; }
+
+.step-list { list-style: none; padding: 0; margin: 0; }
+.step-list li {
+    display: flex; gap: 0.8rem; padding: 0.6rem 0;
+    border-bottom: 1px solid #f0f0f0; align-items: flex-start;
+}
+.step-list li:last-child { border-bottom: none; }
+.step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #0077B6; color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    flex-shrink: 0; margin-top: 2px;
+}
+
+.alert-box {
+    border-radius: 10px; padding: 0.9rem 1.1rem;
+    margin: 1rem 0; display: flex; gap: 0.7rem; align-items: flex-start;
+    font-size: 0.88rem;
+}
+.alert-box.warning { background: #FFF7ED; border: 1px solid #FED7AA; color: #92400E; }
+.alert-box.info    { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+.alert-box.success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #14532D; }
+.alert-box.danger  { background: #FEF2F2; border: 1px solid #FECACA; color: #7F1D1D; }
+
+.code-block {
+    background: #1E2D3D; color: #A3C4D8; border-radius: 10px;
+    padding: 1rem 1.2rem; font-family: monospace; font-size: 0.83rem;
+    overflow-x: auto; margin: 0.5rem 0; line-height: 1.6;
+}
+.code-block .comment { color: #6B8FA3; }
+.code-block .key { color: #D4AF37; }
+.code-block .val { color: #10b981; }
+
+.dept-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.8rem; margin-top: 0.5rem;
+}
+.dept-card {
+    border: 1.5px solid #E9ECEF; border-radius: 10px;
+    padding: 0.9rem 1rem; transition: border-color 0.2s;
+}
+.dept-card:hover { border-color: #0077B6; }
+.dept-card .dept-icon { font-size: 1.4rem; margin-bottom: 0.3rem; }
+.dept-card .dept-name { font-weight: 700; font-size: 0.9rem; color: #0F1C2E; }
+.dept-card .dept-url { font-family: monospace; font-size: 0.72rem; color: #6C757D; }
+
+@media (max-width: 900px) {
+    .doc-sidebar { display: none; }
+    .doc-main { padding: 1.5rem 1rem; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width:960px;margin:0 auto;padding:3rem 1rem 4rem;">
+<div class="doc-page">
 
-    <!-- En-tête -->
-    <div style="background:linear-gradient(135deg,#0F1C2E,#1E3A5F);color:white;border-radius:20px;padding:3rem;margin-bottom:2.5rem;">
-        <h1 style="font-family:'Montserrat',sans-serif;font-size:2.2rem;margin:0 0 0.5rem;">
-            <i class="fas fa-book-open" style="margin-right:0.8rem;color:#D4AF37;"></i>Documentation Ventoryx Academy
+<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+<nav class="doc-sidebar">
+    <div class="sidebar-brand">
+        <h2>📚 Documentation</h2>
+        <p>Ventoryx Academy — Guide complet</p>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">👤 Guide étudiant</div>
+        <a class="sidebar-link" href="#inscription">Inscription & Connexion</a>
+        <a class="sidebar-link" href="#dashboard-etudiant">Tableau de bord</a>
+        <a class="sidebar-link" href="#parcours">Parcours & Cours</a>
+        <a class="sidebar-link" href="#tests">Tests & Certifications</a>
+        <a class="sidebar-link" href="#ia">Assistant IA</a>
+        <a class="sidebar-link" href="#forum">Forum & Messagerie</a>
+        <a class="sidebar-link" href="#abonnement">Abonnements</a>
+        <a class="sidebar-link" href="#pwa">Mode hors-ligne (PWA)</a>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">🔐 Accès gestion</div>
+        <a class="sidebar-link" href="#roles">Rôles & Hiérarchie</a>
+        <a class="sidebar-link" href="#acces-pages">Accéder aux pages</a>
+        <a class="sidebar-link" href="#dashboard-dg">Dashboard DG</a>
+        <a class="sidebar-link" href="#dashboard-coord">Dashboard Coordinateurs</a>
+        <a class="sidebar-link" href="#dashboard-gest">Dashboard Gestionnaires</a>
+        <a class="sidebar-link" href="#admin-django">Interface Admin Django</a>
+        <a class="sidebar-link" href="#audit">Journal d'audit</a>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">🛠️ Guide développeur</div>
+        <a class="sidebar-link" href="#architecture">Architecture</a>
+        <a class="sidebar-link" href="#modeles">Modèles de données</a>
+        <a class="sidebar-link" href="#urls">URLs & Namespaces</a>
+        <a class="sidebar-link" href="#env">Variables d'environnement</a>
+        <a class="sidebar-link" href="#commandes">Commandes de gestion</a>
+        <a class="sidebar-link" href="#securite">Sécurité</a>
+        <a class="sidebar-link" href="#deploiement">Déploiement</a>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">⚖️ Informations légales</div>
+        <a class="sidebar-link" href="#comptes-test">Comptes de test</a>
+        <a class="sidebar-link" href="#credits">Stack technique</a>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════ MAIN CONTENT ═══════════════════════ -->
+<main class="doc-main">
+
+    <div style="margin-bottom: 2.5rem;">
+        <h1 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;font-size:2rem;margin:0 0 0.4rem;">
+            Documentation Ventoryx Academy
         </h1>
-        <p style="opacity:0.85;margin:0;font-size:1.05rem;">Guide complet pour les utilisateurs et les développeurs</p>
-        <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;">
-            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-code-branch"></i> Django 6.0.7</span>
-            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-shield-alt"></i> Production-ready</span>
-            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-robot"></i> IA GPT-4o-mini</span>
-            <span style="background:rgba(255,255,255,0.15);padding:0.4rem 1rem;border-radius:50px;font-size:0.85rem;"><i class="fas fa-mobile-alt"></i> PWA</span>
-        </div>
-    </div>
-
-    <!-- Table des matières -->
-    <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);border-left:4px solid #D4AF37;margin-bottom:2rem;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;font-size:1.1rem;margin:0 0 1rem;">📋 Table des matières</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.4rem;">
-            <a href="#utilisateurs" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">1. Guide utilisateur (apprenant)</a>
-            <a href="#gestionnaires" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">2. Guide gestionnaires</a>
-            <a href="#coordinateurs" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">3. Guide coordinateurs</a>
-            <a href="#dg" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">4. Guide Directeur Général</a>
-            <a href="#architecture" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">5. Architecture technique</a>
-            <a href="#securite" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">6. Sécurité</a>
-            <a href="#ia" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">7. Assistant IA</a>
-            <a href="#paiements" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">8. Paiements Stripe</a>
-            <a href="#pwa" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">9. Application PWA</a>
-            <a href="#developpeurs" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">10. Guide développeurs</a>
-            <a href="#roles" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">11. Rôles & permissions</a>
-            <a href="#deploiement" style="color:#0077B6;text-decoration:none;font-size:0.9rem;padding:0.3rem 0;">12. Déploiement</a>
-        </div>
-    </div>
-
-    <!-- Section 1 : Guide utilisateur -->
-    <div id="utilisateurs" class="doc-section" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #0077B6;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-user-graduate" style="color:#0077B6;margin-right:0.6rem;"></i>1. Guide Utilisateur (Apprenant)</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;">
-            <div>
-                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Inscription & Connexion</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Créer un compte depuis la page <a href="{% url 'users:register' %}" style="color:#0077B6;">/auth/register/</a></li>
-                    <li>Se connecter via <a href="{% url 'users:login' %}" style="color:#0077B6;">/auth/login/</a></li>
-                    <li>Connexion Google disponible (si configurée)</li>
-                    <li>Mot de passe oublié : réinitialisation par email</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Parcours de formation</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>8 métiers aéronautiques disponibles</li>
-                    <li>Contrôleur aérien & Technicien : accès gratuit</li>
-                    <li>Autres parcours : abonnement requis</li>
-                    <li>Formation avancée : abonnement Premium annuel</li>
-                    <li>20 cours par module + 4 quiz par module</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Mon espace (tableau de bord)</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Progression détaillée par parcours</li>
-                    <li>Statistiques : cours, tests, moyenne, heures</li>
-                    <li>Certificats obtenus</li>
-                    <li>Notifications et messagerie</li>
-                    <li>Statut de l'abonnement</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Assistant IA</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Disponible <strong>uniquement pendant les cours</strong></li>
-                    <li>Quota : 10 questions/jour (gratuit)</li>
-                    <li>Illimité pour les abonnés annuels</li>
-                    <li>Spécialisé en aéronautique</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Abonnements</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Mensuel : 39 €/mois</li>
-                    <li>Annuel : 329 €/an (économisez 29%)</li>
-                    <li>Paiement sécurisé via Stripe</li>
-                    <li>Acceptation des CGV obligatoire</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="color:#0077B6;font-size:1rem;margin-bottom:0.5rem;">Certificats</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Certificats numériques vérifiables</li>
-                    <li>Numéro de série unique par certificat</li>
-                    <li>Vérification publique sur <a href="{% url 'core:verification_certificat' %}" style="color:#0077B6;">/verification-certificat/</a></li>
-                    <li>Hash cryptographique d'authenticité</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section 2 : Gestionnaires -->
-    <div id="gestionnaires" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #10b981;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-users-cog" style="color:#10b981;margin-right:0.6rem;"></i>2. Guide Gestionnaires</h2>
-        <p style="color:#495057;font-size:0.9rem;margin-bottom:1rem;">Les gestionnaires gèrent les messages entrants et les tâches de leur département. Ils accèdent à leur espace via <strong>/auth/dashboard/gestionnaire/[département]/</strong></p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;margin-bottom:1rem;">
-            {% for dept in "pedagogie,technique,marketing,operations,qualite,support,design"|split:"," %}
-            <div style="background:#F8FAFE;border-radius:8px;padding:0.8rem;font-size:0.85rem;">
-                <strong style="color:#0F1C2E;text-transform:capitalize;">{{ dept }}</strong><br>
-                <span style="color:#6C757D;">gest.{{ dept }}@ventoryx-academy.com</span>
-            </div>
-            {% endfor %}
-        </div>
-        <p style="color:#6C757D;font-size:0.85rem;background:#FFF3CD;padding:0.8rem;border-radius:8px;margin:0;">
-            <i class="fas fa-key"></i> Mot de passe de test : <strong>ChangeMe2026!</strong> — À changer dès la mise en production.
+        <p style="color:#6C757D;font-size:1rem;margin:0;">
+            Guide complet — Utilisateurs · Gestionnaires · Développeurs
         </p>
-    </div>
-
-    <!-- Section 3 : Coordinateurs -->
-    <div id="coordinateurs" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #8B5CF6;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-sitemap" style="color:#8B5CF6;margin-right:0.6rem;"></i>3. Guide Coordinateurs</h2>
-        <p style="color:#495057;font-size:0.9rem;margin-bottom:1rem;">Les coordinateurs supervisent leur département et ont accès à une vue synthétique des métriques. Accès : <strong>/auth/dashboard/coordinateur/[département]/</strong></p>
-        <p style="color:#6C757D;font-size:0.85rem;background:#E8F4F8;padding:0.8rem;border-radius:8px;margin:0;">
-            <i class="fas fa-info-circle"></i> Les coordinateurs sont nommés après évaluation de leur candidature sur la plateforme. Leurs identifiants sont générés automatiquement et sont temporaires (changement lors d'une prise de poste).
-        </p>
-    </div>
-
-    <!-- Section 4 : DG -->
-    <div id="dg" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #D4AF37;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-crown" style="color:#D4AF37;margin-right:0.6rem;"></i>4. Guide Directeur Général</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;flex-wrap:wrap;">
-            <div>
-                <h3 style="color:#D4AF37;font-size:1rem;margin-bottom:0.5rem;">Accès</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Email test : <strong>dg@ventoryx-academy.com</strong></li>
-                    <li>Dashboard : <a href="{% url 'users:dashboard_dg' %}" style="color:#0077B6;">/auth/dashboard/dg/</a></li>
-                    <li>Admin Django : <a href="/admin/" style="color:#0077B6;">/admin/</a></li>
-                    <li>Rapports transparence : /auth/rapports-transparence/</li>
-                    <li>Équipe : /auth/equipe/</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="color:#D4AF37;font-size:1rem;margin-bottom:0.5rem;">Fonctionnalités exclusives</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Vue globale de tous les utilisateurs</li>
-                    <li>Gestion des candidatures</li>
-                    <li>Audit logs complets</li>
-                    <li>Rapports de transparence</li>
-                    <li>Gestion des certificats</li>
-                    <li>Réunions virtuelles d'équipe</li>
-                </ul>
-            </div>
+        <div class="alert-box info" style="margin-top:1rem;">
+            <i class="fas fa-info-circle"></i>
+            <span>Toutes les URLs de cette documentation sont préfixées par la langue courante, ex : <code>/fr/</code> ou <code>/en/</code>.</span>
         </div>
     </div>
 
-    <!-- Section 5 : Architecture -->
-    <div id="architecture" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #0077B6;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-cogs" style="color:#0077B6;margin-right:0.6rem;"></i>5. Architecture Technique</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Stack principal</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li><strong>Framework :</strong> Django 6.0.7</li>
-                    <li><strong>BDD :</strong> SQLite (dev) / PostgreSQL (prod)</li>
-                    <li><strong>Cache :</strong> LocMemCache (dev) / Redis (prod)</li>
-                    <li><strong>Tâches :</strong> Celery + Celery Beat</li>
-                    <li><strong>Fichiers statiques :</strong> WhiteNoise</li>
-                    <li><strong>Images :</strong> Pillow 12.3.0</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Applications Django</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li><strong>core</strong> : pages publiques, IA, vault</li>
-                    <li><strong>users</strong> : authentification, dashboards</li>
-                    <li><strong>parcours</strong> : formations et progression</li>
-                    <li><strong>blog</strong> : articles et contenu</li>
-                    <li><strong>institution</strong> : certificats, candidatures</li>
-                    <li><strong>messaging</strong> : messages et notifications</li>
-                    <li><strong>audit</strong> : logs immutables</li>
-                    <li><strong>forum</strong> : communauté</li>
-                    <li><strong>gestion</strong> : tâches, campagnes, tickets</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Variables d'environnement</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li><code>DJANGO_SECRET_KEY</code> — obligatoire</li>
-                    <li><code>OPENAI_API_KEY</code> — assistant IA</li>
-                    <li><code>STRIPE_PUBLIC_KEY</code> — paiements</li>
-                    <li><code>STRIPE_SECRET_KEY</code> — paiements</li>
-                    <li><code>STRIPE_WEBHOOK_SECRET</code> — webhooks</li>
-                    <li><code>REDIS_URL</code> — cache/Celery (optionnel)</li>
-                    <li><code>SENDGRID_API_KEY</code> — emails prod</li>
-                    <li><code>SENTRY_DSN</code> — monitoring (optionnel)</li>
-                </ul>
-            </div>
+    <!-- ───────────────── INSCRIPTION / CONNEXION ───────────────── -->
+    <section class="doc-section" id="inscription">
+        <div class="section-header">
+            <div class="section-icon" style="background:#EFF6FF;">🔑</div>
+            <h2>Inscription & Connexion</h2>
         </div>
-    </div>
 
-    <!-- Section 6 : Sécurité -->
-    <div id="securite" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #ef4444;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-shield-alt" style="color:#ef4444;margin-right:0.6rem;"></i>6. Sécurité</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.8rem;">
-            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
-                <strong style="color:#DC2626;">Authentification</strong>
-                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
-                    <li>Argon2 (hash de mots de passe)</li>
-                    <li>CSRF protection sur tous les formulaires</li>
-                    <li>Axes : blocage après 5 tentatives</li>
-                    <li>Session sécurisée (HTTPOnly, SameSite)</li>
-                </ul>
-            </div>
-            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
-                <strong style="color:#DC2626;">Réseau & Contenu</strong>
-                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
-                    <li>CSP (Content Security Policy)</li>
-                    <li>X-Frame-Options: DENY</li>
-                    <li>XSS protection activée</li>
-                    <li>HTTPS obligatoire en production</li>
-                </ul>
-            </div>
-            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
-                <strong style="color:#DC2626;">Audit & Monitoring</strong>
-                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
-                    <li>Audit logs immutables (AuditLog)</li>
-                    <li>Filtrage de l'IA (questions et réponses)</li>
-                    <li>Rate limiting sur les APIs publiques</li>
-                    <li>Honeypot anti-bot sur les formulaires</li>
-                </ul>
-            </div>
-            <div style="background:#FEF2F2;border-radius:8px;padding:1rem;">
-                <strong style="color:#DC2626;">Données sensibles</strong>
-                <ul style="color:#495057;font-size:0.85rem;padding-left:1rem;margin:0.5rem 0 0;">
-                    <li>Clés API dans Replit Secrets (jamais en dur)</li>
-                    <li>RGPD : consentement tracé</li>
-                    <li>Données cryptées en transit (SSL)</li>
-                    <li>Sentry DSN pour le monitoring d'erreurs</li>
-                </ul>
-            </div>
+        <div class="info-card accent-blue">
+            <h3>Pages d'authentification</h3>
+            <div class="url-block"><span class="method get">GET</span>/auth/register/ — Formulaire d'inscription (3 étapes)</div>
+            <div class="url-block"><span class="method post">POST</span>/auth/login/ — Connexion par email + mot de passe</div>
+            <div class="url-block"><span class="method get">GET</span>/auth/logout/ — Déconnexion</div>
+            <div class="url-block"><span class="method get">GET</span>/auth/forgot-password/ — Réinitialisation de mot de passe</div>
+            <div class="url-block"><span class="method get">GET</span>/auth/google/ — Connexion Google OAuth2</div>
         </div>
-    </div>
 
-    <!-- Section 7 : IA -->
-    <div id="ia" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #D4AF37;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-robot" style="color:#D4AF37;margin-right:0.6rem;"></i>7. Assistant IA</h2>
-        <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;">
-            <li>Modèle : GPT-4o-mini (OpenAI)</li>
-            <li><strong>Accessible uniquement pendant les cours</strong> (contexte de cours requis)</li>
-            <li>Quota : 10 questions/jour pour les utilisateurs gratuits, illimité en Premium annuel</li>
-            <li>Filtre de contenu double (questions et réponses)</li>
-            <li>Logs d'audit de chaque interaction</li>
-            <li>Endpoint : <code>POST /api/chatbot/</code> avec <code>{ "question": "...", "cours": "contexte du cours" }</code></li>
-            <li>Configuration : variable <code>OPENAI_API_KEY</code> dans Replit Secrets</li>
+        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:1.2rem 0 0.5rem;">Processus d'inscription</h3>
+        <ul class="step-list">
+            <li><div class="step-num">1</div><div><strong>Identité :</strong> prénom, nom, email, nationalité, date de naissance (min. 16 ans), métier souhaité</div></li>
+            <li><div class="step-num">2</div><div><strong>Sécurité :</strong> mot de passe (min. 10 car., maj + min + chiffre + symbole) avec indicateur de force</div></li>
+            <li><div class="step-num">3</div><div><strong>Consentements :</strong> acceptation CGU/politique de confidentialité (obligatoire), newsletter (optionnel)</div></li>
         </ul>
-    </div>
 
-    <!-- Section 8 : Paiements -->
-    <div id="paiements" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #635BFF;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fab fa-stripe" style="color:#635BFF;margin-right:0.6rem;"></i>8. Paiements Stripe</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Flux de paiement</h3>
-                <ol style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Utilisateur choisit son plan (mensuel/annuel)</li>
-                    <li>Accepte les CGV (case obligatoire)</li>
-                    <li>Redirection vers Stripe Checkout</li>
-                    <li>Paiement sécurisé chez Stripe</li>
-                    <li>Webhook <code>checkout.session.completed</code></li>
-                    <li>Activation automatique de l'abonnement</li>
-                </ol>
+        <div class="alert-box warning" style="margin-top:1rem;">
+            <i class="fas fa-shield-alt"></i>
+            <span><strong>Sécurité :</strong> après 5 tentatives de connexion échouées, l'adresse IP est bloquée pendant 1 heure (django-axes). La réinitialisation passe par email.</span>
+        </div>
+    </section>
+
+    <!-- ───────────────── DASHBOARD ÉTUDIANT ───────────────── -->
+    <section class="doc-section" id="dashboard-etudiant">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F0FDF4;">🎓</div>
+            <h2>Tableau de bord étudiant</h2>
+        </div>
+        <div class="url-block"><span class="method get">GET</span>/auth/dashboard/etudiant/ — Accessible après connexion <span class="badge-etudiant role-badge">étudiant</span></div>
+        <p style="margin:1rem 0 0.5rem;color:#374151;">Le dashboard étudiant affiche en temps réel :</p>
+        <table class="doc-table">
+            <tr><th>Indicateur</th><th>Description</th></tr>
+            <tr><td>Parcours actifs</td><td>Nombre de formations en cours</td></tr>
+            <tr><td>Tests réussis</td><td>X/Y tests passés avec score ≥ 70 %</td></tr>
+            <tr><td>Cours terminés</td><td>Total des leçons complétées</td></tr>
+            <tr><td>Moyenne générale</td><td>Moyenne de tous les scores de test</td></tr>
+            <tr><td>Heures de formation</td><td>Estimation (30 min/cours terminé)</td></tr>
+            <tr><td>Classement</td><td>Position par rapport aux autres apprenants</td></tr>
+        </table>
+        <p style="color:#374151;">La barre latérale droite liste tous les parcours disponibles avec leur progression, les certificats obtenus, et l'accès au forum de la spécialité active.</p>
+    </section>
+
+    <!-- ───────────────── PARCOURS & COURS ───────────────── -->
+    <section class="doc-section" id="parcours">
+        <div class="section-header">
+            <div class="section-icon" style="background:#FFF7ED;">✈️</div>
+            <h2>Parcours & Cours</h2>
+        </div>
+
+        <p style="color:#374151;">8 parcours de formation aéronautique sont disponibles :</p>
+        <div class="dept-grid">
+            <div class="dept-card">
+                <div class="dept-icon">🛩️</div>
+                <div class="dept-name">Pilote de ligne</div>
+                <div class="dept-url">/parcours/pilote/</div>
             </div>
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Configuration</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li><code>STRIPE_PUBLIC_KEY</code> : clé publique</li>
-                    <li><code>STRIPE_SECRET_KEY</code> : clé secrète</li>
-                    <li><code>STRIPE_WEBHOOK_SECRET</code> : secret webhook</li>
-                    <li>URL webhook : <code>/auth/paiement/webhook/</code></li>
-                    <li>Sans clés : message d'information affiché</li>
-                </ul>
+            <div class="dept-card">
+                <div class="dept-icon">👥</div>
+                <div class="dept-name">Personnel Navigant (PNC)</div>
+                <div class="dept-url">/parcours/pnc/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">⚙️</div>
+                <div class="dept-name">Ingénieur Aéronautique</div>
+                <div class="dept-url">/parcours/ingenieur/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">📡</div>
+                <div class="dept-name">Contrôleur Aérien</div>
+                <div class="dept-url">/parcours/controleur/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">🔧</div>
+                <div class="dept-name">Technicien Aéronautique</div>
+                <div class="dept-url">/parcours/technicien/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">🔩</div>
+                <div class="dept-name">Mécanicien Avion</div>
+                <div class="dept-url">/parcours/mecanicien/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">🧳</div>
+                <div class="dept-name">Agent d'Escale</div>
+                <div class="dept-url">/parcours/agent_escale/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">⭐</div>
+                <div class="dept-name">Formation Avancée Premium</div>
+                <div class="dept-url">/parcours/premium/</div>
             </div>
         </div>
-    </div>
 
-    <!-- Section 9 : PWA -->
-    <div id="pwa" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #10b981;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-mobile-alt" style="color:#10b981;margin-right:0.6rem;"></i>9. Application PWA (Progressive Web App)</h2>
-        <p style="color:#495057;font-size:0.9rem;margin-bottom:1rem;">Ventoryx Academy est installable comme application sur tous les appareils.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;">
-            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
-                <strong style="color:#10b981;">📱 Android / Chrome</strong><br>
-                Bouton "Ajouter à l'écran d'accueil" dans le menu du navigateur
+        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:1.5rem 0 0.5rem;">Structure d'un parcours</h3>
+        <div class="url-block"><span class="method get">GET</span>/parcours/ — Sélection du métier</div>
+        <div class="url-block"><span class="method get">GET</span>/parcours/&lt;metier&gt;/ — Accueil du parcours</div>
+        <div class="url-block"><span class="method get">GET</span>/parcours/&lt;metier&gt;/module/&lt;N&gt;/cours/&lt;N&gt;/ — Leçon individuelle</div>
+        <div class="url-block"><span class="method get">GET</span>/parcours/&lt;metier&gt;/module/&lt;N&gt;/test/&lt;N&gt;/ — Test de module</div>
+        <div class="url-block"><span class="method get">GET</span>/parcours/&lt;metier&gt;/test-global/ — Test de certification finale</div>
+
+        <table class="doc-table" style="margin-top:1rem;">
+            <tr><th>Parcours standard</th><th>Formation Premium</th></tr>
+            <tr><td>4 modules</td><td>6 modules</td></tr>
+            <tr><td>80 cours</td><td>120 cours</td></tr>
+            <tr><td>Tests par module</td><td>Tests par module + avancés</td></tr>
+            <tr><td>Test global + certificat</td><td>Test global + certificat gold</td></tr>
+        </table>
+    </section>
+
+    <!-- ───────────────── TESTS & CERTIFICATIONS ───────────────── -->
+    <section class="doc-section" id="tests">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F0FDF4;">📜</div>
+            <h2>Tests & Certifications</h2>
+        </div>
+        <div class="info-card accent-green">
+            <h3>Système de certification</h3>
+            <ul style="margin:0;padding-left:1.2rem;line-height:2;">
+                <li>Score de réussite : <strong>70 % minimum</strong></li>
+                <li>Certificat généré automatiquement après le test global</li>
+                <li>Chaque certificat porte un <strong>hash SHA-256 unique</strong> vérifiable publiquement</li>
+                <li>Vérification en ligne : <code>/verification-certificat/</code></li>
+                <li>Téléchargement PDF disponible depuis le dashboard</li>
+            </ul>
+        </div>
+        <div class="alert-box info">
+            <i class="fas fa-info-circle"></i>
+            <span>Les parcours <strong>Contrôleur Aérien</strong> et <strong>Technicien Aéronautique</strong> sont accessibles gratuitement sans abonnement.</span>
+        </div>
+    </section>
+
+    <!-- ───────────────── ASSISTANT IA ───────────────── -->
+    <section class="doc-section" id="ia">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F5F3FF;">🤖</div>
+            <h2>Assistant IA</h2>
+        </div>
+        <div class="info-card accent-purple">
+            <h3>Chatbot spécialisé aéronautique</h3>
+            <p style="margin:0 0 0.5rem;color:#374151;">L'assistant IA (powered by OpenAI) est disponible <strong>uniquement dans le contexte d'un cours actif</strong>.</p>
+            <ul style="margin:0;padding-left:1.2rem;line-height:2;">
+                <li>Endpoint API : <code>POST /api/chatbot/</code></li>
+                <li>Accès refusé (403) si l'utilisateur n'est pas dans un cours</li>
+                <li>Questions limitées au contenu pédagogique du parcours en cours</li>
+                <li>Historique conservé dans la session navigateur</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ───────────────── FORUM & MESSAGERIE ───────────────── -->
+    <section class="doc-section" id="forum">
+        <div class="section-header">
+            <div class="section-icon" style="background:#EDE9FE;">💬</div>
+            <h2>Forum & Messagerie</h2>
+        </div>
+        <div class="url-block"><span class="method get">GET</span>/forum/ — Forum général</div>
+        <div class="url-block"><span class="method get">GET</span>/forum/&lt;metier&gt;/ — Forum par spécialité</div>
+        <div class="url-block"><span class="method get">GET</span>/forum/&lt;metier&gt;/sujet/&lt;id&gt;/ — Discussion</div>
+        <div class="url-block"><span class="method get">GET</span>/messaging/inbox/ — Messagerie interne</div>
+        <div class="url-block"><span class="method get">GET</span>/messaging/contacts/ — Liste des contacts</div>
+        <div class="url-block"><span class="method post">POST</span>/messaging/envoyer-dg/ — Message au Directeur Général</div>
+        <p style="color:#374151;margin-top:0.8rem;">Chaque parcours dispose de son propre sous-forum. Les sujets peuvent être épinglés ou fermés par les modérateurs.</p>
+    </section>
+
+    <!-- ───────────────── ABONNEMENTS ───────────────── -->
+    <section class="doc-section" id="abonnement">
+        <div class="section-header">
+            <div class="section-icon" style="background:#FFF7ED;">💳</div>
+            <h2>Abonnements & Paiements</h2>
+        </div>
+        <table class="doc-table">
+            <tr><th>Plan</th><th>Code</th><th>Accès</th><th>Paiement</th></tr>
+            <tr><td>Mensuel</td><td><code>mensuel</code></td><td>Tous les parcours</td><td>Stripe mensuel</td></tr>
+            <tr><td>Annuel</td><td><code>annuel</code></td><td>Tous les parcours + bonus</td><td>Stripe annuel</td></tr>
+            <tr><td>Bienvenue Annuel</td><td><code>bienvenue_annuel</code></td><td>Offre de lancement</td><td>Stripe</td></tr>
+            <tr><td>Entreprise</td><td><code>entreprise</code></td><td>Multi-utilisateurs</td><td>Devis / facturation</td></tr>
+        </table>
+        <div class="url-block"><span class="method get">GET</span>/auth/checkout/ — Page de paiement (avec checkbox CGV obligatoire)</div>
+        <div class="url-block"><span class="method post">POST</span>/auth/create-checkout-session/ — Création session Stripe</div>
+        <div class="url-block"><span class="method get">GET</span>/auth/paiement/succes/ — Confirmation paiement</div>
+        <div class="url-block"><span class="method post">POST</span>/auth/paiement/webhook/ — Webhook Stripe (événements)</div>
+        <div class="alert-box warning" style="margin-top:1rem;">
+            <i class="fas fa-lock"></i>
+            <span>Le webhook Stripe est protégé par signature HMAC. La clé <code>STRIPE_WEBHOOK_SECRET</code> doit être configurée en production.</span>
+        </div>
+    </section>
+
+    <!-- ───────────────── PWA ───────────────── -->
+    <section class="doc-section" id="pwa">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F0FDF4;">📱</div>
+            <h2>Mode hors-ligne (PWA)</h2>
+        </div>
+        <div class="info-card accent-green">
+            <h3>Progressive Web App</h3>
+            <ul style="margin:0;padding-left:1.2rem;line-height:2;">
+                <li>Manifest : <code>/static/manifest.json</code></li>
+                <li>Service Worker : <code>/sw.js</code></li>
+                <li>Page hors-ligne : <code>/offline/</code></li>
+                <li>Icônes : 72px → 512px (tous formats)</li>
+                <li>Installable sur Android, iOS et desktop Chrome/Edge</li>
+            </ul>
+        </div>
+        <p style="color:#374151;">Pour installer l'app : cliquer sur l'icône d'installation dans la barre d'adresse du navigateur (Chrome/Edge) ou « Ajouter à l'écran d'accueil » sur mobile.</p>
+    </section>
+
+    <!-- ═══════════════════ SECTION GESTION ═══════════════════ -->
+
+    <!-- ───────────────── RÔLES ───────────────── -->
+    <section class="doc-section" id="roles">
+        <div class="section-header">
+            <div class="section-icon" style="background:#FFF3CD;">👑</div>
+            <h2>Rôles & Hiérarchie</h2>
+        </div>
+        <table class="doc-table">
+            <tr><th>Rôle</th><th>Code</th><th>Périmètre</th><th>Dashboard</th></tr>
+            <tr>
+                <td><span class="role-badge badge-dg">Directeur Général</span></td>
+                <td><code>dg</code></td>
+                <td>Accès total — tous les départements, rapports, audit</td>
+                <td><code>/auth/dashboard/dg/</code></td>
+            </tr>
+            <tr>
+                <td><span class="role-badge badge-coord">Coordinateur</span></td>
+                <td><code>coordinateur</code></td>
+                <td>Supervision d'un département + gestion des gestionnaires</td>
+                <td><code>/auth/dashboard/coordinateur/&lt;dept&gt;/</code></td>
+            </tr>
+            <tr>
+                <td><span class="role-badge badge-gest">Gestionnaire</span></td>
+                <td><code>gestionnaire</code></td>
+                <td>Opérations courantes d'un département</td>
+                <td><code>/auth/dashboard/gestionnaire/&lt;dept&gt;/</code></td>
+            </tr>
+            <tr>
+                <td><span class="role-badge badge-etudiant">Étudiant</span></td>
+                <td><code>etudiant</code></td>
+                <td>Accès aux parcours, forum, messagerie</td>
+                <td><code>/auth/dashboard/etudiant/</code></td>
+            </tr>
+        </table>
+        <div class="alert-box info">
+            <i class="fas fa-route"></i>
+            <span>La route <code>/auth/dashboard/</code> redirige automatiquement vers le bon dashboard selon le rôle de l'utilisateur connecté.</span>
+        </div>
+    </section>
+
+    <!-- ───────────────── ACCÉDER AUX PAGES DE GESTION ───────────────── -->
+    <section class="doc-section" id="acces-pages">
+        <div class="section-header">
+            <div class="section-icon" style="background:#DBEAFE;">🔐</div>
+            <h2>Accéder aux pages de gestion</h2>
+        </div>
+
+        <div class="alert-box success">
+            <i class="fas fa-key"></i>
+            <strong>Méthode la plus simple :</strong>&nbsp; Connectez-vous avec un compte ayant le bon rôle, puis allez sur <code>/auth/dashboard/</code> — vous serez redirigé automatiquement.
+        </div>
+
+        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:1.2rem 0 0.6rem;">Accès direct par URL</h3>
+
+        <table class="doc-table">
+            <tr><th>Interface</th><th>URL directe</th><th>Rôle requis</th></tr>
+            <tr><td>Dashboard Directeur Général</td><td><code>/fr/auth/dashboard/dg/</code></td><td><span class="role-badge badge-dg">DG</span></td></tr>
+            <tr><td>Dashboard Coordinateur Pédagogie</td><td><code>/fr/auth/dashboard/coordinateur/pedagogie/</code></td><td><span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Dashboard Coordinateur Technique</td><td><code>/fr/auth/dashboard/coordinateur/technique/</code></td><td><span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Dashboard Coordinateur Marketing</td><td><code>/fr/auth/dashboard/coordinateur/marketing/</code></td><td><span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Dashboard Coordinateur Opérations</td><td><code>/fr/auth/dashboard/coordinateur/operations/</code></td><td><span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Dashboard Coordinateur Qualité</td><td><code>/fr/auth/dashboard/coordinateur/qualite/</code></td><td><span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Dashboard Coordinateur Support</td><td><code>/fr/auth/dashboard/coordinateur/support/</code></td><td><span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Dashboard Coordinateur Design</td><td><code>/fr/auth/dashboard/coordinateur/design/</code></td><td><span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Dashboard Gestionnaire Pédagogie</td><td><code>/fr/auth/dashboard/gestionnaire/pedagogie/</code></td><td><span class="role-badge badge-gest">Gestionnaire</span></td></tr>
+            <tr><td>Journal d'audit</td><td><code>/fr/audit/journal/</code></td><td><span class="role-badge badge-dg">DG</span> <span class="role-badge badge-coord">Coordinateur</span></td></tr>
+            <tr><td>Administration Django</td><td><code>/admin/</code></td><td>Staff Django (<code>is_staff=True</code>)</td></tr>
+        </table>
+
+        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:1.2rem 0 0.6rem;">Pages de gestion par département</h3>
+        <div class="dept-grid">
+            <div class="dept-card">
+                <div class="dept-icon">📚</div>
+                <div class="dept-name">Pédagogie & Contenu</div>
+                <div class="dept-url">/fr/gestion/pedagogie/</div>
             </div>
-            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
-                <strong style="color:#10b981;">🍎 iOS / Safari</strong><br>
-                Bouton Partager → "Sur l'écran d'accueil"
+            <div class="dept-card">
+                <div class="dept-icon">💻</div>
+                <div class="dept-name">Développement Technique</div>
+                <div class="dept-url">/fr/gestion/technique/</div>
             </div>
-            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
-                <strong style="color:#10b981;">💻 Desktop / Chrome</strong><br>
-                Icône d'installation dans la barre d'adresse
+            <div class="dept-card">
+                <div class="dept-icon">📣</div>
+                <div class="dept-name">Marketing & Communication</div>
+                <div class="dept-url">/fr/gestion/marketing/</div>
             </div>
-            <div style="background:#F0FDF4;border-radius:8px;padding:1rem;font-size:0.85rem;color:#495057;">
-                <strong style="color:#10b981;">✈️ Mode hors ligne</strong><br>
-                Service worker actif pour la continuité de service
+            <div class="dept-card">
+                <div class="dept-icon">🚚</div>
+                <div class="dept-name">Opérations & Logistique</div>
+                <div class="dept-url">/fr/gestion/operations/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">✅</div>
+                <div class="dept-name">Qualité & Innovation</div>
+                <div class="dept-url">/fr/gestion/qualite/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">🎧</div>
+                <div class="dept-name">Support & Administration</div>
+                <div class="dept-url">/fr/gestion/support/</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-icon">🎨</div>
+                <div class="dept-name">Design & UX</div>
+                <div class="dept-url">/fr/gestion/design/</div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Section 10 : Développeurs -->
-    <div id="developpeurs" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #0F1C2E;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-terminal" style="color:#0F1C2E;margin-right:0.6rem;"></i>10. Guide Développeurs</h2>
-        <pre style="background:#1E3A5F;color:#E0E0E0;padding:1.5rem;border-radius:12px;font-size:0.82rem;overflow-x:auto;margin:0 0 1rem;"><code># Installation et démarrage
-git clone [repo]
-pip install -r requirements.txt
-cp .env.example .env        # configurer les variables
-python manage.py migrate
-python manage.py init_test_data   # crée les utilisateurs de test
-python manage.py runserver 0.0.0.0:5000
-
-# Commandes utiles
-python manage.py createsuperuser      # admin Django
-python manage.py collectstatic        # fichiers statiques
-python manage.py makemigrations       # créer les migrations
-python manage.py shell                # shell interactif
-python manage.py init_test_data       # données de test</code></pre>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Structure des templates</h3>
-                <pre style="background:#F8F9FA;padding:1rem;border-radius:8px;font-size:0.78rem;margin:0;overflow-x:auto;"><code>templates/
-├── base.html           # Template de base
-├── index.html          # Page d'accueil
-├── auth/               # Authentification
-├── admin/              # Dashboards admin/gestionnaire
-├── pages/
-│   ├── utilisateur/    # Dashboard étudiant
-│   ├── entreprise/     # Premium, checkout
-│   ├── support/        # FAQ, contact, blog
-│   ├── parcours/       # Formations
-│   └── legal/          # CGU, confidentialité
-└── errors/             # Pages d'erreur 403/404/500</code></pre>
-            </div>
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Conventions importantes</h3>
-                <ul style="color:#495057;font-size:0.85rem;padding-left:1.2rem;margin:0;">
-                    <li>Templates app-specific sous <code>pages/&lt;app&gt;/</code></li>
-                    <li>Templates admin sous <code>admin/</code></li>
-                    <li>Templates auth sous <code>auth/</code></li>
-                    <li>Données sensibles : Replit Secrets uniquement</li>
-                    <li>Rôles : etudiant, gestionnaire, coordinateur, dg</li>
-                    <li>Toujours vérifier <code>est_active()</code> sur l'abonnement</li>
-                    <li>L'IA nécessite le contexte du cours (<code>cours</code>)</li>
-                </ul>
-            </div>
+    <!-- ───────────────── DASHBOARD DG ───────────────── -->
+    <section class="doc-section" id="dashboard-dg">
+        <div class="section-header">
+            <div class="section-icon" style="background:#FFF3CD;">👑</div>
+            <h2>Dashboard Directeur Général</h2>
         </div>
-    </div>
-
-    <!-- Section 11 : Rôles -->
-    <div id="roles" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #f59e0b;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-users" style="color:#f59e0b;margin-right:0.6rem;"></i>11. Rôles & Permissions</h2>
-        <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
-                <thead>
-                    <tr style="background:#0F1C2E;color:white;">
-                        <th style="padding:0.8rem;text-align:left;">Fonctionnalité</th>
-                        <th style="padding:0.8rem;text-align:center;">Apprenant</th>
-                        <th style="padding:0.8rem;text-align:center;">Gestionnaire</th>
-                        <th style="padding:0.8rem;text-align:center;">Coordinateur</th>
-                        <th style="padding:0.8rem;text-align:center;">DG</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in "Voir les cours gratuits,Accéder aux parcours premium,Assistant IA (pendant cours),Tableau de bord personnel,Gestion des messages département,Vue métriques département,Vue globale plateforme,Audit logs complets,Gestion candidatures,Admin Django"|split:"," %}
-                    <tr style="border-bottom:1px solid #E9ECEF;">
-                        <td style="padding:0.6rem 0.8rem;color:#495057;">{{ row }}</td>
-                        <td style="padding:0.6rem;text-align:center;">{% if forloop.counter <= 4 %}✅{% else %}❌{% endif %}</td>
-                        <td style="padding:0.6rem;text-align:center;">{% if forloop.counter <= 5 %}✅{% else %}❌{% endif %}</td>
-                        <td style="padding:0.6rem;text-align:center;">{% if forloop.counter <= 6 %}✅{% else %}❌{% endif %}</td>
-                        <td style="padding:0.6rem;text-align:center;">✅</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+        <div class="url-block"><span class="method get">GET</span>/fr/auth/dashboard/dg/ — <span class="role-badge badge-dg">DG uniquement</span></div>
+        <div class="info-card accent-gold" style="margin-top:1rem;">
+            <h3>Fonctionnalités disponibles</h3>
+            <table class="doc-table">
+                <tr><th>Action</th><th>URL Gestion</th></tr>
+                <tr><td>Exporter les messages</td><td><code>/gestion/dg/exporter-messages/</code></td></tr>
+                <tr><td>Exporter les candidatures</td><td><code>/gestion/dg/exporter-candidatures/</code></td></tr>
+                <tr><td>Rapport hebdomadaire</td><td><code>/gestion/dg/rapport-hebdo/</code></td></tr>
+                <tr><td>Message aux coordinateurs</td><td><code>/gestion/dg/message-coordinateurs/</code></td></tr>
+                <tr><td>Archiver les messages</td><td><code>/gestion/dg/archiver-messages/</code></td></tr>
+                <tr><td>Auditer un département</td><td><code>/gestion/dg/auditer-departement/</code></td></tr>
+                <tr><td>Valider un budget</td><td><code>/gestion/dg/valider-budget/</code></td></tr>
+                <tr><td>Créer une alerte</td><td><code>/gestion/dg/creer-alerte/</code></td></tr>
+                <tr><td>Ajouter un partenaire</td><td><code>/gestion/dg/ajouter-partenaire/</code></td></tr>
+                <tr><td>Vider le cache</td><td><code>/gestion/dg/vider-cache/</code></td></tr>
+                <tr><td>Gérer les candidatures</td><td><code>/gestion/dg/candidatures/</code></td></tr>
             </table>
         </div>
-    </div>
+        <p style="color:#374151;">Le DG a également accès au <strong>journal d'audit complet</strong> (<code>/fr/audit/journal/</code>) qui trace toutes les actions des utilisateurs staff.</p>
+    </section>
 
-    <!-- Section 12 : Déploiement -->
-    <div id="deploiement" style="background:white;border-radius:12px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;border-top:4px solid #FF6B35;">
-        <h2 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:0 0 1.2rem;"><i class="fas fa-rocket" style="color:#FF6B35;margin-right:0.6rem;"></i>12. Déploiement</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Avant la mise en production</h3>
-                <ul style="color:#495057;font-size:0.9rem;padding-left:1.2rem;margin:0;">
-                    <li>Définir <code>DJANGO_DEBUG=False</code></li>
-                    <li>Configurer PostgreSQL (remplacer SQLite)</li>
-                    <li>Ajouter les vraies clés Stripe</li>
-                    <li>Configurer SendGrid pour les emails</li>
-                    <li>Activer Redis pour Celery</li>
-                    <li>Supprimer les données et comptes de test</li>
-                    <li>Configurer ALLOWED_HOSTS avec le domaine réel</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="font-size:1rem;color:#0F1C2E;margin-bottom:0.5rem;">Variables Replit Secrets</h3>
-                <p style="color:#495057;font-size:0.85rem;margin:0 0 0.5rem;">Toutes les clés sensibles doivent être dans Replit Secrets (jamais dans .env) :</p>
-                <ul style="color:#495057;font-size:0.85rem;padding-left:1.2rem;margin:0;">
-                    <li>SESSION_SECRET</li>
-                    <li>OPENAI_API_KEY</li>
-                    <li>STRIPE_PUBLIC_KEY / STRIPE_SECRET_KEY</li>
-                    <li>STRIPE_WEBHOOK_SECRET</li>
-                    <li>SENDGRID_API_KEY</li>
-                </ul>
-            </div>
+    <!-- ───────────────── DASHBOARD COORDINATEURS ───────────────── -->
+    <section class="doc-section" id="dashboard-coord">
+        <div class="section-header">
+            <div class="section-icon" style="background:#EDE9FE;">🎯</div>
+            <h2>Dashboard Coordinateurs</h2>
         </div>
-    </div>
+        <div class="url-block"><span class="method get">GET</span>/fr/auth/dashboard/coordinateur/&lt;departement&gt;/ — <span class="role-badge badge-coord">Coordinateur</span></div>
 
-    <!-- Contact développeur -->
-    <div style="background:linear-gradient(135deg,#0F1C2E,#1E3A5F);color:white;border-radius:12px;padding:1.5rem;text-align:center;">
-        <p style="margin:0;font-size:0.9rem;opacity:0.9;">
-            <i class="fas fa-envelope" style="margin-right:0.5rem;"></i>
-            Pour toute question technique : <a href="{% url 'core:contact' %}" style="color:#D4AF37;font-weight:600;">formulaire de contact</a>
-            &nbsp;·&nbsp;
-            <a href="{% url 'core:support_technique' %}" style="color:#D4AF37;font-weight:600;">support technique</a>
-        </p>
-    </div>
+        <p style="color:#374151;margin:0.8rem 0;">Le coordinateur voit son département uniquement. Les 7 départements et leurs comptes de test :</p>
+        <table class="doc-table">
+            <tr><th>Département</th><th>Code URL</th><th>Email coordinateur</th></tr>
+            <tr><td>Pédagogie & Contenu</td><td><code>pedagogie</code></td><td>coord.pedagogie@ventoryx-academy.com</td></tr>
+            <tr><td>Développement Technique</td><td><code>technique</code></td><td>coord.technique@ventoryx-academy.com</td></tr>
+            <tr><td>Marketing & Communication</td><td><code>marketing</code></td><td>coord.marketing@ventoryx-academy.com</td></tr>
+            <tr><td>Opérations & Logistique</td><td><code>operations</code></td><td>coord.operations@ventoryx-academy.com</td></tr>
+            <tr><td>Qualité & Innovation</td><td><code>qualite</code></td><td>coord.qualite@ventoryx-academy.com</td></tr>
+            <tr><td>Support & Administration</td><td><code>support</code></td><td>coord.support@ventoryx-academy.com</td></tr>
+            <tr><td>Design & UX</td><td><code>design</code></td><td>coord.design@ventoryx-academy.com</td></tr>
+        </table>
 
+        <div class="info-card accent-purple">
+            <h3>Actions disponibles par département</h3>
+            <p style="margin:0;color:#374151;">Chaque coordinateur a accès aux actions de gestion correspondant à son département, ex. pour <strong>pédagogie</strong> :</p>
+            <div class="url-block"><span class="method post">POST</span>/gestion/pedagogie/creer-module/</div>
+            <div class="url-block"><span class="method post">POST</span>/gestion/pedagogie/creer-cours/</div>
+            <div class="url-block"><span class="method post">POST</span>/gestion/pedagogie/creer-quiz/</div>
+            <div class="url-block"><span class="method post">POST</span>/gestion/pedagogie/ajouter-question/</div>
+            <div class="url-block"><span class="method get">GET</span>/gestion/pedagogie/parcours/</div>
+        </div>
+    </section>
+
+    <!-- ───────────────── DASHBOARD GESTIONNAIRES ───────────────── -->
+    <section class="doc-section" id="dashboard-gest">
+        <div class="section-header">
+            <div class="section-icon" style="background:#DBEAFE;">⚙️</div>
+            <h2>Dashboard Gestionnaires</h2>
+        </div>
+        <div class="url-block"><span class="method get">GET</span>/fr/auth/dashboard/gestionnaire/&lt;departement&gt;/ — <span class="role-badge badge-gest">Gestionnaire</span></div>
+        <table class="doc-table">
+            <tr><th>Département</th><th>Email gestionnaire</th></tr>
+            <tr><td>pedagogie</td><td>gest.pedagogie@ventoryx-academy.com</td></tr>
+            <tr><td>technique</td><td>gest.technique@ventoryx-academy.com</td></tr>
+            <tr><td>marketing</td><td>gest.marketing@ventoryx-academy.com</td></tr>
+            <tr><td>operations</td><td>gest.operations@ventoryx-academy.com</td></tr>
+            <tr><td>qualite</td><td>gest.qualite@ventoryx-academy.com</td></tr>
+            <tr><td>support</td><td>gest.support@ventoryx-academy.com</td></tr>
+            <tr><td>design</td><td>gest.design@ventoryx-academy.com</td></tr>
+        </table>
+        <p style="color:#374151;">Les gestionnaires exécutent les opérations courantes (créer des tâches, signaler des bugs, créer des campagnes, etc.) sans accès aux fonctions stratégiques réservées aux coordinateurs et au DG.</p>
+    </section>
+
+    <!-- ───────────────── ADMIN DJANGO ───────────────── -->
+    <section class="doc-section" id="admin-django">
+        <div class="section-header">
+            <div class="section-icon" style="background:#FEF2F2;">🛡️</div>
+            <h2>Interface Admin Django</h2>
+        </div>
+        <div class="url-block"><span class="method get">GET</span>/admin/ — Requiert <code>is_staff=True</code> sur le compte</div>
+        <div class="alert-box danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span><strong>Accès restreint :</strong> seul le compte DG (et les superutilisateurs) ont <code>is_staff=True</code>. Ne jamais exposer l'admin publiquement sans authentification.</span>
+        </div>
+        <p style="color:#374151;margin-top:0.8rem;">Depuis l'admin Django, vous pouvez gérer directement :</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem;">
+            <div class="info-card" style="padding:0.8rem;">📚 Parcours, Modules, CoursItems</div>
+            <div class="info-card" style="padding:0.8rem;">👤 Utilisateurs & Abonnements</div>
+            <div class="info-card" style="padding:0.8rem;">🎯 Tâches, Campagnes, Tickets</div>
+            <div class="info-card" style="padding:0.8rem;">💬 Forums, Sujets, Messages</div>
+            <div class="info-card" style="padding:0.8rem;">📰 Blog, Articles, Catégories</div>
+            <div class="info-card" style="padding:0.8rem;">📋 Journal d'audit complet</div>
+            <div class="info-card" style="padding:0.8rem;">🏢 Offres d'emploi, Candidatures</div>
+            <div class="info-card" style="padding:0.8rem;">🏆 Certificats utilisateurs</div>
+        </div>
+    </section>
+
+    <!-- ───────────────── JOURNAL D'AUDIT ───────────────── -->
+    <section class="doc-section" id="audit">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F0FDF4;">📋</div>
+            <h2>Journal d'audit</h2>
+        </div>
+        <div class="url-block"><span class="method get">GET</span>/fr/audit/journal/ — <span class="role-badge badge-dg">DG</span> <span class="role-badge badge-coord">Coordinateurs</span></div>
+        <p style="color:#374151;">Chaque action administrative est enregistrée avec : utilisateur, type d'action, objet concerné, timestamp, adresse IP. Le journal est en lecture seule (immuable).</p>
+    </section>
+
+    <!-- ═══════════════════ SECTION DÉVELOPPEUR ═══════════════════ -->
+
+    <!-- ───────────────── ARCHITECTURE ───────────────── -->
+    <section class="doc-section" id="architecture">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F0FDF4;">🏗️</div>
+            <h2>Architecture du projet</h2>
+        </div>
+        <div class="code-block"><span class="comment"># Structure du projet</span>
+ventoryx-academy/
+├── <span class="key">apps/</span>
+│   ├── audit/          <span class="comment"># Journal d'audit (AuditLog)</span>
+│   ├── blog/           <span class="comment"># Articles de blog</span>
+│   ├── core/           <span class="comment"># Vues principales, config, IA</span>
+│   ├── forum/          <span class="comment"># Forum par spécialité</span>
+│   ├── gestion/        <span class="comment"># Actions de gestion par département</span>
+│   ├── institution/    <span class="comment"># Offres d'emploi, candidatures, certificats</span>
+│   ├── messaging/      <span class="comment"># Messagerie interne</span>
+│   ├── parcours/       <span class="comment"># Cours, modules, tests, progression</span>
+│   └── users/          <span class="comment"># Auth, rôles, abonnements, dashboards</span>
+├── <span class="key">templates/</span>
+│   ├── auth/           <span class="comment"># Login, register</span>
+│   ├── errors/         <span class="comment"># 404, 500, 403, 429</span>
+│   └── pages/          <span class="comment"># Toutes les pages du site</span>
+├── <span class="key">static/</span>            <span class="comment"># CSS, JS, images, manifest.json</span>
+├── <span class="key">settings.py</span>        <span class="comment"># Configuration principale</span>
+├── <span class="key">urls.py</span>            <span class="comment"># Point d'entrée des URLs</span>
+├── <span class="key">wsgi.py</span>            <span class="comment"># Serveur WSGI (Gunicorn)</span>
+├── <span class="key">seed.py</span>            <span class="comment"># Données initiales (utilisateurs, parcours)</span>
+└── <span class="key">start.sh</span>           <span class="comment"># Script de démarrage</span></div>
+    </section>
+
+    <!-- ───────────────── MODÈLES DE DONNÉES ───────────────── -->
+    <section class="doc-section" id="modeles">
+        <div class="section-header">
+            <div class="section-icon" style="background:#EFF6FF;">🗄️</div>
+            <h2>Modèles de données clés</h2>
+        </div>
+        <table class="doc-table">
+            <tr><th>Modèle</th><th>App</th><th>Description</th></tr>
+            <tr><td><code>User</code></td><td>users</td><td>Utilisateur étendu (role, departement, nationalité, date naissance)</td></tr>
+            <tr><td><code>Subscription</code></td><td>users</td><td>Abonnement Stripe (plan, statut, dates, IDs Stripe)</td></tr>
+            <tr><td><code>Parcours</code></td><td>parcours</td><td>Formation complète (metier slug, nom, modules, cours)</td></tr>
+            <tr><td><code>ModuleParcours</code></td><td>parcours</td><td>Section d'un parcours (numero, titre)</td></tr>
+            <tr><td><code>CoursItem</code></td><td>parcours</td><td>Leçon ou test (type: cours|test, contenu HTML)</td></tr>
+            <tr><td><code>Question</code> / <code>Reponse</code></td><td>parcours</td><td>QCM pour les tests</td></tr>
+            <tr><td><code>ProgressionUtilisateur</code></td><td>parcours</td><td>Progression user × item (termine, score, date)</td></tr>
+            <tr><td><code>Notification</code></td><td>messaging</td><td>Notifications in-app (lue, date_creation)</td></tr>
+            <tr><td><code>AuditLog</code></td><td>audit</td><td>Journal d'audit (action, user, ip, timestamp)</td></tr>
+            <tr><td><code>Certificat</code></td><td>institution</td><td>Certificat SHA-256 (statut, date_delivrance)</td></tr>
+            <tr><td><code>SiteConfig</code></td><td>core</td><td>Configuration dynamique du site</td></tr>
+        </table>
+    </section>
+
+    <!-- ───────────────── URLs ───────────────── -->
+    <section class="doc-section" id="urls">
+        <div class="section-header">
+            <div class="section-icon" style="background:#FFF7ED;">🗺️</div>
+            <h2>URLs & Namespaces</h2>
+        </div>
+        <table class="doc-table">
+            <tr><th>Namespace</th><th>Préfixe</th><th>Contenu</th></tr>
+            <tr><td><code>core</code></td><td><code>/</code></td><td>Accueil, FAQ, blog, contact, chatbot, légal</td></tr>
+            <tr><td><code>users</code></td><td><code>/auth/</code></td><td>Auth, dashboards, paiements, profil</td></tr>
+            <tr><td><code>parcours</code></td><td><code>/parcours/</code></td><td>Formation, cours, tests</td></tr>
+            <tr><td><code>forum</code></td><td><code>/forum/</code></td><td>Forum général et par spécialité</td></tr>
+            <tr><td><code>messaging</code></td><td><code>/messaging/</code></td><td>Messagerie interne</td></tr>
+            <tr><td><code>gestion</code></td><td><code>/gestion/</code></td><td>Actions opérationnelles par département</td></tr>
+            <tr><td><code>audit</code></td><td><code>/audit/</code></td><td>Journal d'audit</td></tr>
+            <tr><td><code>institution</code></td><td><code>/institution/</code></td><td>Pages des départements (info publique)</td></tr>
+            <tr><td><code>blog</code></td><td><code>/blog/</code></td><td>Articles de blog</td></tr>
+            <tr><td>—</td><td><code>/admin/</code></td><td>Interface d'administration Django</td></tr>
+        </table>
+        <p style="color:#374151;">Toutes les URLs applicatives sont préfixées par <code>i18n_patterns</code>, ce qui ajoute automatiquement <code>/fr/</code> ou <code>/en/</code> selon la langue.</p>
+    </section>
+
+    <!-- ───────────────── VARIABLES D'ENVIRONNEMENT ───────────────── -->
+    <section class="doc-section" id="env">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F0FDF4;">⚙️</div>
+            <h2>Variables d'environnement</h2>
+        </div>
+        <table class="doc-table">
+            <tr><th>Variable</th><th>Obligatoire</th><th>Description</th></tr>
+            <tr><td><code>DJANGO_SECRET_KEY</code></td><td>✅ Oui</td><td>Clé secrète Django (min. 50 car.)</td></tr>
+            <tr><td><code>DATABASE_URL</code></td><td>Production</td><td>PostgreSQL. Sinon SQLite si <code>USE_SQLITE=True</code></td></tr>
+            <tr><td><code>OPENAI_API_KEY</code></td><td>⚠️ IA</td><td>Clé OpenAI pour le chatbot (à configurer dans Replit Secrets)</td></tr>
+            <tr><td><code>STRIPE_SECRET_KEY</code></td><td>⚠️ Paiements</td><td>Clé secrète Stripe</td></tr>
+            <tr><td><code>STRIPE_WEBHOOK_SECRET</code></td><td>⚠️ Paiements</td><td>Secret webhook Stripe</td></tr>
+            <tr><td><code>STRIPE_PRICE_ID_MENSUEL</code></td><td>⚠️ Paiements</td><td>ID du plan mensuel Stripe</td></tr>
+            <tr><td><code>STRIPE_PRICE_ID_ANNUEL</code></td><td>⚠️ Paiements</td><td>ID du plan annuel Stripe</td></tr>
+            <tr><td><code>SENDGRID_API_KEY</code></td><td>Emails</td><td>Clé SendGrid pour emails transactionnels</td></tr>
+            <tr><td><code>SENTRY_DSN</code></td><td>Optionnel</td><td>DSN Sentry pour monitoring erreurs (laisser vide si non configuré)</td></tr>
+            <tr><td><code>DJANGO_DEBUG</code></td><td>Non</td><td><code>True</code> en dev, <code>False</code> en production</td></tr>
+            <tr><td><code>SESSION_SECRET</code></td><td>Replit</td><td>Secret de session (géré via Replit Secrets)</td></tr>
+            <tr><td><code>VENTORYX_DEFAULT_PWD</code></td><td>Seed</td><td>Mot de passe par défaut des comptes de test</td></tr>
+        </table>
+        <div class="alert-box danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span><strong>Sécurité :</strong> ne jamais mettre de vraies clés API dans <code>.env</code> versionné ou dans <code>.replit</code>. Utiliser les <strong>Replit Secrets</strong> pour toute valeur sensible.</span>
+        </div>
+    </section>
+
+    <!-- ───────────────── COMMANDES ───────────────── -->
+    <section class="doc-section" id="commandes">
+        <div class="section-header">
+            <div class="section-icon" style="background:#EDE9FE;">💻</div>
+            <h2>Commandes de gestion</h2>
+        </div>
+        <div class="code-block"><span class="comment"># Initialiser les données de test (utilisateurs + parcours)</span>
+<span class="val">python3 manage.py init_test_data</span>
+
+<span class="comment"># Appliquer les migrations</span>
+<span class="val">python3 manage.py migrate</span>
+
+<span class="comment"># Collecter les fichiers statiques</span>
+<span class="val">python3 manage.py collectstatic --noinput</span>
+
+<span class="comment"># Créer un super-utilisateur manuellement</span>
+<span class="val">python3 manage.py createsuperuser</span>
+
+<span class="comment"># Lancer en développement</span>
+<span class="val">bash start.sh</span>
+
+<span class="comment"># Lancer directement avec Gunicorn (production)</span>
+<span class="val">gunicorn --bind=0.0.0.0:5000 --reuse-port wsgi:application</span></div>
+
+        <h3 style="font-family:'Montserrat',sans-serif;color:#0F1C2E;margin:1.2rem 0 0.5rem;">Script start.sh (ordre d'exécution)</h3>
+        <ul class="step-list">
+            <li><div class="step-num">1</div><div><code>python3 manage.py migrate</code> — applique les migrations de BDD</div></li>
+            <li><div class="step-num">2</div><div><code>python3 manage.py init_test_data</code> — seed utilisateurs et parcours (idempotent)</div></li>
+            <li><div class="step-num">3</div><div><code>python3 manage.py collectstatic</code> — copie les fichiers statiques</div></li>
+            <li><div class="step-num">4</div><div><code>gunicorn</code> ou <code>runserver</code> — démarrage du serveur</div></li>
+        </ul>
+    </section>
+
+    <!-- ───────────────── SÉCURITÉ ───────────────── -->
+    <section class="doc-section" id="securite">
+        <div class="section-header">
+            <div class="section-icon" style="background:#FEF2F2;">🔒</div>
+            <h2>Sécurité</h2>
+        </div>
+        <table class="doc-table">
+            <tr><th>Mesure</th><th>Détail</th></tr>
+            <tr><td>Hashage des mots de passe</td><td>Argon2 (recommandé par Django Security)</td></tr>
+            <tr><td>Protection CSRF</td><td>Token CSRF sur tous les formulaires POST</td></tr>
+            <tr><td>Brute-force</td><td>django-axes : blocage IP après 5 échecs, cooldown 1h</td></tr>
+            <tr><td>XSS</td><td>X-XSS-Protection activé + échappement Django templates</td></tr>
+            <tr><td>Clickjacking</td><td>X-Frame-Options: DENY</td></tr>
+            <tr><td>Content Security Policy</td><td>django-csp middleware configuré</td></tr>
+            <tr><td>HTTPS (production)</td><td>SECURE_SSL_REDIRECT + HSTS activé</td></tr>
+            <tr><td>Cookies sécurisés</td><td>SESSION_COOKIE_SECURE + CSRF_COOKIE_SECURE en production</td></tr>
+            <tr><td>Audit trail</td><td>AuditLog immuable pour toutes les actions staff</td></tr>
+            <tr><td>Certificats</td><td>Hash SHA-256 vérifiable publiquement</td></tr>
+        </table>
+    </section>
+
+    <!-- ───────────────── DÉPLOIEMENT ───────────────── -->
+    <section class="doc-section" id="deploiement">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F0FDF4;">🚀</div>
+            <h2>Déploiement</h2>
+        </div>
+        <div class="info-card accent-green">
+            <h3>Déploiement sur Replit (Autoscale)</h3>
+            <ul style="margin:0;padding-left:1.2rem;line-height:2;">
+                <li>Cible : <code>deploymentTarget = "autoscale"</code></li>
+                <li>Serveur : Gunicorn <code>--bind=0.0.0.0:5000 --reuse-port wsgi:application</code></li>
+                <li>BDD production : PostgreSQL (configurer <code>DATABASE_URL</code>)</li>
+                <li>Fichiers statiques : <code>collectstatic</code> au démarrage via <code>start.sh</code></li>
+            </ul>
+        </div>
+        <div class="alert-box warning">
+            <i class="fas fa-tools"></i>
+            <span>Avant chaque déploiement : vérifier que <code>DJANGO_DEBUG=False</code>, que tous les secrets sont dans Replit Secrets (pas dans <code>.env</code>), et que <code>python3 manage.py check --deploy</code> ne retourne pas d'erreur critique.</span>
+        </div>
+    </section>
+
+    <!-- ───────────────── COMPTES DE TEST ───────────────── -->
+    <section class="doc-section" id="comptes-test">
+        <div class="section-header">
+            <div class="section-icon" style="background:#DBEAFE;">🔑</div>
+            <h2>Comptes de test</h2>
+        </div>
+        <div class="alert-box info">
+            <i class="fas fa-info-circle"></i>
+            <span>Ces comptes sont créés automatiquement par <code>python3 manage.py init_test_data</code> (lancé à chaque démarrage). Mot de passe unique pour tous : <strong><code>ChangeMe!2026</code></strong></span>
+        </div>
+        <table class="doc-table">
+            <tr><th>Rôle</th><th>Email</th><th>Dashboard URL</th></tr>
+            <tr><td><span class="role-badge badge-dg">DG</span></td><td>dg@ventoryx-academy.com</td><td>/fr/auth/dashboard/dg/</td></tr>
+            <tr><td><span class="role-badge badge-coord">Coord. Pédagogie</span></td><td>coord.pedagogie@ventoryx-academy.com</td><td>/fr/auth/dashboard/coordinateur/pedagogie/</td></tr>
+            <tr><td><span class="role-badge badge-coord">Coord. Technique</span></td><td>coord.technique@ventoryx-academy.com</td><td>/fr/auth/dashboard/coordinateur/technique/</td></tr>
+            <tr><td><span class="role-badge badge-coord">Coord. Marketing</span></td><td>coord.marketing@ventoryx-academy.com</td><td>/fr/auth/dashboard/coordinateur/marketing/</td></tr>
+            <tr><td><span class="role-badge badge-coord">Coord. Opérations</span></td><td>coord.operations@ventoryx-academy.com</td><td>/fr/auth/dashboard/coordinateur/operations/</td></tr>
+            <tr><td><span class="role-badge badge-coord">Coord. Qualité</span></td><td>coord.qualite@ventoryx-academy.com</td><td>/fr/auth/dashboard/coordinateur/qualite/</td></tr>
+            <tr><td><span class="role-badge badge-coord">Coord. Support</span></td><td>coord.support@ventoryx-academy.com</td><td>/fr/auth/dashboard/coordinateur/support/</td></tr>
+            <tr><td><span class="role-badge badge-coord">Coord. Design</span></td><td>coord.design@ventoryx-academy.com</td><td>/fr/auth/dashboard/coordinateur/design/</td></tr>
+            <tr><td><span class="role-badge badge-gest">Gest. Pédagogie</span></td><td>gest.pedagogie@ventoryx-academy.com</td><td>/fr/auth/dashboard/gestionnaire/pedagogie/</td></tr>
+            <tr><td><span class="role-badge badge-gest">Gest. Technique</span></td><td>gest.technique@ventoryx-academy.com</td><td>/fr/auth/dashboard/gestionnaire/technique/</td></tr>
+            <tr><td><span class="role-badge badge-gest">Gest. Marketing</span></td><td>gest.marketing@ventoryx-academy.com</td><td>/fr/auth/dashboard/gestionnaire/marketing/</td></tr>
+            <tr><td><span class="role-badge badge-gest">Gest. Opérations</span></td><td>gest.operations@ventoryx-academy.com</td><td>/fr/auth/dashboard/gestionnaire/operations/</td></tr>
+            <tr><td><span class="role-badge badge-gest">Gest. Qualité</span></td><td>gest.qualite@ventoryx-academy.com</td><td>/fr/auth/dashboard/gestionnaire/qualite/</td></tr>
+            <tr><td><span class="role-badge badge-gest">Gest. Support</span></td><td>gest.support@ventoryx-academy.com</td><td>/fr/auth/dashboard/gestionnaire/support/</td></tr>
+            <tr><td><span class="role-badge badge-gest">Gest. Design</span></td><td>gest.design@ventoryx-academy.com</td><td>/fr/auth/dashboard/gestionnaire/design/</td></tr>
+            <tr><td><span class="role-badge badge-etudiant">Étudiant test</span></td><td>salifousmanesow4@gmail.com</td><td>/fr/auth/dashboard/etudiant/</td></tr>
+        </table>
+    </section>
+
+    <!-- ───────────────── STACK TECHNIQUE ───────────────── -->
+    <section class="doc-section" id="credits">
+        <div class="section-header">
+            <div class="section-icon" style="background:#F5F3FF;">⚡</div>
+            <h2>Stack technique</h2>
+        </div>
+        <table class="doc-table">
+            <tr><th>Couche</th><th>Technologie</th><th>Version</th></tr>
+            <tr><td>Framework web</td><td>Django</td><td>6.0.7</td></tr>
+            <tr><td>Serveur WSGI</td><td>Gunicorn</td><td>26.x</td></tr>
+            <tr><td>Base de données</td><td>PostgreSQL (prod) / SQLite (dev)</td><td>—</td></tr>
+            <tr><td>Traitement image</td><td>Pillow</td><td>12.3.0</td></tr>
+            <tr><td>Auth sociale</td><td>django-allauth</td><td>—</td></tr>
+            <tr><td>Anti brute-force</td><td>django-axes</td><td>—</td></tr>
+            <tr><td>CSP</td><td>django-csp</td><td>—</td></tr>
+            <tr><td>Éditeur riche</td><td>django-ckeditor</td><td>4.x</td></tr>
+            <tr><td>Paiements</td><td>Stripe</td><td>—</td></tr>
+            <tr><td>IA</td><td>OpenAI API</td><td>GPT</td></tr>
+            <tr><td>Monitoring</td><td>Sentry SDK</td><td>—</td></tr>
+            <tr><td>PWA</td><td>Service Worker natif</td><td>—</td></tr>
+            <tr><td>i18n</td><td>Django i18n (FR / EN)</td><td>—</td></tr>
+        </table>
+    </section>
+
+</main>
 </div>
+
+<script>
+// Active sidebar link on scroll
+const sections = document.querySelectorAll('.doc-section');
+const links = document.querySelectorAll('.sidebar-link');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            links.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector(`.sidebar-link[href="#${entry.target.id}"]`);
+            if (link) link.classList.add('active');
+        }
+    });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
 {% endblock %}
