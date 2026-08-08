@@ -15,17 +15,33 @@ from apps.core.notifications import (
 @login_required
 def selection_metier(request):
     metiers = Parcours.objects.filter(actif=True).order_by('ordre')
+    
+    # Créer une liste de dictionnaires pour le template
+    metiers_data = []
     for metier in metiers:
         progressions = ProgressionUtilisateur.objects.filter(user=request.user, parcours=metier)
         total = metier.total_cours
         termine = progressions.filter(termine=True).count()
-        metier.progression = int((termine / max(total, 1)) * 100) if total > 0 else 0
-        setattr(metier, 'total_cours', total)
-        metier.total_tests = metier.total_quiz
-
+        progression_pct = int((termine / max(total, 1)) * 100) if total > 0 else 0
+        
+        metiers_data.append({
+            'id': metier.id,
+            'nom': metier.nom,
+            'metier': metier.metier,
+            'description': metier.description,
+            'actif': metier.actif,
+            'ordre': metier.ordre,
+            'gratuit': metier.gratuit,
+            'premium': metier.premium,
+            'total_cours': total,
+            'total_tests': metier.total_quiz,
+            'progression': progression_pct,
+            'image': metier.image,
+        })
+    
     return render(request, 'pages/parcours/selection_metier.html', {
         'page_title': 'Sélection du parcours',
-        'metiers': metiers,
+        'metiers': metiers_data,  # ← On passe la liste de dictionnaires
     })
 
 
