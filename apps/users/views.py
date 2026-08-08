@@ -462,7 +462,7 @@ def dashboard_etudiant(request):
         "discussions_recentes": [],
         "recommandations": [],
     }
-    return render(request, "pages/utilisateur/dashboard_etudiant.html", context)
+    return render(request, "templates/pages/utilisateur/dashboard_etudiant.html", context)
 
 
 @login_required
