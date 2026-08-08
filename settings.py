@@ -36,12 +36,12 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 # ============================================================
 # HÔTES AUTORISÉS
 # ============================================================
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,ventoryx-academy--salifousmanesow.replit.app").split(",")
 
 # ============================================================
 # ORIGINES CSRF
 # ============================================================
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://ventoryx-academy.com").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "https://ventoryx-academy.com,https://ventoryx-academy--salifousmanesow.replit.app").split(",")
 
 # ============================================================
 # APPLICATIONS INSTALLÉES
@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'django_filters',
     'import_export',
     'corsheaders',
-    'axes',
+    # 'axes',  # ← DÉSACTIVÉ
     'auditlog',
     'storages',
     'compressor',
@@ -98,7 +98,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'axes.middleware.AxesMiddleware',
+    # 'axes.middleware.AxesMiddleware',  # ← DÉSACTIVÉ
     'apps.audit.middleware.AuditMiddleware',
     'apps.core.middleware.MaintenanceMiddleware',
 ]
@@ -165,6 +165,11 @@ else:
 # ============================================================
 AUTH_USER_MODEL = 'users.User'
 
+# Redirections
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'users:dashboard'
+LOGOUT_REDIRECT_URL = 'core:index'
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 10}},
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
@@ -183,15 +188,16 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 AUTHENTICATION_BACKENDS = [
+    # 'axes.backends.AxesStandaloneBackend',  # ← DÉSACTIVÉ
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
-    'axes.backends.AxesStandaloneBackend',
 ]
 
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 0.25
-AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']
-AXES_RESET_ON_SUCCESS = True
+# AXES désactivé
+# AXES_FAILURE_LIMIT = 5
+# AXES_COOLOFF_TIME = 0.25
+# AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']
+# AXES_RESET_ON_SUCCESS = True
 
 ACCOUNT_SIGNUP_FIELDS = ['username*', 'password1*', 'password2*']
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}

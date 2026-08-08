@@ -20,7 +20,7 @@ def selection_metier(request):
         total = metier.total_cours
         termine = progressions.filter(termine=True).count()
         metier.progression = int((termine / max(total, 1)) * 100) if total > 0 else 0
-        metier.total_cours = total
+        setattr(metier, 'total_cours', total)
         metier.total_tests = metier.total_quiz
 
     return render(request, 'pages/parcours/selection_metier.html', {
