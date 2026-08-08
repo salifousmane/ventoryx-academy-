@@ -183,9 +183,9 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesStandaloneBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'axes.backends.AxesStandaloneBackend',
 ]
 
 AXES_FAILURE_LIMIT = 5
