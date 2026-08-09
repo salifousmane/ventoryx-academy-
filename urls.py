@@ -27,7 +27,7 @@ handler429 = 'apps.core.core_views.erreur_429'
 
 urlpatterns += i18n_patterns(
     path('', include('apps.core.urls')),
-    path('auth/', include('apps.users.urls')),
+    path('auth/', include('apps.users.users_urls')),
     path('parcours/', include('apps.parcours.urls')),
     path('blog/', include('apps.blog.urls')),
     path('institution/', include('apps.institution.urls')),

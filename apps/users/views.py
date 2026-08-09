@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_protect
+@csrf_exempt
 def register(request):
     if request.method == "POST":
         first_name = request.POST.get("first_name", "").strip()
@@ -86,7 +87,7 @@ def register(request):
                 request,
                 f"Bienvenue {first_name} ! Votre compte a été créé avec succès.",
             )
-            return redirect("core:tableau_de_bord")
+            return redirect("users:dashboard")
         except Exception as e:
             messages.error(
                 request,
@@ -104,6 +105,7 @@ def register(request):
 
 
 @csrf_protect
+@csrf_exempt
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("core:index")
@@ -121,7 +123,7 @@ def login_view(request):
             next_url = request.GET.get("next", "")
             if next_url:
                 return redirect(next_url)
-            return redirect("core:tableau_de_bord")
+            return redirect("core: dashboard")
         else:
             messages.error(request, "Email ou mot de passe incorrect.")
 
