@@ -154,20 +154,66 @@ def dashboard_dg(request):
     now = timezone.now()
     last_30 = now - timedelta(days=30)
 
+    # Utilisation de try/except pour éviter que le serveur ne crash
+    try:
+        total_utilisateurs = User.objects.count()
+    except:
+        total_utilisateurs = 0
+
+    try:
+        messages_recents = MessageContact.objects.filter(statut="non_lu").count()
+    except:
+        messages_recents = 0
+
+    try:
+        candidatures_recentes = Candidature.objects.filter(statut="soumise").count()
+    except:
+        candidatures_recentes = 0
+
+    try:
+        certificats_delivres = Certificat.objects.count()
+    except:
+        certificats_delivres = 0
+
+    try:
+        candidatures_total = Candidature.objects.count()
+    except:
+        candidatures_total = 0
+
+    try:
+        total_parcours = Parcours.objects.count()
+    except:
+        total_parcours = 0
+
+    try:
+        taches_en_cours = Tache.objects.filter(statut="en_cours").count()
+    except:
+        taches_en_cours = 0
+
+    try:
+        tickets_ouverts = TicketSupport.objects.filter(statut="ouvert").count()
+    except:
+        tickets_ouverts = 0
+
+    try:
+        nouveaux_utilisateurs = User.objects.filter(date_joined__gte=last_30).count()
+    except:
+        nouveaux_utilisateurs = 0
+
     context = {
         "page_title": "Tableau de bord DG",
-        "total_utilisateurs": User.objects.count(),
-        "messages_recents": MessageContact.objects.filter(statut="non_lu").count(),
-        "candidatures_recentes": Candidature.objects.filter(statut="soumise").count(),
-        "certificats_delivres": Certificat.objects.count(),
-        "candidatures_total": Candidature.objects.count(),
-        "total_parcours": Parcours.objects.count(),
-        "taches_en_cours": Tache.objects.filter(statut="en_cours").count(),
-        "tickets_ouverts": TicketSupport.objects.filter(statut="ouvert").count(),
-        "nouveaux_utilisateurs": User.objects.filter(date_joined__gte=last_30).count(),
+        "total_utilisateurs": total_utilisateurs,
+        "messages_recents": messages_recents,
+        "candidatures_recentes": candidatures_recentes,
+        "certificats_delivres": certificats_delivres,
+        "candidatures_total": candidatures_total,
+        "total_parcours": total_parcours,
+        "taches_en_cours": taches_en_cours,
+        "tickets_ouverts": tickets_ouverts,
+        "nouveaux_utilisateurs": nouveaux_utilisateurs,
     }
     return render(request, "admin/dg.html", context)
-
+    
 @login_required
 def dashboard_coordinateur(request, departement):
     from apps.messaging.models import MessageContact
