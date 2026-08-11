@@ -1,4 +1,3 @@
-
 import logging
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -167,7 +166,7 @@ def dashboard_dg(request):
         "tickets_ouverts": TicketSupport.objects.filter(statut="ouvert").count(),
         "nouveaux_utilisateurs": User.objects.filter(date_joined__gte=last_30).count(),
     }
-    return render(request, "templates/admin/dg.html", context)
+    return render(request, "admin/dg.html", context)
 
 @login_required
 def dashboard_coordinateur(request, departement):
@@ -192,7 +191,7 @@ def dashboard_coordinateur(request, departement):
         "design": "admin/coordinateur_design.html",
     }
     template = templates.get(departement, "admin/gestionnaire.html")
-    return render(request, "templates/" + template, context)
+    return render(request, template, context)
 
 @login_required
 def dashboard_gestionnaire(request, departement):
@@ -211,7 +210,7 @@ def dashboard_gestionnaire(request, departement):
         "messages_non_lus": non_lus,
         "messages_traites": traites,
     }
-    return render(request, "templates/admin/gestionnaire.html", context)
+    return render(request, "admin/gestionnaire.html", context)
 
 @login_required
 def dashboard_etudiant(request):
@@ -368,7 +367,7 @@ def dashboard_etudiant(request):
         "discussions_recentes": [],
         "recommandations": [],
     }
-    return render(request, "templates/pages/utilisateur/dashboard_etudiant.html", context)
+    return render(request, "pages/utilisateur/dashboard_etudiant.html", context)
 
 @login_required
 def checkout(request):
@@ -486,7 +485,7 @@ def stripe_webhook(request):
 @login_required
 def reunion_virtuelle(request):
     context = {"page_title": "Réunion virtuelle"}
-    return render(request, "templates/admin/reunion.html", context)
+    return render(request, "admin/reunion.html", context)
 
 @login_required
 @require_POST
@@ -504,7 +503,7 @@ def page_equipe(request):
     from apps.users.models import User
     membres = User.objects.exclude(role="etudiant").order_by("role", "last_name")
     context = {"page_title": "Notre Équipe", "membres": membres}
-    return render(request, "templates/admin/equipe.html", context)
+    return render(request, "admin/equipe.html", context)
 
 @login_required
 def page_rapports_transparence(request):
@@ -528,7 +527,7 @@ def page_rapports_transparence(request):
         "logs_recents": logs_recents,
         "date_rapport": now,
     }
-    return render(request, "templates/admin/rapports_transparence.html", context)
+    return render(request, "admin/rapports_transparence.html", context)
 
 @login_required
 def documentation(request):
