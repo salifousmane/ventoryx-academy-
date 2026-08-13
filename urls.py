@@ -41,3 +41,13 @@ urlpatterns += i18n_patterns(
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# Servir les fichiers statiques techniques depuis le dossier templates
+from django.views.static import serve
+from django.conf import settings
+
+urlpatterns += [
+    path('robots.txt', serve, {'path': 'robots.txt', 'document_root': settings.BASE_DIR / 'templates'}),
+    path('sitemap.xml', serve, {'path': 'sitemap.xml', 'document_root': settings.BASE_DIR / 'templates'}),
+    path('favicon.ico', serve, {'path': 'favicon.ico', 'document_root': settings.BASE_DIR / 'templates'}),
+]
